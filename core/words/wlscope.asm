@@ -1,4 +1,4 @@
-; ( addr len -- wid )
+; ( addr len -- addr' len' wid )
 ; Compiler
 ; wlscope, "wordlist scope" ( addr len -- addr' len' wid ), is a deferred word
 ; which enables the AmForth application to choose the wordlist ( wid ) for the

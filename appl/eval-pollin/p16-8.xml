@@ -1,0 +1,40 @@
+<project name="pollins-16-8" basedir="." default="Help">
+    
+    <target name="p16-8.asm">
+        <copy tofile="p16-8.asm" file="pollin.asm" overwrite="true">
+          <filterset>
+            <filter token="F_CPU" value="8000000"/>
+            <filter token="USART" value=""/>
+          </filterset>
+        </copy>
+    </target>
+    
+    <target name="p16-8.hex" depends="p16-8.asm" description="Hexfiles for p16-8">
+        <avrasm2 projectname="p16-8" mcu="atmega16"/>
+        <delete file="p16-8.asm"/>
+
+    </target>
+
+    <target name="p16-8" depends="p16-8.hex" description="Atmega16 @ 8 MHz">
+        <echo>Uploading Hexfiles for p16-8</echo>
+        <avrdude 
+		    type="stk200"
+		    mcu="atmega16"
+		    flashfile="p16-8.hex"
+		    eepromfile="p16-8.eep.hex" />
+		<tstamp>
+		  <format property="fintim" pattern="E @ H:m"/>
+		  </tstamp>
+		  <echo>Finished on ${fintim}</echo>
+    </target>
+    <target name="p16-8.fuses" description="Set fuses for P16-8">
+	<echo>Writing fuses</echo>
+	<avrdude-2fuses
+		    type="stk200"
+		    mcu="atmega16"
+		    hfuse="0x99"
+		    lfuse="0xff"
+	/>
+    </target>
+
+</project>

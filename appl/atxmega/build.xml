@@ -1,0 +1,21 @@
+<!-- make multiple targets with antelope -->
+<project name="aldivi" basedir="." default="Help">
+
+    <import file="../avr-build.xml"/>
+    <target name="atxmega.hex" description="Hexfiles for AVR atxmega">
+        <avrasm2 projectname="atxmega" mcu="atxmega128a1"/>
+    </target>
+
+    <target name="atxmega" depends="atxmega.hex" description="AVR ATXMega 128A1 @ 2 MHz">
+        <echo>Uploading Hexfiles for AVR atxmega</echo>
+        <avrdude 
+		    type="stk200"
+		    mcu="x128a1"
+		    flashfile="atxmega.hex"
+		    eepromfile="atxmega.eep.hex"
+		/>
+    </target>
+    <target name="compile" depends="atxmega.hex">
+    </target>
+
+</project>

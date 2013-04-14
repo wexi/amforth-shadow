@@ -1,0 +1,23 @@
+<!-- make multiple targets with antelope -->
+<project name="amForth" basedir="." default="release">
+<target name="release">
+  <ant antfile="build.xml" dir="arduino" target="compile" inheritAll="false"/>
+  <ant antfile="build.xml" dir="avr-butterfly" target="compile" inheritAll="false"/>
+</target>
+<target name="clean">
+  <ant antfile="build.xml"  dir="arduino" target="clean" inheritAll="false"/>
+  <ant antfile="build.xml" dir="avr-butterfly" target="clean" inheritAll="false"/>
+  <ant antfile="build.xml" dir="template" target="clean" inheritAll="false"/>
+  <ant antfile="build.xml" dir="eval-pollin" target="clean" inheritAll="false"/>
+  <ant antfile="build.xml" dir="atxmega" target="clean" inheritAll="false"/>
+  <ant antfile="build.xml" dir="atmega2561" target="clean" inheritAll="false"/>
+</target>
+<target name="compile">
+  <ant antfile="build.xml"  dir="arduino" target="compile" inheritAll="false"/>
+  <ant antfile="build.xml" dir="avr-butterfly" target="compile" inheritAll="false"/>
+  <ant antfile="build.xml" dir="template" target="compile" inheritAll="false"/>
+  <ant antfile="build.xml" dir="eval-pollin" target="compile" inheritAll="false"/>
+  <ant antfile="build.xml" dir="atxmega" target="compile" inheritAll="false"/>
+  <ant antfile="build.xml" dir="atmega2561" target="compile" inheritAll="false"/>
+</target>
+</project>

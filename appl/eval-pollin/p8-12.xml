@@ -1,0 +1,25 @@
+<project name="pollins-8-12" basedir="." default="Help">
+
+    <target name="p8-12.asm">
+        <copy tofile="p8-12.asm" file="pollin.asm" overwrite="true">
+          <filterset>
+            <filter token="F_CPU" value="12000000"/>
+            <filter token="USART" value=""/>
+          </filterset>
+        </copy>
+    </target>
+    <target name="p8-12.hex" description="Hexfiles for p8-12" depends="p8-12.asm">
+        <avrasm2 projectname="p8-12" mcu="atmega88"/>
+
+    </target>
+
+    <target name="p8-12" depends="p8-12.hex" description="Atmega8 @ 12 MHz">
+	        <echo>Uploading Hexfiles for p8-12</echo>
+		<avrdude 
+		    type="stk200"
+		    mcu="atmega88"
+		    flashfile="p8-12.hex"
+		    eepromfile="p8-12.eep.hex"
+		/>
+    </target>
+</project>

@@ -1,0 +1,346 @@
+#!/usr/bin/perl -w
+
+# pd2amforth: Read all XML files in the
+# current directory, assume they are
+# Atmel Atmega Partdescription files
+# and produce device files for assembler
+# and amforth. The generated files may
+# need some further corrections however
+
+use strict;
+use XML::LibXML;
+
+my $PDDIR="../Atmel/Partdescriptionfiles.v6/";
+#$PDDIR=".";
+sub min {
+  my ($a, $b) = @_;
+  return $a if $a<$b;
+  return $b;
+}
+
+sub fmt_str {
+    my ($str, $format) = @_;
+    my $result;
+    my $len = sprintf("$format", length $str);
+    $result  = ".dw $len\n";
+    $result .= "\t.db \"$str\"";
+    $result .= ",0" if length($str)%2;
+    return $result;
+}
+
+sub readXML ($) {
+    my ($basename) = @_;
+    my ($timestamp, $number, $label, %regs, $partname, $defname, $maxdp, $device);
+    my ($start, $ramsize, $esize, $ivecsize, $fsize, $mcustring, $coreversion, $pclen);
+    my ($numberusarts, %usartregs, %peripherals, %needsdef, %registerdups);
+    my ($has_smcr, $has_wdtcsr, $has_jtag)=(0,0,0);
+    my ($firstentry) = (1);
+    
+    $needsdef{"SPMEN"} = 1;
+    $needsdef{"SPMCSR"} = 1;
+    $needsdef{"EEPE"} = 1;
+    $needsdef{"EEMPE"}=1;
+    
+    my $parser = new XML::LibXML;
+    my $doc = $parser->parse_file ("$PDDIR/$basename");
+    $basename = lc $basename;
+
+    $basename =~ s/\.xml$//;
+    $basename =~ s/\.gz$//;
+    foreach my $device ($doc->getElementsByTagName("device")) {
+     return unless $device->getAttribute("family")=~/megaAVR/; # |AVR XMEGA
+     foreach my $addressspace ($doc -> getElementsByTagName("address-space")) {
+      my $size = $addressspace->getAttribute("size");
+      $size=hex($size) if $size=~/x/;
+      $esize = $size if $addressspace->getAttribute("name")=~/eeprom/;
+      if($addressspace->getAttribute("name")=~/prog/) {
+        $fsize = $size;
+        $maxdp = $fsize;
+        foreach my $memory ($addressspace->getElementsByTagName("memory-segment")) {
+          if($memory->getAttribute("name")=~/BOOT_SECTION/) {
+            $size = $memory->getAttribute("start");
+            $size=hex($size) if $size=~/x/;
+            $maxdp = $size if $maxdp>$size
+          }
+        }
+      }
+      if($addressspace->getAttribute("name")=~/data/) {
+        foreach my $memory ($addressspace->getElementsByTagName("memory-segment")) {
+          if($memory->getAttribute("type")=~/ram/) {
+            next if $memory->hasAttribute("external") && $memory->getAttribute("external")==1;
+            $size = $memory->getAttribute("start");
+            $size=hex($size) if $size=~/x/;
+            $start = $size;
+            $size= $memory->getAttribute("size");
+            $size=hex($size) if $size=~/x/;
+            $ramsize = $size;
+          }
+        }
+      }
+    }
+    $maxdp = min($maxdp, 65535);
+    print "RAM: $ramsize EEPROM: $esize und FLASH $fsize maxdp=0x",sprintf("%X", $maxdp);
+    
+    return unless int($fsize)>8000;
+    
+    $partname = $device->getAttribute("name");
+    $defname = "unknown";
+    $defname = "m$1def.inc" if $partname=~/ATmega(.*)/;
+    $defname = "usb$1def.inc" if $partname=~/AT90USB(.*)/;
+    $defname = "can$1def.inc" if $partname=~/AT90CAN(.*)/;
+    $defname = "pwm$1def.inc" if $partname=~/AT90PWM(.*)/;
+    $defname = "ATxmega$1def.inc"  if $partname=~/ATxmega(.*)/;
+    $defname = "unknown" if $defname=~/comp/;
+    return if $defname=~/unknown/;
+
+    mkdir $basename unless -d $basename;
+    mkdir "$basename/words" unless -d "$basename/words";
+
+    open(FRT, ">$basename/$basename.frt") or die "$basename: $!\n";
+    
+    open(ASM, ">$basename/device.asm") or die "$basename: $!\n";
+    open(PY,  ">$basename/device.py")  or die "$basename: $!\n";
+    open(INC, ">$basename/device.inc") or die "$basename: $!\n";
+    open(SLEEP, ">$basename/words/sleep.asm") or die "$basename/words/sleep.asm: $!\n";
+    open(WDT, ">$basename/words/no-wdt.asm") or die "$basename/words/no-wdt.asm: $!\n";
+    print FRT "\\ Partname: $partname\n";
+    print FRT "\\ generated automatically\n\n";    
+
+    print INC "; Partname:  $partname\n";
+    print INC "; generated automatically, no not edit\n\n";
+
+    print PY "# Partname:  $partname\n";
+    print PY "# generated automatically, do not edit\n";
+    print PY "MCUREGS = {";
+
+    print ASM "; Partname:  $partname\n";
+    print ASM "; generated automatically, do not edit\n";    
+    print ASM "\n.nolist\n\t.include \"$defname\"\n.list\n\n";    
+    print ASM ".equ ramstart =  $start\n";
+    print ASM ".equ CELLSIZE = 2\n";
+    print ASM ".macro readflashcell\n";
+    if(int($fsize) <= 65536) {
+	print ASM "\tlsl zl\n\trol zh\n\tlpm \@0, Z+\n\tlpm \@1, Z+\n";
+    } else {
+	print ASM "\tclr temp7\n\tlsl zl\n\trol zh\n\trol temp7\n\tout_ RAMPZ, temp7\n\telpm \@0, Z+\n\telpm \@1, Z+\n";
+    }
+    print ASM ".endmacro\n";
+    print ASM ".macro writeflashcell\n";
+    if(int($fsize) <= 65536) {
+        print ASM "\tlsl zl\n\trol zh\n";
+    } else {
+	print ASM "\tclr temp7\n\tlsl zl\n\trol zh\n\trol temp7\n\tout_ RAMPZ, temp7\n";
+    }
+    print ASM ".endmacro\n";
+    # get the data structurs from XML
+    
+    # get all module names that should be included
+    foreach my $module ($doc->getElementsByTagName("module-instance")) {
+	$peripherals{$module->getAttribute("name")} = $module->getAttribute("module") if $module->getAttribute("type")=~/peripheral/;
+    }
+    # now get all the register names
+    # first some syntactic sugar
+    my $comma = "";
+    foreach my $module ($doc->getElementsByTagName("modules")->item(0)->getElementsByTagName("module")) {
+      my $mname=$module->getAttribute("name");
+      next unless $peripherals{$mname};
+
+      my $mcaption=$module->getAttribute("caption");
+      print ASM ".set WANT_$mname = 0\n";
+      print INC ".if WANT_$mname == 1\n";
+      print FRT "\\ $mname\n";
+      foreach my $register ($module -> getElementsByTagName("register")) {
+        my $caption=$register->getAttribute("caption");
+        my $name   =$register->getAttribute("name");
+        my $offset =$register->getAttribute("offset");
+        $has_smcr=1 if $name=~/SMCR/;
+        $has_wdtcsr=1 if $name=~/WDTCSR/;
+        next if $registerdups{$name};
+        $registerdups{$name}=$offset;
+        my $addr = $offset; $addr=hex($addr) if $addr=~/x/;
+        $needsdef{$name} = 0;
+        print FRT "&$addr constant $name\t\\ $caption\n";
+        print INC "; ( -- addr ) System Constant\n; R( -- )\n; $caption";
+        print INC "\nVE_${name}:\n\t" . fmt_str($name, "\$ff%02d")."\n\t.dw VE_HEAD\n\t.set VE_HEAD=VE_${name}\n";
+        print INC "XT_${name}:\n\t.dw PFA_DOVARIABLE\nPFA_${name}:\n\t.dw $addr\n";
+        print PY "$comma\n\t'${name}': '&$addr'";
+        $comma = ",";
+        foreach my $bitfield ($register->getElementsByTagName("bitfield")) {
+           my $bm = $bitfield->getAttribute("mask");
+           my $bc = $bitfield->getAttribute("caption");
+           my $bn = $bitfield->getAttribute("name");
+           $needsdef{$bn} = 0;
+           $bm=~s/0x/\$/;
+           print PY "$comma\n\t  '${name}_${bn}': '$bm'";
+           print FRT "  $bm constant ${name}_${bn} \\ $bc\n";
+        }
+      }
+      print INC "\n.endif\n";
+    }
+    $ivecsize = "2";
+    $ivecsize = "1" if int($fsize) <= 8192; # educated guess
+    $pclen    = "2";
+    $pclen    = "3" if int($fsize) > 132000; 
+
+    print ASM ".equ intvecsize = $ivecsize ; please verify; flash size: $fsize bytes\n";
+    print ASM ".equ pclen = $pclen ; please verify\n";
+    print FRT "\n\\ Interrupts\n";
+    print ASM ".overlap\n";
+    $number = 0;
+    foreach my $ivector ($doc -> getElementsByTagName("interrupt")) {
+        my ($name, $index, $addr, $caption);
+        $number++;
+        next if $number==1;
+        $index=$ivector->getAttribute("index");
+        $addr=$index*$ivecsize;
+        $name =$ivector->getAttribute("name");
+        $caption=$ivector->getAttribute("caption");
+        print PY  "$comma\n\t'${name}Addr': '$addr'";
+        print ASM ".org $addr\n\t rcall isr ; $caption\n";
+        $caption = "&$addr  constant ${name}Addr \\ $caption";
+        print FRT "".substr($caption, 0, 75)."\n"; # make sure the lines fit amforth' TIB
+    }
+    print ASM ".equ INTVECTORS = $number\n";
+    print ASM ".nooverlap\n";
+    print ASM "\n; compatability layer (maybe empty)\n";
+    print ASM ".equ SPMEN = SELFPRGEN\n" if $needsdef{"SPMEN"} == 1;
+    print ASM ".equ SPMCSR = SPMCR\n"    if $needsdef{"SPMCSR"} == 1;
+    print ASM ".equ EEPE = EEWE\n"       if $needsdef{"EEPE"} == 1;
+    print ASM ".equ EEMPE = EEMWE\n"     if $needsdef{"EEMPE"}==1;
+
+    print ASM "\n; controller data area, environment query mcu-info\n";
+    print ASM "mcu_info:\n";
+    print ASM "mcu_ramsize:\n\t.dw $ramsize\n";
+    print ASM "mcu_eepromsize:\n\t.dw $esize\n";
+    print ASM "mcu_maxdp:\n\t.dw $maxdp \n";
+    print ASM "mcu_numints:\n\t.dw $number\n";
+    print ASM "mcu_name:\n\t". fmt_str($partname, "%2d")."\n";
+    print ASM ".set codestart=pc\n";
+    
+    print PY "\n}";
+    
+    close(PY);
+    close(FRT);
+    close(ASM);
+
+    print WDT "; ( -- ) 
+; MCU
+; disable watch dog timer at runtime
+VE_NOWDT:
+    .dw \$ff04
+    .db \"-wdt\"
+    .dw VE_HEAD
+    .set VE_HEAD = VE_NOWDT
+XT_NOWDT:
+    .dw PFA_NOWDT
+PFA_NOWDT:
+";
+  if($has_wdtcsr) {
+      print WDT "
+     in temp1,SREG
+     push temp1
+     ; Turn always off global interrupt.
+     cli
+     ; Reset Watchdog Timer
+     wdr
+     ; Clear WDRF in MCUSR
+     in temp1, MCUSR
+     andi temp1, (0xff & (0<<WDRF))
+     out MCUSR, temp1
+     ; Write logical one to WDCE and WDE
+     ; Keep old prescaler setting to prevent unintentional time-out
+     in_ temp1, WDTCSR
+     ori temp1, (1<<WDCE) | (1<<WDE)
+     out_ WDTCSR, temp1
+     ; Turn off WDT
+     ldi temp1, (0<<WDE)
+     out_ WDTCSR, temp1
+     ; restore status register
+     pop temp1
+     out SREG,temp1
+     jmp_ DO_NEXT
+";
+    } else {
+      print WDT "
+; Reset WDT
+  wdr
+; Write logical one to WDTOE and WDE
+  in_ temp1, WDTCR
+  ori temp1, (1<<WDTOE)|(1<<WDE)
+  out WDTCR, temp1
+; Turn off WDT
+  ldi temp1, (0<<WDE)
+  out_ WDTCR, temp1
+  jmp_ DO_NEXT
+";
+    }
+    close(WDT);
+    if($has_smcr) {
+      print SLEEP "; ( mode -- ) 
+; MCU
+; put the controller into the specified sleep mode
+VE_SLEEP:
+    .dw \$ff05
+    .db \"sleep\", 0
+    .dw VE_HEAD
+    .set VE_HEAD = VE_SLEEP
+XT_SLEEP:
+    .dw PFA_SLEEP
+PFA_SLEEP:
+  andi  tosl, 7        ; leave only legal mode bits
+  lsl    tosl        ; move to correct location (bits 3-1)
+  ori    tosl, 1        ; set the SE bit
+  out_  SMCR, tosl      ; set the sleep config
+  sleep            ; nighty-night
+  out_  SMCR, zerol      ; 0 protects against accidental sleeps
+  loadtos            ; pop argument from stack
+  jmp_    DO_NEXT
+"
+    } else {
+      print SLEEP  "; ( mode -- )
+; MCU
+; put the controller into the specified sleep mode
+VE_SLEEP:
+  .dw \$ff05
+  .db \"sleep\", 0
+  .dw VE_HEAD
+  .set VE_HEAD = VE_SLEEP
+XT_SLEEP:
+  .dw PFA_SLEEP
+PFA_SLEEP:
+  andi  tosl, 7             ; leave only legal mode bits
+  swap  tosl                ; move to correct location (bits 6-4, atmega32)
+  ori   tosl, \$80           ; set the SE bit (atmega32: bit 7, not bit 0)
+  out_  MCUCR, tosl         ; set the sleep config (atmega32: MCUCR not SMCR)
+  sleep                   ; nighty-night
+;; the 4 lower bits of MCUCR should not be touched
+  in_   tosl, MCUCR
+  andi  tosl, \$0F
+  out_  MCUCR, tosl
+  ;clr  tosl                ; need to clean up the SMCR reg before we leave
+  ;out    SMCR, tosl          ; 0 protects against accidental sleeps
+  loadtos                   ; pop argument from stack
+  jmp  DO_NEXT
+";
+    }
+    close(SLEEP);
+  }
+}
+
+
+
+sub main {
+    my( $basename);
+    $|=1;
+    opendir(CWD, $PDDIR);
+    foreach (reverse sort readdir(CWD)) {
+        next unless /(.*).xml(\.gz)?$/;
+        $basename = $_;
+        print "$basename: ";
+        readXML($basename);
+        print "\n";
+    }
+    closedir(CWD);
+}
+
+main();

@@ -1,0 +1,184 @@
+\ To test the ANS Forth search-order word set and search order extensions
+
+\ Copyright (C) Gerry Jackson 2006
+
+\ This program is free software; you can redistribute it and/or
+\ modify it any way.
+
+\ This program is distributed in the hope that it will be useful,
+\ but WITHOUT ANY WARRANTY; without even the implied warranty of
+\ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+\ The tests are not claimed to be comprehensive or correct 
+
+\ --------------------------------------------------------------------
+\ Version 0.1   Oct 2006 First version released
+
+\ --------------------------------------------------------------------
+\ The tests are based on John Hayes test program for the core word set
+\ and requires those files to have been loaded
+
+\ Words tested in this file are:
+\     forth-wordlist get-order set-order also only forth get-current
+\     set-current definitions previous search-wordlist wordlist find
+\ Words not fully tested:
+\     order only tests that it executes, display is implementation
+\           dependent
+
+\ --------------------------------------------------------------------
+\ Assumptions and dependencies:
+\     - running on a case insensitive system. Strictly speaking ANS 
+\       Forth words should be in upper case only, this file is mostly
+\       lower case
+\     - the forth wordlist is at the head of the search order and is
+\       also the compilation wordlist
+\     - tester.fr has been loaded prior to this file
+\ --------------------------------------------------------------------
+
+Testing Search-order word set
+
+decimal
+
+variable wid1  variable wid2
+
+: save-orderlist ( widn ... wid1 n -> ) dup , 0 ?do , loop ;
+
+\ --------------------------------------------------------------------
+
+Testing forth-wordlist get-order set-order
+
+{ forth-wordlist wid1 ! -> }
+
+create order-list
+
+{ get-order save-orderlist -> }
+
+: get-orderlist  ( -- widn ... wid1 n )
+   order-list dup @ cells  ( -- ad n )
+   over +                  ( -- ad ad' )
+   ?do i @ -1 cells +loop  ( -- )
+;
+
+{ get-order over -> get-order wid1 @ } \ Forth wordlist at top
+{ get-order set-order -> }             \ Effectively noop
+{ get-order -> get-orderlist }         \ Check nothing changed
+{ get-orderlist drop get-orderList 2* set-order -> }
+{ get-order -> get-orderlist drop get-orderList 2* }
+{ get-orderlist set-order get-order -> get-orderlist }
+
+\ --------------------------------------------------------------------
+
+Testing also only forth
+
+{ also get-order -> get-orderlist over swap 1+ }
+{ only forth get-order -> get-orderlist }    \ See assumptions above
+
+\ --------------------------------------------------------------------
+
+Testing get-current set-current wordlist (simple)
+
+{ get-current -> wid1 @ }        \ See assumptions above
+{ wordlist wid2 ! -> }
+{ wid2 @ set-current -> }
+{ get-current -> wid2 @ }
+{ wid1 @ set-current
+
+\ --------------------------------------------------------------------
+
+Testing minimum search order list contains forth-wordlist and set-order
+
+: so1 set-order ;    \ In case it is unavailable in the forth wordlist
+
+{ only forth-wordlist 1 set-order get-orderlist so1 -> }
+{ get-order -> get-orderlist }
+
+\ --------------------------------------------------------------------
+
+Testing get-order set-order with 0 and -1 number of wids argument
+
+: so2a get-order get-orderlist set-order ; \  To recover search order
+: so2 0 set-order so2a ;
+
+{ so2 -> 0 }         \ 0 set-order leaves an empty search order
+
+: so3 -1 set-order so2a ;
+: so4 only so2a ;
+
+{ so3 -> so4 }       \ -1 set-order = only
+
+\ --------------------------------------------------------------------
+
+Testing definitions previous
+
+{ only forth definitions -> }
+{ get-current -> forth-wordlist }
+{ get-order wid2 @ swap 1+ set-order definitions get-current -> wid2 @ }
+{ get-order -> get-orderlist wid2 @ swap 1+ }
+{ previous get-order -> get-orderlist }
+{ definitions get-current -> forth-wordlist }
+
+\ --------------------------------------------------------------------
+
+Testing search-wordlist wordlist find
+
+only forth definitions
+variable xt  ' dup xt !
+variable xti ' .( xti !    \ Immediate word
+
+{ s" dup" wid1 @ search-wordlist -> xt  @ -1 }
+{ s" .("  wid1 @ search-wordlist -> xti @  1 }
+{ s" dup" wid2 @ search-wordlist ->        0 }
+
+: c"dup" c" dup" ;
+: c".("  c" .(" ;
+: c"x" c" unknown word"  ;
+
+{ c"dup" find -> xt  @ -1 }
+{ c".("  find -> xti @  1 }
+{ c"x"   find -> c"x"   0 }
+
+\ --------------------------------------------------------------------
+
+Testing new definitions are put into the correct wordlist
+
+: alsowid2 also get-order wid2 @ rot drop swap set-order ;
+alsowid2
+: w1 1234  ;
+definitions
+: w1 -9876 ; immediate
+
+only forth
+{ w1 -> 1234 }
+definitions
+{ w1 -> 1234 }
+alsowid2
+{ w1 -> -9876 }
+definitions
+{ w1 -> -9876 } 
+
+only forth definitions
+
+: so5  dup if swap execute then ;
+
+{ s" w1" wid1 @ search-wordlist so5 -> -1  1234 }
+{ s" w1" wid2 @ search-wordlist so5 ->  1 -9876 }
+
+: c"w1" c" w1" ;
+{ alsowid2 c"w1" find so5 ->  1 -9876 }
+{ previous c"w1" find so5 -> -1  1234 }
+
+\ --------------------------------------------------------------------
+
+Testing order  \ Should display search order and compilation wordlist
+
+cr .( ONLY FORTH DEFINITIONS search order and compilation list) cr
+{ only forth definitions order -> }
+
+cr .( Plus another unnamed wordlist at the head of the search order) cr
+{ alsowid2 definitions order -> }
+
+\ --------------------------------------------------------------------
+
+cr .( Tests on Search Order words completed successfully) cr
+
+only forth definitions		\ Leave search order in the standard state

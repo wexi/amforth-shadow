@@ -1,0 +1,15 @@
+<!-- make multiple targets with antelope -->
+<project name="pollins" basedir="." default="Help">
+    <import file="../avr-build.xml"/>
+    <import file="p328-16.xml"/>
+    <import file="p16-8.xml"/>
+    <import file="p32-16.xml"/>
+    <import file="p32-8.xml"/>
+    <import file="p644-16.xml"/>
+    <import file="p1284-16.xml"/>
+    <import file="p8-12.xml"/>
+
+    <target name="compile" depends="p16-8.hex, p32-8.hex, p328-16.hex, p1284-16.hex, p644-16.hex">
+       
+    </target>
+</project>

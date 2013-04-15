@@ -487,6 +487,7 @@ class AMForth(object):
         self._amforth_dp = None
         self._filedirs = {}
         self._search_path = []
+        self._uploaded = set()
         self._amforth_words = []
         self._amforth_regs  = {}
         self._amforth_cpu = ""
@@ -689,6 +690,10 @@ additional definitions (e.g. register names)
             self._serialconn.timeout = self._config.current_behavior.timeout
 
     def upload_file(self, filename):
+        if filename in self._uploaded:
+            return False
+        else:
+            self._uploaded.add(filename)
         self._update_files()
         if os.path.dirname(filename):
           fpath=filename
@@ -739,6 +744,7 @@ additional definitions (e.g. register names)
                              str(e)))
                 self.progress_callback("Error", None, errmsg)
                 raise AMForthException(errmsg)
+        return True
 
     def _send_file_contents(self, f):
         in_comment = False
@@ -932,10 +938,12 @@ additional definitions (e.g. register names)
     def handle_common_directives(self, directive, directive_arg):
         if directive == "#include":
             fn = directive_arg.strip()
-            self.upload_file(fn)
-            resume_fn = self._config.current_behavior.filename
-            if resume_fn:
-                self.progress_callback("File", None, resume_fn + " (resumed)")
+            if self.upload_file(fn):
+                resume_fn = self._config.current_behavior.filename
+                if resume_fn:
+                    self.progress_callback("File", None, resume_fn + " (resumed)")
+            else:
+                self.progress_callback("Information", None, "already uploaded")
         elif directive == "#cd":
             dirname = directive_arg.strip()
             if os.path.isabs(dirname):

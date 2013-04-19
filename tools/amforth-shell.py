@@ -124,6 +124,11 @@
 #       is encountered as the very last line of an upload file it will
 #       have no effect.
 #
+#   #include-once [<yes-or-no>]
+#       Controls whether to upload an already uploaded file.
+#       The default behavior is "no" unless the shell is launched
+#       with the --include-once option.
+#
 #   #error-on-output [<yes-or-no>]
 #       Controls whether an error is generated if unexpected output
 #       occurs during an upload.  The default is yes.  This directive
@@ -261,6 +266,7 @@ class Behaviors(object):
         self.timeout = 15.0
         self.quote_char_words = ["[char]", "char"]
         self.start_string_words = ['s"', '."', 'abort"']
+        self.include_once = False
         self.error_on_output = True
         self.ignore_errors = False
         self.directive_uncommented = True
@@ -367,13 +373,13 @@ class AMForth(object):
 
     amforth_error_cre = re.compile(" \?\? -\d+ \d+ \r\n> $")
     upload_directives = [
-        "#cd", "#include", "#directive", "#ignore-error",
+        "#cd", "#include", "#directive", "#include-once", "#ignore-error",
         "#ignore-error-next", "#error-on-output", "#expect-output-next",
         "#string-start-word", "#quote-char-word",
         "#timeout", "#timeout-next", "#interact", "#exit"
         ]
     interact_directives = [
-        "#cd", "#edit", "#include", "#directive", "#ignore-error",
+        "#cd", "#edit", "#include", "#directive", "#include-once", "#ignore-error",
         "#error-on-output", "#string-start-word", "#quote-char-word",
         "#timeout", "#timeout-next", "#update-words", "#exit", 
         "#update-cpu", "#update-files"
@@ -487,6 +493,7 @@ class AMForth(object):
         self._amforth_dp = None
         self._filedirs = {}
         self._search_path = []
+        self._uploaded = set()
         self._amforth_words = []
         self._amforth_regs  = {}
         self._amforth_cpu = ""
@@ -605,6 +612,8 @@ additional definitions (e.g. register names)
         parser.add_argument("--editor", action="store",
             default = os.environ.get("EDITOR", None),
             help="Editor to use for #edit directive")
+        parser.add_argument("--include-once", action="store_true",
+            help="Skip #include if file already uploaded")
         parser.add_argument("--no-error-on-output", action="store_true",
             help="Indicate an error if upload causes output")
         parser.add_argument("--ignore-error", action="store_true",
@@ -619,6 +628,7 @@ additional definitions (e.g. register names)
         self._serial_speed = arg.speed
         self.editor = arg.editor
         behavior = self._config.current_behavior
+        behavior.include_once = arg.include_once
         behavior.error_on_output = not arg.no_error_on_output
         behavior.directive_config = arg.directive
         behavior.timeout = arg.timeout
@@ -689,6 +699,10 @@ additional definitions (e.g. register names)
             self._serialconn.timeout = self._config.current_behavior.timeout
 
     def upload_file(self, filename):
+        if self._config.current_behavior.include_once and filename in self._uploaded:
+            return False
+        else:
+            self._uploaded.add(filename)
         self._update_files()
         if os.path.dirname(filename):
           fpath=filename
@@ -739,6 +753,7 @@ additional definitions (e.g. register names)
                              str(e)))
                 self.progress_callback("Error", None, errmsg)
                 raise AMForthException(errmsg)
+        return True
 
     def _send_file_contents(self, f):
         in_comment = False
@@ -932,10 +947,12 @@ additional definitions (e.g. register names)
     def handle_common_directives(self, directive, directive_arg):
         if directive == "#include":
             fn = directive_arg.strip()
-            self.upload_file(fn)
-            resume_fn = self._config.current_behavior.filename
-            if resume_fn:
-                self.progress_callback("File", None, resume_fn + " (resumed)")
+            if self.upload_file(fn):
+                resume_fn = self._config.current_behavior.filename
+                if resume_fn:
+                    self.progress_callback("File", None, resume_fn + " (resumed)")
+            else:
+                self.progress_callback("Information", None, "already uploaded")
         elif directive == "#cd":
             dirname = directive_arg.strip()
             if os.path.isabs(dirname):
@@ -960,6 +977,10 @@ additional definitions (e.g. register names)
             behavior = copy.deepcopy(self._config.current_behavior)
             behavior.timeout = timeout
             self._config.next_line_behavior = behavior
+        elif directive == "#include-once":
+            v = self._yes_or_no_arg(directive_arg)
+            behavior = self._config.current_file_behavior
+            behavior.include_once = v
         elif directive == "#ignore-error":
             v = self._yes_or_no_arg(directive_arg)
             self._config.current_file_behavior.ignore_errors = v

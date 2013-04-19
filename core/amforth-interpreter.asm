@@ -2,14 +2,15 @@
 
 DO_COLON:
     push XH
-    push XL          ; PUSH IP
+    push XL			; PUSH IP
     movw XL, wl
     adiw xl, 1
 DO_NEXT:
     brts DO_INTERRUPT
-    movw zl, XL        ; READ IP
+DO_NEXTT:
+    movw zl, XL			; READ IP
     readflashcell wl, wh
-    adiw XL, 1        ; INC IP
+    adiw XL, 1			; INC IP
 
 DO_EXECUTE:
     movw zl, wl

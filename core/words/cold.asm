@@ -19,6 +19,13 @@ PFA_COLD:
 .dseg
 ram_user1: .byte SYSUSERSIZE + APPUSERSIZE
 .cseg
+    ldi zl, low(intovf)
+    ldi zh, high(intovf)
+clr_int: ; clear soft interrupts stuff
+    st  z+, zerol
+    cpi zl, low(intvec)
+    brne clr_int
+	
     ldi zl, low(ram_user1)
     ldi zh, high(ram_user1)
     movw upl, zl

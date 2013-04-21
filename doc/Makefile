@@ -6,6 +6,7 @@ SPHINXOPTS    =
 SPHINXBUILD   = sphinx-build
 PAPER         = a4
 BUILDDIR      = build
+VERSION       = '5.1'
 
 # Internal variables.
 PAPEROPT_a4     = -D latex_paper_size=a4
@@ -27,8 +28,14 @@ htdocs:
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) source $(BUILDDIR)/htdocs
 
 books:
-	$(SPHINXBUILD) -b epub $(ALLSPHINXOPTS) source/TG $(BUILDDIR)/books/epub
-	$(SPHINXBUILD) -b latex $(ALLSPHINXOPTS) source/TG  $(BUILDDIR)/books/latex
+	$(SPHINXBUILD) -b epub $(ALLSPHINXOPTS) \
+           -D master_doc=book    \
+	   -D release=$(VERSION) \
+           source $(BUILDDIR)/books/epub
+	$(SPHINXBUILD) -b latex $(ALLSPHINXOPTS) \
+           -D master_doc=book    \
+	   -D release=$(VERSION) \
+            source  $(BUILDDIR)/books/latex
 	@echo "Running LaTeX files through pdflatex..."
 	$(MAKE) -C $(BUILDDIR)/books/latex all-pdf
 	@echo

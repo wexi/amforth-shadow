@@ -25,7 +25,7 @@
         <div class="rel">
           <a href="/faq.html" title="FAQ"
              accesskey="F">FAQ</a> |
-          <a href="/amforth-userguide.pdf" title="User Guide"
+          <a href="/UG/amforth_user.html" title="User Guide"
              accesskey="U">User Guide</a> |
           <a href="/TG/TG.html" title="Technical Guide"
              accesskey="T">Technical Guide</a> |
@@ -75,24 +75,31 @@
     <div class="footer-wrapper">
       <div class="footer">
         <div class="left">
-          {%- for rellink in rellinks|reverse %}
-          <a href="{{ pathto(rellink[0]) }}" title="{{ rellink[1]|striptags|e }}"
-             {{ accesskey(rellink[2]) }}>{{ rellink[3] }}</a>
-          {%- if not loop.last %}{{ reldelim2 }}{% endif %}
-          {%- endfor %}
           {%- if show_source and has_source and sourcename %}
-            <br/>
             <a href="{{ pathto('_sources/' + sourcename, true)|e }}"
                rel="nofollow">{{ _('Show Source') }}</a>
           {%- endif %}
         </div>
 
-        <div class="right">
-          {{ super() }}
+
+        <div>
+<a href="mailto:amforth-devel@lists.sourceforge.net">amforth-devel@lists.sourceforge.net</a>
+        </div>
+	<div class="clearer"></div>
+
+        <div class="right">Hosted by <a 
+    href="http://sourceforge.net/projects/amforth">
+    <img src="http://sflogo.sourceforge.net/sflogo.php?group_id=179967&type=10" 
+    width="80" height="15" border="0" 
+    alt="Get amforth: Forth for AVR ATmega at SourceForge.net." />
+    </a>
+        </div>
+
         </div>
         <div class="clearer"></div>
       </div>
     </div>
+
 {% endblock %}
 
 {% block relbar1 %}{% endblock %}

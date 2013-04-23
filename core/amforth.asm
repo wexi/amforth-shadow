@@ -4,7 +4,7 @@
 
 .set pc_ = pc
 .org $0000
-  jmp_ PFA_COLD
+  jmp_ COLD_START
 .org pc_
 .include "drivers/generic-isr.asm"
 ; lower part of the dictionary

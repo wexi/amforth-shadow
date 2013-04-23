@@ -8,24 +8,29 @@ VE_COLD:
     .set VE_HEAD = VE_COLD
 XT_COLD:
     .dw PFA_COLD
-PFA_COLD:
-    in_ r10, MCUSR
-    clr r11
+	
+COLD_START:
     clr zerol
     clr zeroh
-    out_ MCUSR, zerol
-    ; init first user data area
-    ; allocate space for User Area
-.dseg
-ram_user1: .byte SYSUSERSIZE + APPUSERSIZE
-.cseg
+    rjmp clr_ints
+
+PFA_COLD:
+    cli
+    out_ MCUSR, zerol		; programmatic restart
+
+clr_ints:			; clear soft interrupts stuff
     ldi zl, low(intovf)
     ldi zh, high(intovf)
-clr_int: ; clear soft interrupts stuff
+clr_int:
     st  z+, zerol
     cpi zl, low(intvec)
     brne clr_int
 	
+; init first user data area
+; allocate space for User Area
+.dseg
+ram_user1: .byte SYSUSERSIZE + APPUSERSIZE
+.cseg
     ldi zl, low(ram_user1)
     ldi zh, high(ram_user1)
     movw upl, zl

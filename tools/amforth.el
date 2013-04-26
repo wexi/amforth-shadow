@@ -2,7 +2,24 @@
 
 ;; Copyright (C) 1995,1996,1997,1998,2000,2001,2003,2004,2007,2008,2010,2011,2012 Free Software Foundation, Inc.
 
-;; This file is a fork of Emacs Gforth support which should grow into Emacs AmForth support.
+;; ----------------------------------------------------------------------
+
+;; This file is currently a trivial fork of gforth.el. It is hoped it
+;; develops into full blown AmForth support.
+
+;; github/amforth-shadow favored indentation is that of openfirmware. It
+;; is obtained by introducing the following code to .emacs
+
+;; (autoload 'forth-mode "amforth.el")
+;; (setq auto-mode-alist (cons '("\\.frt\\'" . forth-mode) auto-mode-alist))
+;; (add-hook 'forth-mode-hook (function (lambda ()
+;; 				       ;; customize variables here:
+;; 				       (setq forth-indent-level 3)
+;; 				       (setq forth-minor-indent-level 1)
+;; 				       (setq forth-hilight-level 3)
+;; 				       )))
+
+;; ----------------------------------------------------------------------
 
 ;; GForth is distributed in the hope that it will be useful,
 ;; but WITHOUT ANY WARRANTY.  No author or distributor

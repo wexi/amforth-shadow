@@ -1,4 +1,4 @@
-; ( n -- flag ) 
+; ( n -- flag )
 ; Compare
 ; compare with 0 (zero)
 VE_EQUALZERO:
@@ -10,4 +10,5 @@ XT_EQUALZERO:
     .dw PFA_EQUALZERO
 PFA_EQUALZERO:
     or tosh, tosl
-    rjmp PFA_EQUALDONE
+    brne PFA_ZERO1
+    rjmp PFA_TRUE1

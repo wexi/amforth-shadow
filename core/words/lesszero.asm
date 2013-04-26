@@ -1,4 +1,4 @@
-; ( n1 -- flag) 
+; ( n1 -- flag)
 ; Compare
 ; compare with zero
 VE_LESSZERO:
@@ -9,6 +9,6 @@ VE_LESSZERO:
 XT_LESSZERO:
     .dw PFA_LESSZERO
 PFA_LESSZERO:
-    cp tosl, zerol
-    cpc tosh, zeroh
-    rjmp PFA_LESSDONE
+    sbrc tosh,7
+    rjmp PFA_TRUE1
+    rjmp PFA_ZERO1

@@ -183,8 +183,8 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'AmForth.tex', u'AmForth Documentation',
-   u'Matthias Trute', 'manual'),
+  ('index', 'amforth.tex', u'AmForth Documentation',
+   u'Matthias Trute', 'manual', True),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -245,7 +245,7 @@ texinfo_documents = [
 # -- Options for Epub output ---------------------------------------------------
 
 # Bibliographic Dublin Core info.
-epub_title = u'AmForth'
+epub_title = u'amforth'
 epub_author = u'Matthias Trute'
 epub_publisher = u'Matthias Trute'
 epub_copyright = u'2013, Matthias Trute'

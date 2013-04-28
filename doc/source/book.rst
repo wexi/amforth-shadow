@@ -10,7 +10,9 @@ Contents:
 
 .. toctree::
 
-   Preface
-   TG
-   Cookbook
-   refcard
+   UG/amforth_user
+   TG/Preface
+   TG/TG
+   TG/Cookbook
+   TG/refcard
+   history

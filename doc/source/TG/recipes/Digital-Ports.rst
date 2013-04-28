@@ -1,3 +1,5 @@
+.. _Digital Ports:
+
 =============
 Digital Ports
 =============

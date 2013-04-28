@@ -111,13 +111,20 @@ The NEXT routine is the core of the inner interpreter. It does the
 mapping between the execution tokens and the corresponding machine
 code. It consists of 4 steps which are executed for every forth word.
 
+
+.. _Inner-Interpreter:
+
+.. figure:: Inner-Interpreter.*
+
+    Inner Interpreter
+
 The first step is to check whether an interrupt needs to
 be handled. It is done by looking at the :command:`T`
 flag in the machine status register. If it is set, the code jumps
-to the interrupt handling part. 
+to the interrupt handling part.
 
 The next step is to read the cell the :command:`IP` points to and
-stores this value in the W register. For a COLON word 
+stores this value in the W register. For a COLON word
 W contains the address of the code field.
 
 The 3rd step is to increase the :command:`IP` register by 1.
@@ -127,12 +134,12 @@ The 4th step is the EXECUTE step.
 EXECUTE
 ~~~~~~~
 
-This operation is the JUMP.  It reads the content of the cell the 
+This operation is the JUMP.  It reads the content of the cell the
 :command:`W` register points to. The result is stored in the scratch pad
 register :command:`X`. The data in :command:`X` is the address of the machine code to be
-executed in the last step. This step is used by the forth command 
-:command:`EXECUTE` too. The forth command does not get the address 
-of the next destination from the current :command:`IP` but from the data stack. 
+executed in the last step. This step is used by the forth command
+:command:`EXECUTE` too. The forth command does not get the address
+of the next destination from the current :command:`IP` but from the data stack.
 
 This last step finally jumps to the machine code pointed to
 by the :command:`X` scratch pad register.
@@ -141,11 +148,11 @@ by the :command:`X` scratch pad register.
 DO COLON
 ~~~~~~~~
 
-DO COLON (aka NEST) is the subcroutine call. It pushes the 
-:command:`IP` onto the return stack. It then increments :command:`W` 
-by one flash cell, so that it points to the body of the (colon) word, 
-and sets :command:`IP` to that value. Then it continues with 
-:command:`NEXT`, which begins executing the words in the body 
+DO COLON (aka NEST) is the subcroutine call. It pushes the
+:command:`IP` onto the return stack. It then increments :command:`W`
+by one flash cell, so that it points to the body of the (colon) word,
+and sets :command:`IP` to that value. Then it continues with
+:command:`NEXT`, which begins executing the words in the body
 of the (parent) colon word. Note that :command:`W` points to
 the execution token of the current word, so W+1 points to the
 parameter field (body) of the forth word.
@@ -160,8 +167,8 @@ EXIT
 ~~~~
 
 The code for EXIT (aka UNNEST) is the return from a subroutine.
-It is defined in the forth word :command:`EXIT` in the dictionary. 
-It reads the :command:`IP` from the return stack and jumps to NEXT. The return 
+It is defined in the forth word :command:`EXIT` in the dictionary.
+It reads the :command:`IP` from the return stack and jumps to NEXT. The return
 stack pointer is incremented by 2 (1 flash cell).
 
 .. code-block:: none
@@ -188,11 +195,11 @@ SOURCE and REFILL
 .................
 
 :command:`SOURCE` provides an addr/len string pair that does not change
-during processing. The task of :command:`REFILL` is to fill the string 
+during processing. The task of :command:`REFILL` is to fill the string
 buffer, :command:`SOURCE` points to when finished.
 
-There is one default input source: The terminal input buffer. This buffer gets filled with 
-:command:`REFILL-TIB` that reads from the serial input buffers (:command:`KEY`). 
+There is one default input source: The terminal input buffer. This buffer gets filled with
+:command:`REFILL-TIB` that reads from the serial input buffers (:command:`KEY`).
 :command:`SOURCE` points to the Terminal Input Buffer itself.
 Another input source are plain strings, used by :command:`EVALUATE`.
 
@@ -206,7 +213,7 @@ to analyze and operate on the particular word.
 .. _Recognizer-current:
 
 .. figure:: Recognizer-current.*
-    
+
     Current Recognizer Implementation
 
 A recognizer gets the string information of the current word.
@@ -236,8 +243,8 @@ for the interpreter. If any data is to be left on the stack (e.g. numeric values
 has to be beneath the flag.
 
 The small example illustrates the integration of the floating point library for amforth.
-It is based upon a conversion word :command:`>float` which takes a string and tries to 
-convert it into a float. The word fliteral compiles a floating point number into the 
+It is based upon a conversion word :command:`>float` which takes a string and tries to
+convert it into a float. The word fliteral compiles a floating point number into the
 dictionary.
 
 .. code-block:: forth
@@ -267,7 +274,7 @@ be used in future versions:
 .. _Recognizer-new:
 
 .. figure:: Recognizer.*
-    
+
     Future Recognizer Implementation
 
 With this structure the text interpreter is the only one that
@@ -284,8 +291,8 @@ Data Stack
 The data stack uses the CPU register pair :command:`YH:YL` as its data
 pointer. The Top-Of-Stack element (TOS) is in a register pair.
 Compared to a straight forward implementation this approach saves
-code space and gives higher execution speed (approx 10-20%). Saving even 
-more stack elements does not really provide a greater benefit (much more 
+code space and gives higher execution speed (approx 10-20%). Saving even
+more stack elements does not really provide a greater benefit (much more
 code and only little speed enhancements).
 
 The data stack starts at a configurable distance
@@ -319,7 +326,7 @@ It is called whenever an interrupt occurs. The code
 is the same for all interrupts. It takes the number
 of the interrupt from its vector address and stores
 this in a RAM cell. Then the low level ISR sets the
-:command:`T` flag in the status register of the controller 
+:command:`T` flag in the status register of the controller
 and returns with :command:`RET`.
 
 The second step does the inner interpreter.
@@ -371,11 +378,11 @@ Exceptions
 
 Amforth uses and supports exceptions as specified in the
 ANS wordset. It providess the :command:`CATCH`
-and :command:`THROW` commands. The outermost catch 
+and :command:`THROW` commands. The outermost catch
 frame is located at the interpreter level in the word
 :command:`QUIT`. If an exception with a negative value is
 catched, :command:`QUIT` will print a message with this
-number and and re-start itself. Positive values silently 
+number and and re-start itself. Positive values silently
 restart :command:`QUIT`.
 
 The next table lists the exceptions, amforth may throw
@@ -480,7 +487,7 @@ Environment queries are normal colon words. They are called within
 stack.
 
 :command:`find-name` (und :command:`find` for counted strings)
-uses an array of word list identifiers to search for the word. 
+uses an array of word list identifiers to search for the word.
 This list can be accessed with :command:`get-order` as well.
 
 Wordlist Header
@@ -653,8 +660,8 @@ word IS is used to put a new XT into it.
 Low level space management is done through the the
 EDP variable. This is not a forth value but a EEPROM
 based variable. To read the current value an
-:command:`@e` operation must be used, changes are written 
-back with :command:`!e`. It contains the highest EEPROM address 
+:command:`@e` operation must be used, changes are written
+back with :command:`!e`. It contains the highest EEPROM address
 currently allocated. The name is based on the DP variable,
 which points to the highest dictionary address.
 
@@ -718,9 +725,9 @@ between the various Xdefer definitions.
 DOES>
 -----
 
-:command:`DOES>` is used to change the runtime 
-action of a word that :command:`create` 
-has already defined. 
+:command:`DOES>` is used to change the runtime
+action of a word that :command:`create`
+has already defined.
 
 Its working is described best using a
 simple example: defining a constant. The standard
@@ -739,16 +746,16 @@ same.
 The first command creates a new command :command:`con`. With
 it a new word gets defined, in this example :command:`answer`.
 :command:`con` calls :command:`create`, that parses the source
-buffer and creates a wordlist entry :command:`answer`.  After that, 
+buffer and creates a wordlist entry :command:`answer`.  After that,
 within :command:`con` the top-of-stack element (42) is compiled into
-the newly defined word. The :command:`does>` changes the 
-runtime of the newly defined word :command:`answer` to the code 
+the newly defined word. The :command:`does>` changes the
+runtime of the newly defined word :command:`answer` to the code
 that follows :command:`does>`.
 
-:command:`does>` is an immediate word. That means, it is not compiled 
-into the new word (con) but executed. This compile time action creates 
-a small data structure similiar to the wordlist entry for a noname: word. 
-The address of this data structure is an execution token. This execution 
-token replaces the standard XT that :command:`create` has already 
+:command:`does>` is an immediate word. That means, it is not compiled
+into the new word (con) but executed. This compile time action creates
+a small data structure similiar to the wordlist entry for a noname: word.
+The address of this data structure is an execution token. This execution
+token replaces the standard XT that :command:`create` has already
 written for words that are defined using :command:`con`. This
 leads unevitably to a flash erase cycle.

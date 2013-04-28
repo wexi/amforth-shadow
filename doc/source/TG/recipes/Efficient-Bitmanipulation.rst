@@ -1,4 +1,6 @@
+.. _Efficient Bitmanipulation:
 
+==========================
 Efficient Bit Manipulation
 ==========================
 

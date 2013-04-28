@@ -19,8 +19,39 @@ DO_EXECUTE:
     ijmp
 
 DO_INTERRUPT:
-    ; here we deal with interrupts the forth way
-    clt
-    ldi wl, LOW(XT_ISREXEC)
-    ldi wh, HIGH(XT_ISREXEC)
-    rjmp DO_EXECUTE
+    ; here we deal with soft interrupts
+	clt
+	ldi	zl, low(intbuf)
+	ldi	zh, high(intbuf)
+	ld	temp0, z				; int prog addr
+	
+; crude yet efficient queue output if having low occupancy
+	
+.macro	out_buf
+	ldd	temp1, z+@1
+	std	z+@0, temp1
+	tst	temp1
+	breq out_cur
+.endmacro
+
+	in temp2, SREG				; save unknown I-bit
+	cli							; no hard ints when handling queue
+	out_buf 0,1
+	ori	temp2, $40				; set T bit pos to interrupt forth
+	out_buf 1,2
+	out_buf 2,3
+	out_buf 3,4
+	out_buf 4,5
+	out_buf 5,6
+	out_buf 6,7
+	out_buf 7,8					; intbuf+8 always zero
+
+out_cur:
+	out SREG, temp2				; restore I bit, T set if swi pending
+	ldi	zl, low(intvec)
+	ldi	zh, high(intvec)
+	add	zl, temp0
+	adc	zh, temp1
+	ld	wl, z+
+	ld	wh, z+
+	jmp_ DO_EXECUTE

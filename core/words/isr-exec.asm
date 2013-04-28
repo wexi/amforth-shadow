@@ -1,36 +1,3 @@
-; ( xt -- ) 
-; Interrupt
-; executes an interrupt service routine
-;VE_ISREXEC:
-;    .dw $ff08
-;    .db "isr-exec"
-;    .dw VE_HEAD
-;    .set VE_HEAD = VE_ISREXEC
-XT_ISREXEC:
-    .dw DO_COLON
-PFA_ISREXEC:
-    .dw XT_DOLITERAL
-    .dw intbuf
-    .dw XT_CFETCH
-    .dw XT_DOLITERAL		; intbuf+1 intbuf 8 cmove, consider
-    .dw intbuf+1		; replacing by asm code...
-    .dw XT_DOLITERAL
-    .dw intbuf+0
-    .dw XT_DOLITERAL
-    .dw 8
-    .dw XT_CMOVE
-    .dw XT_DOLITERAL
-    .dw intvec
-    .dw XT_PLUS
-    .dw XT_FETCH
-    .dw XT_SWITT		; test for pending soft interrupts
-    .dw XT_EXECUTE
-    .dw XT_EXIT
-
-; soft interrupts test
-XT_SWITT:
-    .dw PFA_SWITT
-
 ; ( -- addr )
 ; Interrupt
 ; Address of Soft Interrupts Status & Control Variable
@@ -57,7 +24,6 @@ XT_SWIEN:
     .dw PFA_SWIEN
 PFA_SWIEN:
     sts intswi, zerol
-PFA_SWITT:
     lds zl, intbuf
     tst zl
     breq PFA_SWIEN1

@@ -9,13 +9,6 @@ intvec:	.byte INTVECTORS * CELLSIZE
 ; enable/disable soft interrupts by:   int+ int-
 	
 .cseg
-	
-.macro int_buf
-    ld   temp1, X+
-    tst  temp1
-    breq int_cur		; free Q place?
-.endmacro
-
 ; interrupt routine gets called (again) by rcall! This gives the
 ; address of the int-vector on the stack.
 isr:
@@ -36,15 +29,24 @@ isr:
     push xl
     ldi  xl, low(intbuf)
     ldi  xh, high(intbuf)
+	
+; crude yet efficient queue input if having low occupancy
+	
+.macro inp_buf
+    ld   temp1, X+
+    tst  temp1
+    breq inp_cur		; free Q place?
+.endmacro
 
-    int_buf			; crude yet efficient queue
-    int_buf			; if having low occupancy
-    int_buf
-    int_buf
-    int_buf
-    int_buf
-    int_buf
-    int_buf
+    inp_buf
+    inp_buf
+    inp_buf
+    inp_buf
+    inp_buf
+    inp_buf
+    inp_buf
+    inp_buf
+	
     sts intovf, temp0		; mark overflow with prog addr
     pop xl			; ignore interrupt
     pop xh
@@ -52,7 +54,7 @@ isr:
     ld temp0, Y+
     rjmp int_swi
 	
-int_cur:
+inp_cur:
     st -X, temp0		; save interrupt address in queue
     pop xl
     pop xh
@@ -67,4 +69,3 @@ int_swi:
     out SREG, temp0
     ld temp0, Y+
     reti
-

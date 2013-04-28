@@ -30,7 +30,7 @@ isr:
     ldi  xl, low(intbuf)
     ldi  xh, high(intbuf)
 	
-; crude yet efficient queue input if having low occupancy
+; crude yet efficient queue (input) if having low occupancy
 	
 .macro inp_buf
     ld   temp1, X+

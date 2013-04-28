@@ -1,3 +1,4 @@
+.. _User Guide:
 
 User's Manual
 =============

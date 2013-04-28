@@ -11,7 +11,7 @@ VERSION       = '5.1'
 # Internal variables.
 PAPEROPT_a4     = -D latex_paper_size=a4
 PAPEROPT_letter = -D latex_paper_size=letter
-ALLSPHINXOPTS   = -d $(BUILDDIR)/doctrees $(PAPEROPT_$(PAPER)) $(SPHINXOPTS)
+ALLSPHINXOPTS   = -d $(BUILDDIR)/doctrees $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) -E
 # the i18n builder cannot share the environment and doctrees with the others
 I18NSPHINXOPTS  = $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) source
 
@@ -19,7 +19,8 @@ I18NSPHINXOPTS  = $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) source
 
 help:
 	@echo "Please use \`make <target>' where <target> is one of"
-	@echo " amforth     to make an AmForth Website"
+	@echo " books     to make the book versions"
+	@echo " htdocs    to make the website"
 
 clean:
 	-rm -rf $(BUILDDIR)/*
@@ -40,5 +41,3 @@ books:
 	$(MAKE) -C $(BUILDDIR)/books/latex all-pdf
 	@echo
 	@echo "Build finished."
-
-

@@ -1,3 +1,5 @@
+.. _Defining and using Macros:
+
 =========================
 Defining and using Macros
 =========================

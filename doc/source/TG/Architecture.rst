@@ -115,8 +115,9 @@ code. It consists of 4 steps which are executed for every forth word.
 .. _Inner-Interpreter:
 
 .. figure:: Inner-Interpreter.*
+   :align: right
 
-    Inner Interpreter
+   Inner Interpreter
 
 The first step is to check whether an interrupt needs to
 be handled. It is done by looking at the :command:`T`

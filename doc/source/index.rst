@@ -1,15 +1,10 @@
-.. AmForth documentation master file, created by
-   sphinx-quickstart on Fri Feb 22 08:58:42 2013.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
 
 AmForth
 =======
 
-AmForth is an easily extendable command interpreter for the Atmel
-AVR8 Atmega microcontroller family. It has a turnkey feature
+AmForth is an easily extendible command interpreter for the Atmel
+AVR8 Atmega micro controller family. It has a turnkey feature
 for embedded use too.
-
 
 AmForth runs completely on the controller. It does not need additional
 hardware beyond a power supply. It makes no restrictions for hardware
@@ -30,12 +25,27 @@ RAM for the core system.
 
 Karl Lunt has written an excellent :ref:`User Guide`
 on how to start and work with AmForth. For those who want
-to take a deeper look into the system is the :ref:`Technical Guide`
-(`PDF <amforth.pdf>`_, `EPUB <amforth.epub>`_ 28.4.2013).
+to take a deeper look into the system is the :ref:`Technical Guide`.
+The whole documentation is available as `PDF <amforth.pdf>`_
+and `EPUB <AmForth.epub>`_.
 
+Under Construction
+------------------
+
+Here you'll find things that are not yet
+released but will be part of the next release.
+See the code section at Sourceforge to get the
+`most recent sources <http://sourceforge.net/p/amforth/code/HEAD/tree/trunk/>`__
+
+* improved documentation
+* core: added :command:`d0=` and :command:`0=` as assembly primitives and
+  use them in other compare operations. Saves a lot of code space.
+
+More To Read
+----------------
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
 
    UG/amforth_user
    faq
@@ -44,15 +54,4 @@ to take a deeper look into the system is the :ref:`Technical Guide`
    TG/refcard
    history
 
-Notes
------
-
-amforth uses a serial line interface as the terminal.
-Serial line settings are 9600 8N1, no flow control.
-
-The source is developed with and for Atmels avrasm2. The alternative assembler
-avra (linux) needs a few patches to get it work.
-
-Some word names like :command:`find-name` may change in future releases to
-keep contact to `Forth 2012 <http://www.forth200x.org/>`_.
 

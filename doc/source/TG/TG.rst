@@ -5,11 +5,11 @@ Technical Guide
 ===============
 
 .. toctree::
-    :maxdepth: 2
+   :maxdepth: 2
 
-    FirstSteps
-    Hardware
-    Sources
-    Architecture
-    Implementation
-    Tools
+   FirstSteps
+   Hardware
+   Sources
+   Architecture
+   Implementation
+   Tools

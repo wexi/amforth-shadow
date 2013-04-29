@@ -1,3 +1,5 @@
+.. _AVR Butterfly:
+
 =============
 AVR Butterfly
 =============

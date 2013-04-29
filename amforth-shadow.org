@@ -1,40 +1,43 @@
-#+TITLE: Soft Interrupt Service
+#+TITLE: The Shadow Knows
 #+AUTHOR: Enoch
 #+EMAIL: ixew@hotmail.com
 #+OPTIONS: email:t
 
 * Objective
 
-One of AmForth features is the ability to write interrupt handlers in Forth. However, in the current development trunk (SVN r1423 at the time of this writing) those handlers should run with the
-hardware interrupt system (SREG I-bit) disabled. This means that one has to keep those interrupt handlers short and defer long processing to the "main". The following changes to the kernel introduce
-an eight level interrupt queue, allowing the Forth code second level interrupt handlers (SLIH) to be interruptible and thus be as slow to execute as necessary. The new first level interrupt handling
-(FLIH) is suitable for type I interrupt sources, those acknowledged by execution of their interrupt vectors.
+  This is a sandbox for AmForth development that is maintained by an experienced embedded programmer, yet a novice in Forth. It is hoped that the new ideas that would be presented here would be
+  adopted by [[http://amforth.sourceforge.net/][AmForth HQ]]. 
 
-* Implementation
+* Soft Interrupt Service
 
-To the existing +int and -int ("hard front-end") words that control the SREG I-bit the following ("soft rear-end") words were added:
+  One of AmForth features is the ability to write interrupt service routines (ISRs) in Forth. However, in the current implementation (SVN r1429, though differently claimed) those ISRs should run with
+  the hardware interrupt system disabled. This means that one has to keep ISRs short and defer long processing to the "main". The following changes to the kernel introduce an eight level soft
+  interrupt queue, allowing the Forth code second level interrupt handlers (SLIH) to be interruptible and thus be as slow to execute as necessary. The new first level interrupt handling (FLIH) is
+  suitable for type I interrupt sources, those acknowledged by execution of their interrupt vectors.
 
-** int+  ( -- )  "soft interrupts on"
-Enables the soft interrupts. By default soft interrupts are enabled.
+** Implementation
 
-** int-  ( -- )  "soft interrupts off"
-Disables the soft interrupts.
+   To the existing +int and -int ("hard front-end") words that control the SREG I-bit the following ("soft rear-end") words were added:
 
-** int'  ( -- addr )  "soft interrupts apostrophe" 
+*** int+  ( -- )  "soft interrupts on"
 
-Returns the address of a system variable where the lower byte, if non zero, indicates the occurance of a hard interrupt overflow. The overflow mark is the interrupting-device program address. Clear
-this mark by: 0 int' c!
+    Enables the soft interrupts. By default soft interrupts are enabled.
 
-The higher byte, if non-zero, indicates having the soft interrupts inhibited.
+*** int-  ( -- )  "soft interrupts off"
 
-* Compatibility
+    Disables the soft interrupts.
 
-Existing code should not be affected.
+*** int'  ( -- addr )  "soft interrupts apostrophe" 
 
-  
-    
+    Returns the address of a system variable where the lower byte, if non zero, indicates the occurance of a hard interrupt overflow. The overflow mark is the interrupting-device program address. Clear
+    this mark by: 0 int' c!
 
-   
+    The higher byte, if non-zero, indicates having the soft interrupts inhibited.
 
-  
+** Compatibility
 
+   Existing code should not be affected as long as the ISR is a regular Forth colon definition.
+
+* WLSCOPE
+
+  The Word List Scope mechanism was already accepted by HQ. What remains is to explain it better, promote its use and, of-course, fix MARKER which does not preserve wordlist order.

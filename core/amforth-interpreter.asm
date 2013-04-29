@@ -35,7 +35,7 @@ DO_INTERRUPT:
 .endmacro
 
 	in temp2, SREG		; save unknown I-bit
-	cli			; no hard ints when handling queue
+	cli			; no hard int-s when handling queue
 	out_buf 0,1
 	ori	temp2, $40	; set T bit pos to interrupt forth
 	out_buf 1,2
@@ -47,11 +47,19 @@ DO_INTERRUPT:
 	out_buf 7,8		; intbuf+8 always zero
 
 out_cur:
-	out SREG, temp2		; restore I bit, T set if swi pending
+	out SREG, temp2		; restore I bit, T set if another swi pending
 	ldi	zl, low(intvec)
 	ldi	zh, high(intvec)
 	add	zl, temp0
 	adc	zh, temp1
-	ld	wl, z+
+	ld	wl, z+		; ISR IP
 	ld	wh, z+
-	jmp_ DO_EXECUTE
+
+; all ISRs begin with a DO_COLON so why waste time. Also,
+; if the ISR first word is int- it won't get interrupted.
+
+	push XH			; DO_COLON action
+	push XL
+	movw XL, wl
+	adiw XL, 1
+	jmp_ DO_NEXTT

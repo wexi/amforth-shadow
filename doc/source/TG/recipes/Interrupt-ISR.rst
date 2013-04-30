@@ -20,7 +20,7 @@ will affect the user area of the interrupted task.
  \    TIMER0_OVFAddr
  \ provides
  \  timer0.tick      -- increasing ticker
- \ 
+ \
  \ older mcu's may need
  \  TCCR0 constant TCCR0B
  \  TIMSK constant TIMSK0
@@ -54,18 +54,18 @@ will affect the user area of the interrupted task.
    %00000000 TIMSK0 c! \ stop interrupt
  ;
 
-All interrupts are available for forth interrupts. Versions earlier 
-than 4.4 have the limitation that hardware interrupt conditions could 
+All interrupts are available for forth interrupts. Versions earlier
+than 4.4 have the limitation that hardware interrupt conditions could
 not be cleared.
 
 ``int!`` (and friends) uses the interrupt address from
-the datasheet as an index, but points to a different address in RAM.
+the data sheet as an index, but points to a different address in RAM.
 
 Interrupts are processed in two stages. First stage
-is a simple lowlevel processing routine. 
+is a simple low-level processing routine.
 
-#. The low-level interrupt routine stores the index of the 
-   interrupt in a RAM cell (not directly accessible from 
+#. The low-level interrupt routine stores the index of the
+   interrupt in a RAM cell (not directly accessible from
    amforth).
 #. Sets the T-flag in the status register to signal the inner interpreter
    that an interrupt needs attention.

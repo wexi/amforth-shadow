@@ -7,11 +7,11 @@ Reason For Reset
 If the controller constantly resets and prints only (part of)
 the version string, it could be really nice to know why it behaves that way.
 The controller itself stores the reset reason in the machine control register,
-which gets unfortunatly overwritten real soon. amforth reads its content
+which gets unfortunately overwritten real soon. amforth reads its content
 upon startup into an unused register for later usage however.
 
 
-Adding the following few lines to the applturnkey.asm file prints
+Adding the following few lines to the :file:`applturnkey.asm` file prints
 the numeric information at every reset
 
 ::
@@ -31,17 +31,17 @@ and an ordinary call to ``cold``:
 .. code-block:: console
 
  -- power on --
- > 4 
- amforth 4.7 ATmega328P 16000 kHz 
+ > 4
+ amforth 4.7 ATmega328P 16000 kHz
  -- pressing reset button --
- > 2 
- amforth 4.7 ATmega328P 16000 kHz 
+ > 2
+ amforth 4.7 ATmega328P 16000 kHz
  > cold
- 0 
- amforth 4.7 ATmega328P 16000 kHz 
- > 
+ 0
+ amforth 4.7 ATmega328P 16000 kHz
+ >
 
 
-The exact meaning of the numbers is available by reading 
-the respective controller datasheet (8 usually means watch 
+The exact meaning of the numbers is available by reading
+the respective controller data sheet (8 usually means watch
 dog reset).

@@ -2,7 +2,7 @@
 First Steps
 ===========
 
-The first steps require an ATmega microcontroller with an
+The first steps require an ATmega micro controller with an
 RS232 connection to an PC or a terminal like the
 VT100
 or similar hardware. A customization may change these requirements.

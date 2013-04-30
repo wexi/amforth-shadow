@@ -18,12 +18,12 @@ First: A few constants:
 The sign :command:`>` is the command prompt, if you see it, you can
 enter any commands. You'll never enter that character yourselves.
 A command line can be up to 80 characters
-long, if you need a longer one, you'll need to change the 
+long, if you need a longer one, you'll need to change the
 sources and reflash the system.
 
-The arduino uses its own numbering schema for pins, but 
-for now we use the atmega one: digial-13 is the same as 
-bit 7 of PORT-B. Port B has 8 pins and three registers, we need 
+The arduino uses its own numbering schema for pins, but
+for now we use the atmega one: digial-13 is the same as
+bit 7 of PORT-B. Port B has 8 pins and three registers, we need
 only two of them: The Data Direction Register (DDR) and the PORT
 (Output) Register. The third register is used for reading
 from the port (PIN).
@@ -47,16 +47,16 @@ more features that make life easier.
 
 Forth usually uses many small words which do exactly one thing.
 When entering forth commands take care that every word is
-seperated by at least one space. In forth almost every character
+separated by at least one space. In forth almost every character
 can be used as part of a command name.
 
-The first command in this example sets up the Data Direction Register 
+The first command in this example sets up the Data Direction Register
 to make the LED Port an output pin. In arduino sketch it would be:
 
 .. code-block:: c
 
-  void setup() { 
-     pinMode(13, OUTPUT); 
+  void setup() {
+     pinMode(13, OUTPUT);
   }
 
 The same in Forth is:
@@ -66,10 +66,10 @@ The same in Forth is:
   : led-init  $80 DDRB c! ;
 
 By entering the command line the interpreter will learn a new command:
-:command:`led-init`. This command can be called immediatly after the 
+:command:`led-init`. This command can be called immediately after the
 command prompt says OK. And it can be used in further command definitions.
 
-It writes the 8bit number 128 (hex 80) to the register DDRB (hex 24) 
+It writes the 8-bit number 128 (hex 80) to the register DDRB (hex 24)
 as defined above. This makes the 7th bit of PORTB an Output pin.
 
 Calling our newly defined word does not change anything
@@ -87,7 +87,7 @@ If the led-on command does not turn on the LED just call the
 or power cycle as well.
 
 Now that the led is active, we want a command to turn it off. One solution
-is to repeat the command from above: :command:`0 PORTB c!`. Smarter is a 
+is to repeat the command from above: :command:`0 PORTB c!`. Smarter is a
 new command word:
 
 .. code-block:: forth
@@ -117,7 +117,7 @@ With a command line like:
 
 .. code-block:: console
 
-  > led-blink led-blink led-blink 
+  > led-blink led-blink led-blink
 
 The led will blink for a few seconds.
 
@@ -141,8 +141,8 @@ terminated. The last two commands are housekeeping: read the key pressed
 and forget it. Otherwise the key pressed would be the first character
 of the next command line.
 
-The advantage of defining many words is that you can test them immediatly.
+The advantage of defining many words is that you can test them immediately.
 Thus any further code can rely on words already being tested and that
-makes debugging alot easier. The drawback of that many words? You need
-some more code space for the names of the commmands. There is no speed
+makes debugging a lot easier. The drawback of that many words? You need
+some more code space for the names of the commands. There is no speed
 penalty.

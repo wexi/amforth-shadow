@@ -2,7 +2,7 @@
 Overview
 ========
 
-Amforth is a Forth system for the AVR ATmega microcontroller
+Amforth is a Forth system for the AVR ATmega micro controller
 family. It works on the controller itself and does not depend on any
 additional hard- or software. It places no restrictions on using
 external hardware.

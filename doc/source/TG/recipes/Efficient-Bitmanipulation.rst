@@ -31,7 +31,7 @@ A bitname solution would look like
 
 The implementation of the first solution generates highly
 optimized machine code. The bitname solution is more generic
-but significantly slower and is not interrupt safe. 
+but significantly slower and is not interrupt safe.
 
 .. code-block:: forth
 

@@ -7,7 +7,7 @@ Unbreakable AmForth
 This recipe gives some hints how to
 protect AmForth from being (partially)
 destroyed and to be able to recover from
-accidents without reflashing the system.
+accidents without re-flashing the system.
 
 Flash protection
 ----------------
@@ -40,13 +40,13 @@ EEPROM protection
 
 Protect the EEPROM is more difficult. AmForth rewrites
 a few cells during normal development, which makes a simple
-write protection as described for the flash rather useless. 
-Furthermore AmForth uses the EEPROM content at very early 
-stages in the boot process. Any safety action needs thus be 
-hardcoded in :command:`warm` and it will need a trigger to 
-start the EEPROM recovery. This could be a check for some 
+write protection as described for the flash rather useless.
+Furthermore AmForth uses the EEPROM content at very early
+stages in the boot process. Any safety action needs thus be
+hard-coded in :command:`warm` and it will need a trigger to
+start the EEPROM recovery. This could be a check for some
 data or a hardware based information.
 
 As long as the command prompt works, the data that got saved
-by a :command:`marker` definition is sufficient to reset to 
+by a :command:`marker` definition is sufficient to reset to
 a working system.

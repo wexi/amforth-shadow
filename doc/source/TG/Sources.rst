@@ -21,14 +21,16 @@ with include files, named after the pattern
 :file:`dict*.inc`.
 
 The include hierarchy is as follows: Top level is the application specific
-file (template.asm). It included the file :file:`core/amforth.asm` only. This file includes
-the two files from the application directory: :file:`dict_appl.inc` for the low address words (RWW space) and the
-file :file:`dict_appl_core.inc` for the high address space words (NRWW). These two include
-files use other :file:`dict*` files and direct words defintion files. Any cross-references
-are solved by the assembler. The user needs to take care that the highest used address
-is within the flash address range, an assembler error message is generated in that case.
+file (template.asm). It included the file :file:`core/amforth.asm` only.
+This file includes the two files from the application directory:
+:file:`dict_appl.inc` for the low address words (RWW space) and the
+file :file:`dict_appl_core.inc` for the high address space words (NRWW).
+These two include files use other :file:`dict*` files and direct words
+definition files. Any cross-references are solved by the assembler. The
+user needs to take care that the highest used address is within the flash
+address range, an assembler error message is generated in that case.
 
-Currently the following pre defined dict files exist:
+Currently the following pre defined :file:`dict` files exist:
 
 Source Filenames
 ----------------
@@ -41,7 +43,7 @@ Source Filenames
 |                  | beyond the primitives.      | RWW section. If possible put it into the  |
 |                  |                             | NRWW section however.                     |
 +------------------+-----------------------------+-------------------------------------------+
-| dict_mcu.inc     | Microcontroller specific    | It can be placed everywhere. Usually in   |
+| dict_mcu.inc     | Micro controller specific   | It can be placed everywhere. Usually in   |
 |                  | primitives.                 | dict_appl_core.inc.                       |
 +------------------+-----------------------------+-------------------------------------------+
 | dict_core.inc    | All essential primitives.   | Always near the inner interpreter (NRWW,  |
@@ -61,17 +63,17 @@ and there location within the flash memory. Most words can be moved
 from one include file to another to optimize the flash usage.
 
 There are additional files:
-:file:`amforth.asm` and :file:`macros.asm`. The first one is the master 
+:file:`amforth.asm` and :file:`macros.asm`. The first one is the master
 file and the only one the application needs to include. The file
-:file:`macros.asm` contains some useful assembler macros that make 
-the source code easier to read. :file:`user.inc` contains the layout 
+:file:`macros.asm` contains some useful assembler macros that make
+the source code easier to read. :file:`user.inc` contains the layout
 of the system user area.
 
 Core system
 -----------
 
-The file :file:`amforth.asm` is the core of amforth. Here is the startup code 
-for the microcontroller, and the forth inner interpreter with the interrupt
+The file :file:`amforth.asm` is the core of amforth. Here is the startup code
+for the micro controller, and the forth inner interpreter with the interrupt
 service routine. It includes the dictionary files.
 
 Dictionary files
@@ -130,7 +132,7 @@ the official include files provided by Atmel and define the
 important settings for the serial IO port (which port and which
 parameters), the interrupt vectors and some macros.
 
-Adapting another ATmega microcontroller is as easy as
+Adapting another ATmega micro controller is as easy as
 copy and edit an existing file from a similar type.
 
 The last definition is a string with the device name in clear text.

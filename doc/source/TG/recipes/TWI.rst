@@ -8,9 +8,9 @@ SCL Clock Calculator
 .. raw:: html
   :file: twi.html
 
-Most client devices want a clock speed of 100kHz or 400 kHz. 
-The bitrate regeister should be well above 10 if the controller
-is the bus master. The calculation formula 
+Most client devices want a clock speed of 100 kHz or 400 kHz.
+The bitrate register should be well above 10 if the controller
+is the bus master. The calculation formula
 
 :math:`twiclock = \dfrac{cpu clock}{16+2*bitrateregister*{4^{prescaler}}}`
 

@@ -18,7 +18,7 @@ Walking a wordlist requires the following steps
 #. read the starting address from the EEPROM (line 2) It the name field address of the
    first word.
 #. start the loop until zero is reached (lines 4+5)
-#. keep the vital interator data (line 6)
+#. keep the vital iterator data (line 6)
 #. do some work with the entry, consuming the NFA-copy from the previous line  (line 7)
 #. go to the next entry (line 8)
 #. repeat the loop body
@@ -40,4 +40,4 @@ The implementation of the word :command:`show-wordlist` may illustrate this:
     ;
 
 The sequence `$ff and` masks the entry flags (e.g. immediate) and
-extracts the actual string length for use with the following itype.
+extracts the actual string length for use with the following :command:`itype`.

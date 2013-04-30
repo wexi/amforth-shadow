@@ -4,7 +4,7 @@ Port Code From C
 
 There is a lot of C code out there. And there is no easy way
 to use it in AmForth. This recipe gives some hints for porting
-C code. A lot of more examples can be found at 
+C code. A lot of more examples can be found at
 `Rosetta Code <http://rosettacode.org/wiki/Category:Forth>`_.
 
 Register Names and Bits
@@ -13,7 +13,7 @@ Register Names and Bits
 AmForth provides the same register names as C. All addresses are
 memory mapped. Many registers are split into bitgroups, that got
 names as well. In C these names are usually bitnumbers, AmForth
-uses the bitmaps as specified in the Atmel ressource files.
+uses the bitmaps as specified in the Atmel resource files.
 
 Single bits are straight forward:
 
@@ -25,7 +25,7 @@ Single bits are straight forward:
  AmForth:
    \ set the bit
    : or! dup c@ rot or swap c! ;
-   OCIE0 TIMSK0 or! 
+   OCIE0 TIMSK0 or!
 
    \ clear the bit
    : and! dup c@ rot and swap c! ;
@@ -33,10 +33,10 @@ Single bits are straight forward:
 
 ..
  <!-- Some registers have a whole bitmap range at various positions.
- Unfortunatly there is no easy way to recognize them from the
+ Unfortunately there is no easy way to recognize them from the
  source only. One example is the timer configuration register TCCR0.
  It uses the 3 bits beginning from 0 to configure various prescaler
- settings. 
+ settings.
  C:
   TCCR1A = (1 << COM1A)|(1 << WGM1)
  AmForth:
@@ -50,22 +50,22 @@ Single bits are straight forward:
 Control Structures
 ------------------
 
-The controlstructures are basically all the same. The differences
+The control structures are basically all the same. The differences
 are subtle and usually small.
 Conditional Execution
 
 ::
 
- C: 
+ C:
    if(flag) { foo(); } else { bar(); }
 
  AmForth:
-   flag if foo else bar then 
+   flag if foo else bar then
 
 Counted Loops
 
 ::
- 
+
  C:
    for(i=0;i<10;i++) {
      foo();

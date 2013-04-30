@@ -36,7 +36,7 @@ amforth homepage.
 Uploader
 ........
 
-To transfer forth code to the microcontroller some
+To transfer forth code to the micro controller some
 precautions need to taken. During a flash write
 operation all interrupts are turned off. This may
 lead to lost characters on the serial line. One
@@ -77,15 +77,15 @@ Controller
 
 There are a few tools that may be useful on the controller. They
 are implemented as loadable forth code that may affect internal
-data and workflows in a non-portable way. In particular are available
+data and work flows in a non-portable way. In particular are available
 a profiler (counting calls to words), a call tracer (printing a
-stack trace while executing the words), a timing utility (benchme),
-a few memory dump tools and a :command:`see` that may be
-useful to revert the compilation process (gets some forth code
-from compiled words).
+stack trace while executing the words), a timing utility
+(:command:`benchme`), a few memory dump tools and a
+:command:`see` that may be useful to revert the compilation
+process (gets some forth code from compiled words).
 
-.. seealso:: 
-  :ref:`Profiler` 
-  :ref:`Debug Shell` 
+.. seealso::
+  :ref:`Profiler`
+  :ref:`Debug Shell`
   :ref:`Watcher`
   :ref:`Tracer`

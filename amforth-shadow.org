@@ -2,42 +2,54 @@
 #+AUTHOR: Enoch
 #+EMAIL: ixew@hotmail.com
 #+OPTIONS: email:t
+#+STARTUP: indent
 
 * Objective
 
-  This is a sandbox for AmForth development that is maintained by an experienced embedded programmer, yet a novice in Forth. It is hoped that the new ideas that would be presented here would be
-  adopted by [[http://amforth.sourceforge.net/][AmForth HQ]]. 
+This is a sandbox for AmForth development that is maintained by an experienced embedded programmer, yet a novice in Forth. It is hoped that the new ideas that are presented here would soon be adopted
+by [[http://amforth.sourceforge.net/][AmForth HQ]].
 
 * Soft Interrupt Service
 
-  One of AmForth features is the ability to write interrupt service routines (ISRs) in Forth. However, in the current implementation (SVN r1429, though differently claimed) those ISRs should run with
-  the hardware interrupt system disabled. This means that one has to keep ISRs short and defer long processing to the "main". The following changes to the kernel introduce an eight level soft
-  interrupt queue, allowing the Forth code second level interrupt handlers (SLIH) to be interruptible and thus be as slow to execute as necessary. The new first level interrupt handling (FLIH) is
-  suitable for type I interrupt sources, those acknowledged by execution of their interrupt vectors.
+One of AmForth features is the ability to write interrupt service routines (ISRs) in Forth. However, in the current implementation (SVN r1430) those ISRs should run with the hardware interrupt system
+disabled. This means that one has to keep ISRs short and defer long processing to the "main". The following changes to the kernel introduce an eight level soft interrupts queue, allowing the Forth code
+second level interrupt handlers (SLIH) to be interruptible and thus be as slow to execute as necessary. The new first level interrupt handling (FLIH) is suitable for type I interrupt sources, those
+acknowledged by execution of their interrupt vectors.
 
-** Implementation
+** New words
 
-   To the existing +int and -int ("hard front-end") words that control the SREG I-bit the following ("soft rear-end") words were added:
+To the existing +int and -int ("hard front-end") words that control the SREG I-bit the following ("soft rear-end") words were added:
 
 *** int+  ( -- )  "soft interrupts on"
 
-    Enables the soft interrupts. By default soft interrupts are enabled.
+Enables soft interrupts. If ~int+~ is the ISR last instruction the ISR routine would return before the next queued interrupt is served.
 
 *** int-  ( -- )  "soft interrupts off"
 
-    Disables the soft interrupts.
+Disables soft interrupts. If this instruction is the ISR first the ISR will not be interrupted.
 
 *** int'  ( -- addr )  "soft interrupts apostrophe" 
 
-    Returns the address of a system variable where the lower byte, if non zero, indicates the occurance of a hard interrupt overflow. The overflow mark is the interrupting-device program address. Clear
-    this mark by: 0 int' c!
+Returns the address of a system variable where the lower byte, if non zero, indicates occurance of a hard interrupt overflow. The overflow mark is the interrupting-device program address. Clear this
+mark by: ~0 int' c!~
 
-    The higher byte, if non-zero, indicates having the soft interrupts inhibited.
+The higher byte, if non-zero, indicates having the soft interrupts inhibited.
 
 ** Compatibility
 
-   Existing code should not be affected as long as the ISR is a regular Forth colon definition.
+As by default soft interrupts are enabled existing code should not be impacted. The ISR should be a regular Forth colon definition.
+
+** Limitation
+
+It is recommended to turn interrupts off (~int-~) when compiling new code.
+
+** Implementation
+
+Changes apply to:
+1. core/drivers/generic-isr.asm: The revised FLIH introduces an 8 level soft interrupts queue.
+2. core/amforth-interpreter.asm: Incorporates the entire SLIH and is implemented in asm.
+3. core/words/isr-exe.asm: Now hosts the controlling words int+ int- and int' only.
 
 * WLSCOPE
 
-  The Word List Scope mechanism was already accepted by HQ. What remains is to explain it better, promote its use and, of-course, fix MARKER which does not preserve wordlist order.
+The Word List Scope mechanism was already accepted by HQ. What remains is to explain it better, promote its use and, of-course, fix MARKER which does not preserve wordlist order.

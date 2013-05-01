@@ -15,7 +15,7 @@ correct code is
 
  : const create , does> @i ;
 
-Similiarly the 
+Similarly the
 sequence
 
 .. code-block:: forth

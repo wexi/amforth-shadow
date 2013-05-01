@@ -6,21 +6,21 @@ Controller
 ----------
 
 amforth is designed to run on AVR Atmega
-microcontrollers. It requires
+micro controllers. It requires
 ca 8KB flash memory for the basic
 system and can address 128KB of
 flash memory.
 
-The ATtiny microcontrollers and a a few ATmega types lack
-the minimum flash capacity. The ATtiny's some machine instructions 
+The ATtiny micro controllers and a a few ATmega types lack
+the minimum flash capacity. The ATtiny's some machine instructions
 as well.
 
 Bootloader Support
 ------------------
 
 Most bootloaders will not work with amforth since they do
-not provide an application programming interface to rewrite a 
-single flash cell. The default setup will thus replace any 
+not provide an application programming interface to rewrite a
+single flash cell. The default setup will thus replace any
 bootloader found with some core routines.
 
 It is possible to change the word
@@ -35,7 +35,7 @@ Fuses
 -----
 
 Amforth uses the self programming feature of the ATmega
-microcontrollers to work with the dictionary. It is ok to use the
+micro controllers to work with the dictionary. It is ok to use the
 factory default settings plus the changes for the oscillator
 settings. It is recommended to use a higher CPU frequency to meet
 the timing requirements of the serial terminal.

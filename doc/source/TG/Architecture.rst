@@ -90,7 +90,7 @@ Inner Interpreter
 
 For the indirect threading model an inner interpreter is
 needed. The inner interpreter does the interrupt handling too.
-It repeatly reads the cell, the :command:`IP` points to, takes this number
+It repeatedly reads the cell, the :command:`IP` points to, takes this number
 as the address for the next code segment and jumps to that code.
 It is expected that this code segment does a jump back to the
 inner interpreter (NEXT). The :command:`IP` is incremented by 1 just before
@@ -111,14 +111,6 @@ The NEXT routine is the core of the inner interpreter. It does the
 mapping between the execution tokens and the corresponding machine
 code. It consists of 4 steps which are executed for every forth word.
 
-
-.. _Inner-Interpreter:
-
-.. figure:: Inner-Interpreter.*
-   :align: right
-
-   Inner Interpreter
-
 The first step is to check whether an interrupt needs to
 be handled. It is done by looking at the :command:`T`
 flag in the machine status register. If it is set, the code jumps
@@ -131,6 +123,7 @@ W contains the address of the code field.
 The 3rd step is to increase the :command:`IP` register by 1.
 
 The 4th step is the EXECUTE step.
+
 
 EXECUTE
 ~~~~~~~
@@ -149,7 +142,7 @@ by the :command:`X` scratch pad register.
 DO COLON
 ~~~~~~~~
 
-DO COLON (aka NEST) is the subcroutine call. It pushes the
+DO COLON (aka NEST) is the subroutine call. It pushes the
 :command:`IP` onto the return stack. It then increments :command:`W`
 by one flash cell, so that it points to the body of the (colon) word,
 and sets :command:`IP` to that value. Then it continues with
@@ -209,13 +202,23 @@ Recognizer
 
 The text interpreter does only split the source into single, whitespace
 separated words. For each word, a list of specialized actions is used
-to analyze and operate on the particular word.
+to analyse and operate on the particular word.
+
 
 .. _Recognizer-current:
 
-.. figure:: Recognizer-current.*
+.. digraph:: CurrentRecognizer
+   :inline:
 
-    Current Recognizer Implementation
+   "Start" -> "Next Word"
+   "Next Word" -> "First Recognizer" [label="Yes"]
+   "Next Word" -> "End" [label="No"];
+   "First Recognizer" -> "Do Recognizer"
+   "Do Recognizer" -> "Done?"
+   "Done?" -> "More Recognizer?" [label="No"];
+   "More Recognizer?" -> "Do Recognizer" [label="Yes"];
+   "More Recognizer?" -> "End" [label="No"];
+   "Done?" -> "Next Word" [label="Yes"];
 
 A recognizer gets the string information of the current word.
 If the word can be processed, the recognizer is responsible to do so. A word from
@@ -266,7 +269,7 @@ New Recognizer
 
 In its current state, a recognizer not only parses
 and identified the word, but has to take care of the
-interpreter state and various other things (e.g. beeing
+interpreter state and various other things (e.g. being
 postponed or not). This makes a single recognizer more
 complex and duplicates some code blocks (state smartness).
 To improve this situation, are more complex picture may
@@ -274,9 +277,19 @@ be used in future versions:
 
 .. _Recognizer-new:
 
-.. figure:: Recognizer.*
+.. digraph:: FutureRecognizer
+   :inline:
 
-    Future Recognizer Implementation
+   "Start" -> "Next Word"
+   "Next Word" -> "First Recognizer" [label="Yes"]
+   "Next Word" -> "End" [label="No"];
+   "First Recognizer" -> "Do Recognizer"
+   "Do Recognizer" -> "Identified?"
+   "Identified?" -> "More Recognizer?" [label="No"];
+   "More Recognizer?" -> "Do Recognizer" [label="Yes"];
+   "More Recognizer?" -> "Error and End" [label="No"];
+   "Identified?" -> "Execute or Compile" [label="Yes"];
+   "Execute or Compile" -> "Next Word"
 
 With this structure the text interpreter is the only one that
 takes care of the state and acts on the execution tokens accordingly.
@@ -354,7 +367,7 @@ to deal with any kind of interrupts.
 Interrupts from some hardware sources (e.g. the usart)
 need to be cleared from the Interrupt Service Routine.
 If this is not done within the ISR, the interrupt
-is re-triggered immediatly after the ISR returned control.
+is re-triggered immediately after the ISR returned control.
 
 The downside is a relatively long latency since the the
 forth VM has to be synchronized with the interrupt handling
@@ -362,8 +375,18 @@ code in order to use normal colon words as ISR. This penalty
 is usually small since only words in assembly can cause the
 delay.
 
+.. digraph:: InnerInterpreter
+
+   "COLD" -> "Execute Word"
+   "Execute Word" -> "T Flag Set?";
+   "T Flag Set?" -> "Clear T Flag" [label="Yes"];
+   "T Flag Set?" -> "Get Next XT" [label="No"];
+   "Get Next XT" -> "Execute Word";
+   "Clear T Flag" -> "Next XT is ISR_EXEC";
+   "Next XT is ISR_EXEC" -> "Execute Word";
+
 .. seealso:: :ref:`Interrupt Service Routine`
-    :ref:`Interrupt Critical Section`
+   :ref:`Interrupt Critical Section`
 
 Multitasking
 ------------
@@ -378,7 +401,7 @@ Exceptions
 ----------
 
 Amforth uses and supports exceptions as specified in the
-ANS wordset. It providess the :command:`CATCH`
+ANS wordset. It provides the :command:`CATCH`
 and :command:`THROW` commands. The outermost catch
 frame is located at the interpreter level in the word
 :command:`QUIT`. If an exception with a negative value is
@@ -508,7 +531,7 @@ the more modern variants. The order makes it possible
 to implement the list iterators (:command:`search-wordlist`
 and :command:`show-wordlist`) is a straight forward way.
 
-The namefield itself is a struture containing the flags,
+The name field itself is a structure containing the flags,
 the length information in the first flash cell
 and the characters of the word name in a packed format afterwards.
 
@@ -553,9 +576,10 @@ FLASH Structure Overview
 
 .. _flashstructure:
 
-.. figure:: flash-structure.*
+.. figure:: images/flash-structure.*
+   :width: 50%
 
-    Default Flash Structure
+   Default Flash Structure
 
 The reason for this split is a technical one: to
 work with a dictionary in flash the controller needs
@@ -601,9 +625,10 @@ Alternative FLASH Structure
 
 .. _flash2structure:
 
-.. figure:: flash2-structure.*
+.. figure:: images/flash2-structure.*
+   :width: 50%
 
-    Alternative Flash Structure
+   Alternative Flash Structure
 
 The unused flash area beyond 0x1FFFF is not directly accessible for amforth.
 It could be used as a block device.
@@ -688,9 +713,10 @@ HERE as it's buffer to store the just recognized word from SOURCE.
 
 .. _ramfigure:
 
-.. figure:: ram-structure.*
+.. figure:: images/ram-structure.*
+   :width: 50%
 
-    Ram Structure
+   Ram Structure
 
 :ref:`ramfigure` shows an RAM layout that can be used on systems
 without external RAM. All elements are located within the internal
@@ -698,9 +724,10 @@ memory pool.
 
 .. _ram2figure:
 
-.. figure:: ram2-structure.*
+.. figure:: images/ram2-structure.*
+   :width: 50%
 
-    Alternative RAM Structure
+   Alternative RAM Structure
 
 Another layout, that makes the external RAM easily available is shown in
 :ref:`ram2figure`. Here are the stacks at the beginning of the internal RAM and the
@@ -755,8 +782,8 @@ that follows :command:`does>`.
 
 :command:`does>` is an immediate word. That means, it is not compiled
 into the new word (con) but executed. This compile time action creates
-a small data structure similiar to the wordlist entry for a noname: word.
+a small data structure similar to the wordlist entry for a noname: word.
 The address of this data structure is an execution token. This execution
 token replaces the standard XT that :command:`create` has already
 written for words that are defined using :command:`con`. This
-leads unevitably to a flash erase cycle.
+leads inevitably to a flash erase cycle.

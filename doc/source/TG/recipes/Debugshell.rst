@@ -7,10 +7,10 @@ Debug Shell
 A debugger is a tool to check data at runtime. For amforth there is no
 single tool for that purpose. There are a :ref:`Tracer`
 and a :ref:`Profiler` available. They modify the code
-generation to achieve their goals. The debugshell presented here 
-is called at explicit breakpoints to stop the execution of the 
-current word and gives an indepenedent command prompt to execute 
-arbitrary commands. 
+generation to achieve their goals. The debugshell presented here
+is called at explicit breakpoints to stop the execution of the
+current word and gives an independent command prompt to execute
+arbitrary commands.
 
 This debugshell core can be modified and expanded in many ways.
 One example is the Watcher Utility for memory access.
@@ -22,12 +22,12 @@ The debug shell core is quite small. Only 3 lines of code:
 .. code-block:: forth
 
  82 buffer: debugbuf
- : (?) cr ." debug> " debugbuf dup 80 accept ; 
- : ?? begin (?) dup while (evaluate) repeat 2drop ; 
+ : (?) cr ." debug> " debugbuf dup 80 accept ;
+ : ?? begin (?) dup while (evaluate) repeat 2drop ;
 
 Technically it is an isolated command shell activated at
-any time. With this debugger you can place the command 
-``??`` anywhere in your code and you'll get the 
+any time. With this debugger you can place the command
+``??`` anywhere in your code and you'll get the
 ``debug>`` prompt whenever execution reaches it.
 
 Extensions
@@ -45,7 +45,7 @@ or using deferred words:
  : ?? debug? if ?? then ;
 
 assigning  a non-zero value to debug?
-(``true to debug?``) will activate 
+(``true to debug?``) will activate
 the debug prompt. Note that the debug flag
 is stored in EEPROM und the settings survive
 a reset.
@@ -59,14 +59,14 @@ word technique.
   ' ?? is breakpoint
   \ ' noop is breakpoint
 
-Here you use the command ``breakpoint`` in 
+Here you use the command ``breakpoint`` in
 your code instead of the basic ``??`` command.
 
 .. code-block:: forth
 
  : foo bar breakpoint baz ;
 
-Note that the deferred vector is storeed in EEPROM and
+Note that the deferred vector is stored in EEPROM and
 the settings survive a reset.
 
 The third extension uses interrupts. Since amforth
@@ -81,7 +81,7 @@ command (0 is an example interrupt number)
 
  debug> rp@ hex .
  82D
- debug> 
+ debug>
   ok
  >
 
@@ -90,6 +90,6 @@ key you get the debug prompt whenever you press
 it. If you configure and enable the external interrupt
 of course. Note that in this case the debug prompt
 is executed in the interrupt mode of the controller, you
-have to use the polling implementation of the 
+have to use the polling implementation of the
 usart receive module.
 

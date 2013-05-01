@@ -21,7 +21,7 @@ built in's
 ----------
 
 The basic words to access EEPROM are ``@e`` and
-``!e``. They operate with the standard 2bytes forth
+``!e``. They operate with the standard 2 bytes forth
 cells to read and write data. There is no byte-level access.
 
 .. code-block:: forth
@@ -71,15 +71,15 @@ to implement the ``turnkey`` action.
  ok
  > foo
  foo one is pick nip ...
- > 
+ >
 
 your own stuff
 --------------
 
-To use EEPROM storage without ``value`` or 
+To use EEPROM storage without ``value`` or
 ``Edefer``, the command ``edp`` is the
 building block. It is the pointer to the first unused byte in the EEPROM.
-It is itself a ``value`` that can be adjusted with 
+It is itself a ``value`` that can be adjusted with
 ``to`` to allocate (or free) address space.
 
 ::
@@ -98,7 +98,7 @@ The ``Ealloc`` ( n -- ) in the example leaves the
 start address of the allocated area on the stack. It is later
 stored in the newly defined value ``my-eeprom``.
 
-Adjusting ``edp`` as described above is consistent 
+Adjusting ``edp`` as described above is consistent
 with later use of ``value`` and ``Edefer``.
 
 Arrays
@@ -108,7 +108,7 @@ Arrays can be placed in EEPROM as well
 
 ::
 
- >  : Ebuffer: edp value Ealloc ; ( n -- ) ( similiar to buffer: from forth200x)
+ >  : Ebuffer: edp value Ealloc ; ( n -- ) ( similar to buffer: from forth200x)
   ok
  >  42 Ebuffer: my-array
   ok

@@ -12,7 +12,7 @@ During assembly, the typical error message looks like
 
 The symbol naming is based upon Atmel's naming conventions. If the controller has only
 one usart module, it is named either ``usart`` or ``usart0``. Newer Atmegas use the
-0 regardless of the real number of usart modules, older ones omit the 0 completely. You definitly
+0 regardless of the real number of usart modules, older ones omit the 0 completely. You definitely
 have to check the datasheet.
 
 The following controllers use the old schema, they need the ``usart`` file:
@@ -41,15 +41,15 @@ The following controllers use the old schema, they need the ``usart`` file:
 
 All others use a number.
 
-A simple approach that works in most cases is as follows: delete/change all 
-occurances of the 0 character in the following excerpt from your version of the 
+A simple approach that works in most cases is as follows: delete/change all
+occurrences of the 0 character in the following excerpt from your version of the
 :file:`template.asm` file.
 
 .. code-block:: none
 
  .include "drivers/usart_0.asm"
 
-Please note, that the file is named :file:`drivers/usart.asm` not 
+Please note, that the file is named :file:`drivers/usart.asm` not
 :file:`drivers/usart_.asm`.
 
-Similiar changes are needed for the other usart modules (e.g. usart3).
+Similar changes are needed for the other usart modules (e.g. usart3).

@@ -178,4 +178,4 @@ It prints the current branch name in the terminal:
    ## master ok
    >
 
-Its easy to add this command to the applturnkey actions as well.
+Its easy to add this command to the :command:`applturnkey` actions as well.

@@ -6,7 +6,7 @@ Customization takes place when you create the hex files. It requires
 to edit files and re-generate them using the assembler.
 
 All customization is done in the application master file. A good
-starting point is template/template.asm. If you change any other
+starting point is :file:`template/template.asm`. If you change any other
 file, good luck. You can look for these options in the code however.
 
 
@@ -17,14 +17,14 @@ Every application is unique. Thus you need to create your own
 amforth specific to your intended environment. There is no generic
 image that works everywhere.
 
-First make a copy of the appl/template directory (myapp in this example).
+First make a copy of the :file:`appl/template` directory (myapp in this example).
 
 .. code-block:: bash
 
  mt@ayla:~/amforth/appl$ cp -r template myapp
 
 
-Next edit the template.asm in the mayapp directory. You may
+Next edit the :file:`template.asm` in the mayapp directory. You may
 want to rename the file later. There are only a few lines that
 need your attention.
 
@@ -43,14 +43,14 @@ Makefile. Alternatively change the line to
 
  .include "devices/atmega1280/device.asm"
 
-please use the same directoryname from the pd2amforth run
-above. The downside of using the controller-dependent directorname
+please use the same directory name from the pd2amforth run
+above. The downside of using the controller-dependent directory name
 instead of some makefile variables is that you have to keep the
 definition of the controller type in sync in <em>two</em> files.
 The makefile always need the information for the programmer.
 
 The next essential information is the frequency your controller
-uses. It is necessairy (at least) to calculate the proper usart settings
+uses. It is necessary (at least) to calculate the proper usart settings
 and to get the right delay in the forth word ``ms``.
 
 .. code-block:: none
@@ -60,7 +60,7 @@ and to get the right delay in the forth word ``ms``.
  .equ F_CPU = 16000000
 
 The last setting is the command terminal for the prompt. There are
-a few predefined settings. Unfortunatly Atmel has changed the wording
+a few predefined settings. Unfortunately Atmel has changed the wording
 over time. In most cases make sure that the number in the
 _0 reflects the number in the RXEN0 definitions and the final 0 in the
 UCSZ00. Elder controllers do not have a number suffix, just delete it
@@ -75,7 +75,7 @@ UCSZ00. Elder controllers do not have a number suffix, just delete it
  .equ USART_B_VALUE = (1<&lt;TXEN0) | (1<&lt;RXEN0) | (1<&lt;RXCIE0)
  .equ USART_C_VALUE = (3<&lt;UCSZ00)
 
-The next file to edit is the Makefile (or the build.xml if you want
+The next file to edit is the Makefile (or the :file:`build.xml` if you want
 to use the ant utility). First set the right controller type:
 
 .. code-block:: none
@@ -84,15 +84,17 @@ to use the ant utility). First set the right controller type:
   # setting in template.asm, it set
   MCU=atmega1280
 
-The last change is the placement of the avrasm2.exe and the Appnotes2 directory.
+The last change is the placement of the :file:`avrasm2.exe` and the
+:file:`Appnotes2` directory.
 
 .. code-block:: make
 
  # directories
  DIR_ATMEL=../../Atmel
 
-To flash the controller, the program avrdude is used. Depending on your programmer,
-define the BURNER variable as well:
+To flash the controller, the program :command:`avrdude`
+is used. Depending on your programmer, define the BURNER
+variable as well:
 
 .. code-block:: make
 
@@ -112,9 +114,9 @@ WANT - Options
 WANT Options are used to select certain features. There is
 always a default value in place (0).
 
-The files core/devices/$MCU/device.asm contain among other things a
+The files :file:`core/devices/$MCU/device.asm` contain among other things a
 complete list of WANT Options that can be used to include device specific
-Names into the dictionary. 
+Names into the dictionary.
 
 .. code-block:: none
 
@@ -124,9 +126,9 @@ Names into the dictionary.
  .set WANT_CPU = 0
  ....
 
-Changing these options to 1 includes the matching sections from device.inc
-into the generated dictionary. The same effect could be achieved by selectivly
-send the device.frt file sections.
+Changing these options to 1 includes the matching sections from :file:`device.inc`
+into the generated dictionary. The same effect could be achieved by selectively
+send the :file:`device.frt` file sections.
 
 
 Another such option is the WANT_IGNORECASE option. If it is set to 1, the
@@ -134,7 +136,7 @@ amforth dictionary lookup routine is extended to handle upper and lower case
 words the same. This makes foo and FOO the same. This is a dictionary wide
 setting, valid for both pre-defined and self-defined words.
 
-The 3rd group switches the USART terminal communiction between
+The 3rd group switches the USART terminal communication between
 interrupt and poll based routines:
 
 .. code-block:: none

@@ -6,13 +6,13 @@ Redirect IO
 
 The IO system consists of 4 words: :command:`EMIT`, :command:`EMIT?`,
 :command:`KEY` and :command:`KEY?`. The are deferred words, e.g.
-they can be changed at runtime. 
+they can be changed at runtime.
 
 Output
 ------
 
-Amforth has many words like ``."`` and ``type`` to write information. 
-All these words do not do the output work actually, they call 
+Amforth has many words like ``."`` and ``type`` to write information.
+All these words do not do the output work actually, they call
 ``emit`` for each and every single character.
 
 .. code-block:: forth
@@ -32,7 +32,7 @@ code has to take care of everything like scrolling etc as well.
 To complete the picture, another word ``emit?``
 should be redefined. It is called in front of <emit> to
 check whether the output is possible. If no such check
-is nessecairy or possible, just do an 
+is necessary or possible, just do an
 ``' true is emit?``
 
 Unless you do not change the turnkey action as well, everything
@@ -45,12 +45,12 @@ Input is based upon single characters. The command :command:`key?`
 checks whether an unread character is available and :command:`key`
 fetches it. To read an user supplied buffer, the command :command:`accept`
 can be used. It reads until either the buffer is filled or an
-end-of-line character is found (Carriege Return and/or line feed).
+end-of-line character is found (caridge return and/or line feed).
 
 Depending on the input source, different strategies may be used.
 The simplest way is to poll the input device frequently and hope
 that no character is lost. More sophisticated is the use of
-interrupts. They can be called at any time and almost garantuee
+interrupts. They can be called at any time and almost guarantee
 that no characters will be lost. The interrupt usually fills an
 internal small buffer :command:`key` and :command:`key?`
 can deal with.
@@ -58,7 +58,7 @@ can deal with.
 .. code-block:: forth
 
  : ps2-key-isr ( -- )
-  \ get the most recent key stroke 
+  \ get the most recent key stroke
   \ place the key-event in a queue
  ;
  : ps2-key? ( -- f )
@@ -103,7 +103,7 @@ There are some notes that may affect your program
   or ``accept`` call any of the 4 deferred words. There
   is no need to change them.
 * Amforth uses the control characters for the line editing
-  (e.g. backspace, TAB, CR/LF). Characters are 8bit numbers 
+  (e.g. backspace, TAB, CR/LF). Characters are 8 bit numbers
   (ASCII). Multibyte-Characters are not currently supported.
 
 .. seealso:: :ref:`Disable Command Prompt Echo`

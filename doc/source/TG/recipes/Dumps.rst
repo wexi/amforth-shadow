@@ -7,7 +7,7 @@ Dump Utilities
 Stack Dumps
 -----------
 
-Stackdumps can be generated with the command
+Stack dumps can be generated with the command
 :command:`.s`. The standard does not specify,
 how the output has to formatted. The built-in
 command is for core development. This means that
@@ -15,7 +15,7 @@ numbers are printed as unsigned (hex is highly
 recommended) and the TOS is on the left hand
 side. This makes it easy to get the most important
 information easily and the numbers are quickly
-found in memory dumps and the assembler LST and 
+found in memory dumps and the assembler LST and
 MAP files.
 
 The output looks like:
@@ -26,13 +26,13 @@ The output looks like:
  65533 65534 65535  ok
  > hex .s
  FFFD FFFE FFFF  ok
- > 
+ >
 
-Most other forth's and the varios books use another 
+Most other forth's and the various books use another
 stack dump format. It uses signed numbers and
 places the TOS on the right side. This can be
 achieved with the following definition, kindly
-provided by Enoch on the mailling list:
+provided by Enoch on the mailing list:
 
 .. code-block:: forth
 
@@ -69,9 +69,9 @@ Other stack dumps are as follows. They are kindly provided by Erich:
  : urs sp@ sp0      swap do i @ u.  2 +loop ;
 
  \ dot-s, verbose, as it used to be in earlier versions of amforth:
- :  dsv  depth dup 0 do i u. dup i - 
+ :  dsv  depth dup 0 do i u. dup i -
      cells sp0 swap - dup u. @  . cr loop ;
- : udsv  depth dup 0 do i u. dup i - 
+ : udsv  depth dup 0 do i u. dup i -
      cells sp0 swap - dup u. @ u. cr loop ;
 
 
@@ -94,7 +94,7 @@ region has its own dump utility
 
 
 :command:`edump`
-  EEPROM. Similiar to RAM, every address unit has 8 bits, but since
+  EEPROM. Similar to RAM, every address unit has 8 bits, but since
   it used on a cell (16 bits) basis, the display uses this number width:
 
 .. code-block:: console
@@ -107,7 +107,7 @@ region has its own dump utility
   ok
 
 :command:`idump`
-  Flash. Unlike the other memories, flash has 16bits per address unit:
+  Flash. Unlike the other memories, flash has 16 bits per address unit:
 
 .. code-block:: console
 

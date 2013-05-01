@@ -4,11 +4,11 @@
 Digital Ports
 =============
 
-Atmegas have digital ports each with 8 individual pins. They that can 
-be configured as input and output pins. To make an easy use of them, amforth 
+Atmegas have digital ports each with 8 individual pins. They that can
+be configured as input and output pins. To make an easy use of them, amforth
 has a small library :file:`bitnames.frt` in the lib directory.
 
-With this library, you can give any pin a name and can manipulate 
+With this library, you can give any pin a name and can manipulate
 it afterwards regardless of others.
 
 .. code-block:: forth
@@ -22,7 +22,7 @@ Output pins
     :align: right
 
 The simplest hardware is a LED connected to one pin.
-The following sequence initializes the pin and turns 
+The following sequence initializes the pin and turns
 the LED on:
 
 ::
@@ -76,7 +76,7 @@ resistor.
  >  mykey pin_pullup_on
 
 If the key is not pressed, the resistor (either the internal
-pullup or the external resistor) drive the voltage to high. If you
+pull up or the external resistor) drive the voltage to high. If you
 read the pin, you will get a 1 in this example:
 
 ::

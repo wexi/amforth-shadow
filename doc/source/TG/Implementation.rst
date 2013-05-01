@@ -46,7 +46,7 @@ Exceptions are fully supported. The words
 :command:`ABORT` and :command:`ABORT"`
 use them internally.
 
-The :command:`THROW` codes -1, -2 and -13 work as 
+The :command:`THROW` codes -1, -2 and -13 work as
 specified.
 
 The implementation is based upon a variable HANDLER
@@ -57,11 +57,11 @@ Facility
 ........
 
 The basic system uses the :command:`KEY?`
-and :command:`EMIT?` words as deferred words 
+and :command:`EMIT?` words as deferred words
 in the USER area.
 
 The word :command:`MS` is implemented with the word
-:command:`1MS` which busy waits almost exactly 1 millisecond. 
+:command:`1MS` which busy waits almost exactly 1 millisecond.
 The calculation is based upon the frequency specified at
 compile time.
 
@@ -123,7 +123,7 @@ which can be used with the words
 
 The control stack commands
 :command:`CS-ROLL` , and ,
-:command:`CS-PICK` are not implemented. The 
+:command:`CS-PICK` are not implemented. The
 compiler words operate with the more traditional
 :command:`MARK` / :command:`RESOLVE` word pairs.
 
@@ -141,15 +141,15 @@ and :command:`[THEN]` are not implemented.
 Word Lists and Search Order
 ...........................
 
-Amforth supports the ANS Search Order Wordlist. A word list consist of a linked list
+Amforth supports the ANS Search Order word list. A word list consist of a linked list
 of words in the dictionary. There are no limits on the number of word lists
 defined. Only the length of the active search order is limited: There can be
 up to 8 entries at any given moment. This limit can be changed at compile
 time in the application definition file.
 
-Internally the wordlist identifier is the address where the wordlist start
+Internally the word list identifier is the address where the word list start
 address is stored in the EEPROM. Creating a new word list means to allocate
-a new EEPROM cell. Since the ANS standard does not give named wordlist
+a new EEPROM cell. Since the ANS standard does not give named word list
 there is library code available that uses the old fashioned vocabulary.
 
 Strings
@@ -242,8 +242,8 @@ MCU Access
 ..........
 
 amforth provides wrapper words for the
-microcontroller instructions
-:command:`SLEEP` and :command:`WDR` 
+micro controller instructions
+:command:`SLEEP` and :command:`WDR`
 (watch dog reset). To work properly, the MCU needs
 more configuration. amforth itself does not call
 these words.
@@ -262,7 +262,7 @@ to the forth interpreter.
 Memories
 ........
 
-Atmega microcontroller have three different types of
+Atmega micro controller have three different types of
 memory. RAM, EEPROM and Flash. The words
 :command:`@` and :command:`!`
 work on the RAM address space (which includes IO
@@ -275,7 +275,7 @@ one cell (2 bytes) between the memory and the data
 stack. The address is always the native address of
 the target storage: byte-based for EEPROM and RAM,
 word-based for flash. Therefore the flash addresses
-64KWords or 128 KBytes address space.
+64 KWords or 128 KBytes address space.
 
 External RAM shares the normal RAM address space
 after initialization (which can be done in the
@@ -296,10 +296,10 @@ Input Output
 
 amforth uses character terminal IO. A serial console is
 used. All IO is based upon the standard words
-:command:`EMIT`/:command:`EMIT?` and 
+:command:`EMIT`/:command:`EMIT?` and
 :command:`KEY`/:command:`KEY?`. Additionally the word
-:command:`/KEY` is used to signal the sender to stop. 
-All these words are deferred words in the USER area 
+:command:`/KEY` is used to signal the sender to stop.
+All these words are deferred words in the USER area
 and can be changed with the :command:`IS` command.
 
 The predefined words use an interrupt driven IO with
@@ -312,7 +312,7 @@ These basic words include a call to the
 command to enable the use of multitasking.
 
 Other IO depend on the hardware connected to the
-microcontroller. Code exists to use LCD and TV
+micro controller. Code exists to use LCD and TV
 devices. CAN, USB or I2C are possible as well.
 Another use of the redirect feature is the
 following: consider some input data in external

@@ -16,6 +16,7 @@
 .include "words/store.asm"
 .include "words/cstore.asm"
 .include "words/cfetch.asm"
+.include "words/fetchc.asm"
 .include "words/fetch-u.asm"
 .include "words/store-u.asm"
 
@@ -55,8 +56,10 @@
 .include "words/umslashmod.asm"
 .include "words/umstar.asm"
 
+.include "words/cinvert.asm"
 .include "words/invert.asm"
 .include "words/2slash.asm"
+.include "words/u2slash.asm"
 .include "words/2star.asm"
 .include "words/and.asm"
 .include "words/or.asm"

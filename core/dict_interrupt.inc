@@ -4,4 +4,7 @@
 .include "words/int-store.asm"
 .include "words/int-fetch.asm"
 
-.include "words/isr-exec.asm"
+.include "words/swick.asm"
+.include "words/swien.asm"
+.include "words/swidi.asm"
+

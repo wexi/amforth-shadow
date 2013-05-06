@@ -3,6 +3,139 @@
 Implementation
 ==============
 
+Control Structures
+------------------
+
+Building Blocks
+...............
+
+All control structures are based upon jumps and conditional jumps. Every
+control flow operation ends with either a forward or a backward jump. This gives
+6 building blocks to create them all: :command:`(branch)`, :command:`(0branch)`,
+:command:`>mark`, :command:`<mark`, :command:`>resolve` and :command:`<resolve`.
+None of these are directly accessible however. Most of these words are used in
+pairs. The data stack is used as the control flow stack. All words are used
+in immediate words. They are executed at compile time and produce code for the
+runtime action.
+
+:command:`(branch)` is a unconditional jump. It reads the flash cell after the
+command and takes it as the branch destination. Jumps can be at any distance
+in any direction. :command:`(0branch)` jumps and only jumps if the Top-Of-Stack
+element is zero (e.g. logically FALSE). If it is non-zero, the jump is not made
+and execution continues with the next command. In this case, the branch destination 
+field is ignored.
+
+The mark words put the jump destination onto the data stack. This information is
+used by the resolve words to actually complete the operation. The :command:`<mark` 
+additionally reserves one flash cell. The :command:`<resolve` stores the information 
+for the backward jump at the current location of the dictionary pointer, the 
+:command:`>resolve` places the information at the place the :command:`>mark` 
+has reserved and completes the forward jump. Every mark needs to be paired with
+the *right* resolve.
+
+Highlevel Structures
+....................
+
+The building blocks described above create the standard control
+structures: conditional execution and various loop constructs.
+
+Conditional Execution
+#####################
+
+The conditional execution compiles a forward
+jump to another location. The jump destination 
+is resolved with :command:`then`. An :command:`else`
+terminates the first jump and starts a new one for the
+final :command:`then`.
+
+.. code-block:: forth
+
+   : if postpone (0branch) >mark ; immediate
+   : else postpone (branch) >mark
+      swap >resolve ; immediate
+   : then >resolve ; immediate
+
+There is variant of the :command:`if` command, that compiles 
+an unconditional forward branch: :command:`ahead`. Its definition 
+is trivial. It needs to be paired with a :command:`then` to 
+resolve the branch destination too. An :command:`else` would not
+make any sense, but is syntactically ok.
+
+.. code-block:: forth
+
+   : ahead postpone (branch) >mark ; immediate
+
+Loops
+#####
+
+The loop commands create a structure for repeated execution of
+code blocks. A loop starts with a :command:`begin`
+to which the program flow can jump back any time.
+
+.. code-block:: forth
+
+   : begin <mark ; immediate
+
+The first group of loop command are created with :command:`again` and
+:command:`until`. They basically differ from each with the branch 
+command they compile:
+
+.. code-block:: forth
+
+   : until postpone (0branch) <resolve ; immediate
+   : again postpone (branch) <resolve ; immediate
+
+The other loop construct starts with :command:`begin` too. The
+control flow is further organized with :command:`while` and 
+:command:`repeat`:
+
+.. code-block:: forth
+
+   : while postpone (0branch) >mark swap ; immediate
+   : repeat again >resolve ; immediate
+
+
+Counted Loops
+#############
+
+Counted loops need to store the starting address
+and the address of the last word of the loop body. The first
+one is needed to jump back if the counter has not yet reached
+its limit. The forward jump is made in :command:`leave` to
+unconditionally exit the loop body.
+
+.. code-block:: forth
+
+   : do postpone (do) >mark <mark ; immediate
+   : loop postpone (loop) <resolve >resolve ; immediate
+
+The other loop commands :command:`?do` and :command:`+loop`
+are almost identical to their respective counterparts, the 
+compile only a different runtime action to their goals.
+
+The runtime action of :command:`do` (the :command:`(do)`)
+puts three information onto the return stack: The loop
+counter, the loop limit and the destination address for the
+:command:`leave`. The first two parameters are taken from the
+data stack at runtime, the leave-address comes from the compiler
+(from the :command:`>mark`).
+
+The runtime of :command:`loop` (the :command:`(loop)`)
+checks the limits and with :command:`0branch` decides whether to
+repeat the loop body with the next loop counter value or to exit
+the loop body. If the loop has terminated, it cleans up the return 
+stack. The :command:`+loop` works almost identically, except that 
+it reads the loop counter increment from the data stack.
+
+The access to the loop counters within the loops is done with :command:`i`
+and :command:`j`. Since the return stack is used to manage the loop runtime,
+it is necessary to clean it up. This is done with either :command:`unloop`
+or :command:`leave`. Note that :command:`unloop` does not leave the loop!
+
+==================
+Standard Wordlists
+==================
+
 ANS94 Words
 -----------
 

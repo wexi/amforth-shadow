@@ -107,4 +107,4 @@ Notes
     this data.
 
 
-This recipe is based upon ideas from Hannu Vuolasaho and Michal Kalus.
+This recipe is based upon ideas from Hannu Vuolasaho and Michael Kalus.

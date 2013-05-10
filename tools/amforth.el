@@ -477,7 +477,7 @@ INDENT1 and INDENT2 are indentation specifications of the form
 	 (-2 . 2) (0 . 0))
 	(("does>" ";code" ";abi-code") (-1 . 1) (0 . 0))
 	(("while" "[while]") (-2 . 2) (0 . 0))
-	(("repeat" "[repeat]") (-4 . 0) (0 . -4))))
+	(("repeat" "[repeat]") (-2 . 0) (-2 . 0))))
 
 (defvar forth-local-indent-words nil 
   "List of Forth words to prepend to `forth-indent-words', when a forth-mode

@@ -11,10 +11,10 @@ by [[http://amforth.sourceforge.net/][AmForth HQ]].
 
 * Soft Interrupt Service
 
-One of AmForth features is the ability to write interrupt service routines (ISRs) in Forth. However, in the current implementation (SVN r1430) those ISRs should run with the hardware interrupt system
-disabled. This means that one has to keep ISRs short and defer long processing to the "main". The following changes to the kernel introduce an eight level soft interrupts queue, allowing the Forth code
-second level interrupt handlers (SLIH) to be interruptible and thus be as slow to execute as necessary. The new first level interrupt handling (FLIH) is suitable for type I interrupt sources, those
-acknowledged by execution of their interrupt vectors.
+One of AmForth features is the ability to write Interrupt Service Routines (ISR), aka Interrupt Handlers, in Forth. However, in the current implementation (SVN r1430) those ISRs should run with the
+hardware interrupt system disabled. This means that one has to keep ISRs short and defer long processing to the "main". The following changes to the kernel introduce an eight level soft interrupts
+queue, allowing the Forth code Second Level Interrupt Handlers (SLIH) to be interruptible and thus be as slow to execute as necessary. The new first level interrupt handling (FLIH) is suitable for
+type I interrupt sources, those acknowledged by execution of their interrupt vectors.
 
 ** New words
 
@@ -37,7 +37,7 @@ The higher byte, if non-zero, indicates having the soft interrupts inhibited.
 
 ** Compatibility
 
-As by default soft interrupts are enabled existing code should not be impacted. The ISR should be a regular Forth colon definition.
+As by default soft interrupts are enabled existing code should not be impacted. ISRs should be regular Forth colon definitions!
 
 ** Limitation
 
@@ -45,10 +45,9 @@ It is recommended to turn interrupts off (~int-~) when compiling new code.
 
 ** Implementation
 
-Changes apply to:
-1. core/drivers/generic-isr.asm: The revised FLIH introduces an 8 level soft interrupts queue.
-2. core/amforth-interpreter.asm: Incorporates the entire SLIH and is implemented in asm.
-3. core/words/isr-exe.asm: Now hosts the controlling words int+ int- and int' only.
+1. core/drivers/generic-isr.asm: FLIH with 8 level queue.
+2. core/amforth-interpreter.asm: SLIH launcher.
+3. core/words/swi??.asm: Soft interrupts control words.
 
 * WLSCOPE
 

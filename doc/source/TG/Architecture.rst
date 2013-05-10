@@ -85,6 +85,8 @@ AmForth implements the classic indirect threaded variant of
 forth. The registers and their mappings are shown in table
 :ref:`register_mappings`.
 
+.. _Inner Interpreter:
+
 Inner Interpreter
 .................
 

@@ -1,37 +1,204 @@
-
 ==============
 Implementation
 ==============
 
+Dictionary Management
+---------------------
+
+The dictionary can be seen from several points of view. One is
+the split into two memory regions: NRWW and RWW flash. This is
+the hardware view. NRWW flash cannot be read during a flash write
+operation, NRWW means Non-Read-While-Write. This makes it impossible
+to change there anything at runtime. On the other hand is this the place,
+where code resides that can change the RWW (Read-While-Write) part of the
+flash. For AmForth, the command :command:`!i` does this work: It changes
+a single flash cell in the RWW section of the flash. This command hides
+all actions that are necessary to achieve this.
+
+The NRWW section is usually large enough to hold the interpreter core
+and most (if not all) words coded in assembly (not to be confused with
+the words that are hand-assembled into a execution token list) too.
+Having all of them within a rather small memory region makes it possible
+to use the short-ranged and fast relative jumps instead of slower
+full-range jumps necessary for RWW entries.
+
+Another point of view to the dictionary is the memory allocation. The key for it
+is the dictionary pointer :command:`dp`. It is a EEPROM based VALUE that stores the
+address of the first unused flash cell. With this pointer it is easy to allocate
+or free flash space at the end of the allocated area. It is not possible to maintain
+"holes" in the address range. To append a single number to the dictionary,
+the command :command:`,` is used. It writes the data and increases the DP
+pointer accordingly:
+
+.. code-block:: forth
+
+   \ ( n -- )
+   : , dp !i dp 1+ to dp ;
+
+To free a flash region, the DP pointer can be set to any value, but a lot
+of care has to be taken, that all other system data is still consistent
+with it.
+
+The next view point to the dictionary are the wordlists. A wordlist
+is a single linked, searchable list of entries. All wordlists create the forth
+dictionary. A wordlist is identified by its ``wid``, an EEPROM address, that
+contains the address of the first entry. The entries themselves contain a
+pointer to the next entry or ZERO to indicate End-Of-List. When a new entry
+is added to a list it will be the first one of this wordlist afterwards.
+
+A new wordlist is easily created: Simply reserve an EEPROM cell and
+initialize its content with 0:
+
+.. code-block:: forth
+
+   : wordlist ( -- wid )
+       edp 0 over !e
+       dup cell+ to edp ;
+
+This ``wid`` is used to create new entries. The basic procedure to do it
+is :command:`create`:
+
+.. code-block:: forth
+
+   : create
+     (create) reveal
+     postpone (constant) ;
+
+:command:`(create)` parses the current source to get a space delimited string.
+The next step is to determine, into which wordlists the new entry will be placed
+and finally, the new entry is created, but it is still invisible:
+
+.. code-block:: forth
+
+  : (create)
+      parse-name
+      wlscope
+      dup >r
+      header
+      r> smudge 2! ;
+
+The :command:`header` command starts a new dictionary entry. The first action is
+to copy the string from RAM to the flash. The second task is to create the link
+for the wordlist management
+
+.. code-block:: forth
+
+   : header
+    dp >r
+    \ copy the string from RAM to flash
+    r> @e ,
+    \ minor housekeeping
+   ;
+
+``smudge`` is the address of a 4 byte RAM location, that buffers the access information.
+Why not not all words are immediately visible  is something, that the forth standard
+requires. The command :command:`reveal` un-hides the new entry by adjusting the content
+of the wordlist identifier to the address of the new entry:
+
+
+
+.. code-block:: forth
+
+  : reveal
+     smudge @ ?dup if \ check if valid data
+       smudge 2+ @ !e \ update the wid
+       0 smudge !     \ invalidate
+     then ;
+
+The command :command:`wlscope` can be used to change the wordlist that
+gets the new entry. It is a deferred word that defaults to
+:command:`get-current`.
+
+The last command :command:`postpone (constant)` writes the runtime
+action, the execution token (XT) into the newly created word. The XT
+is the address of executable machine code that the forth inner interpreter
+calls (see :ref:`Inner Interpreter`). The machine code for :command:`(constant)`
+puts the address of the flash cell that follows the XT on the data stack.
+
+Compiler
+--------
+
+The Amforth Compiler is based upon immediate words. They are always
+executed, regardless of the value in the ``state`` variable. All
+non-immediate words get compiled verbatim with their respective
+execution token. It is simply appended to the current DP location.
+
+Immediate words are usually executed (unless some special action such
+as :command:`postpone` is applied). The immediate words do usually
+generate some data or compile it to the dictionary. They are not
+compiled with their execution token.
+
+There are no optimization steps involved. The XT are written immediately
+into the dictionary (flash).
+
 Control Structures
 ------------------
+
+Control Structures organize the program execution flow. Since Edsgar Dijkstra
+the structured programming is the preferred way to do it. AmForth provides all
+kinds of them: sequences, selections and repetitions. Selections are made with
+the :command:`ìf` command. Multiple selections can be made with :command:`case`.
+Repetitions can be unlimited or limited. Limited Repetitions can use flags and
+counter/limits to leave the loop.
+
+There is support for out-of-band control flow too: Exceptions. They provide
+some kind of emergency exits to solve hard problems. They can be catched at any
+level up to the outer text interpreter. It will print a message on the command
+terminal and will wait for commands.
 
 Building Blocks
 ...............
 
 All control structures are based upon jumps and conditional jumps. Every
-control flow operation ends with either a forward or a backward jump. This gives
-6 building blocks to create them all: :command:`(branch)`, :command:`(0branch)`,
-:command:`>mark`, :command:`<mark`, :command:`>resolve` and :command:`<resolve`.
-None of these are directly accessible however. Most of these words are used in
-pairs. The data stack is used as the control flow stack. All words are used
-in immediate words. They are executed at compile time and produce code for the
-runtime action.
+control operation does either a forward or a backward jump. Thus
+6 building blocks are needed to create them all: :command:`(branch)`,
+:command:`(0branch)`, :command:`>mark`, :command:`<mark`, :command:`>resolve`
+and :command:`<resolve`. None of them are directly accessible however. Most
+of these words are used in pairs. The data stack is used as the control flow
+stack. All words are used in immediate words. They are executed at compile
+time and produce code for the runtime action.
 
 :command:`(branch)` is a unconditional jump. It reads the flash cell after the
 command and takes it as the branch destination. Jumps can be at any distance
-in any direction. :command:`(0branch)` jumps and only jumps if the Top-Of-Stack
+in any direction. :command:`(0branch)` jumps only if the Top-Of-Stack
 element is zero (e.g. logically FALSE). If it is non-zero, the jump is not made
-and execution continues with the next command. In this case, the branch destination 
-field is ignored.
+and execution continues with the next command. In this case, the branch
+destination field is ignored. These two words are implemented in assembly.
+A equivalent forth implementation would be
 
-The mark words put the jump destination onto the data stack. This information is
-used by the resolve words to actually complete the operation. The :command:`<mark` 
-additionally reserves one flash cell. The :command:`<resolve` stores the information 
-for the backward jump at the current location of the dictionary pointer, the 
-:command:`>resolve` places the information at the place the :command:`>mark` 
-has reserved and completes the forward jump. Every mark needs to be paired with
-the *right* resolve.
+.. code-block:: forth
+
+   : (branch) r> 1+ @i >r ;
+   : (0branch) if (branch) else r> 1+ >r then ;
+
+Note the chicken-and-egg problem with the conditional branch operation.
+
+The ``mark`` words put the jump destination onto the data stack. This
+information is used by the ``resolve`` words to actually complete the
+operation. The :command:`<mark` additionally reserves one flash cell.
+The :command:`<resolve` stores the information for the backward jump
+at the current location of the dictionary pointer, the :command:`>resolve`
+places the information at the place the :command:`>mark` has reserved and
+completes the forward jump. Every mark needs to be paired with the *right*
+resolve.
+
+.. code-block:: forth
+
+   : >mark dp -1 , ;
+   : >resolve ?stack dp swap !i ;
+
+   : <mark dp ;
+   : <resolve ?stack , ;
+
+The place holder -1 in :command:`>mark` prevents a flash erase cycle when the
+jump is resolved using the :command:`!i` in :command:`>resolve`. The
+:command:`?stack` checks for the existence of a data stack entry,
+not for a plausible value. It the data stack is empty, an
+exception -4 is thrown.
+
+.. code-block:: forth
+
+   : ?stack depth 0< if -4 throw then ;
 
 Highlevel Structures
 ....................
@@ -43,30 +210,35 @@ Conditional Execution
 #####################
 
 The conditional execution compiles a forward
-jump to another location. The jump destination 
+jump to another location. The jump destination
 is resolved with :command:`then`. An :command:`else`
 terminates the first jump and starts a new one for the
-final :command:`then`.
+final :command:`then`. This way an alternate code block
+is executed at runtime depending on the flag given to
+the :command:`if`.
 
 .. code-block:: forth
 
-   : if postpone (0branch) >mark ; immediate
-   : else postpone (branch) >mark
-      swap >resolve ; immediate
+   : if   postpone (0branch) >mark ; immediate
+   : else postpone (branch)  >mark swap >resolve ; immediate
    : then >resolve ; immediate
 
-There is variant of the :command:`if` command, that compiles 
-an unconditional forward branch: :command:`ahead`. Its definition 
-is trivial. It needs to be paired with a :command:`then` to 
-resolve the branch destination too. An :command:`else` would not
-make any sense, but is syntactically ok.
+There is a rarely used variant of the :command:`if` command, that compiles
+an unconditional forward branch: :command:`ahead`. It needs to be paired with
+a :command:`then` to resolve the branch destination too. An
+:command:`else` would not make any sense, but is syntactically ok.
 
 .. code-block:: forth
 
    : ahead postpone (branch) >mark ; immediate
 
-Loops
-#####
+There are more variants of multiple selections possible. The
+:command:`case` structure is based upon nested :command:`if`'s. Computed
+goto's can be implemented with jump tables whith execution tokens as code
+blocks. Examples are in the :file:`lib` directory.
+
+Conditional Loops
+#################
 
 The loop commands create a structure for repeated execution of
 code blocks. A loop starts with a :command:`begin`
@@ -77,7 +249,7 @@ to which the program flow can jump back any time.
    : begin <mark ; immediate
 
 The first group of loop command are created with :command:`again` and
-:command:`until`. They basically differ from each with the branch 
+:command:`until`. They basically differ from each with the branch
 command they compile:
 
 .. code-block:: forth
@@ -86,8 +258,9 @@ command they compile:
    : again postpone (branch) <resolve ; immediate
 
 The other loop construct starts with :command:`begin` too. The
-control flow is further organized with :command:`while` and 
-:command:`repeat`:
+control flow is further organized with :command:`while` and
+:command:`repeat`. :command:`while` checks wether a flag is true
+and leaves the loop while repeat unconditionally repeats it.
 
 .. code-block:: forth
 
@@ -110,7 +283,7 @@ unconditionally exit the loop body.
    : loop postpone (loop) <resolve >resolve ; immediate
 
 The other loop commands :command:`?do` and :command:`+loop`
-are almost identical to their respective counterparts, the 
+are almost identical to their respective counterparts, the
 compile only a different runtime action to their goals.
 
 The runtime action of :command:`do` (the :command:`(do)`)
@@ -123,8 +296,8 @@ data stack at runtime, the leave-address comes from the compiler
 The runtime of :command:`loop` (the :command:`(loop)`)
 checks the limits and with :command:`0branch` decides whether to
 repeat the loop body with the next loop counter value or to exit
-the loop body. If the loop has terminated, it cleans up the return 
-stack. The :command:`+loop` works almost identically, except that 
+the loop body. If the loop has terminated, it cleans up the return
+stack. The :command:`+loop` works almost identically, except that
 it reads the loop counter increment from the data stack.
 
 The access to the loop counters within the loops is done with :command:`i`

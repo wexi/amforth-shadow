@@ -25,7 +25,7 @@ The simplest hardware is a LED connected to one pin.
 The following sequence initializes the pin and turns
 the LED on:
 
-::
+.. code-block:: forth
 
  > PORTB 1 portpin: led
   ok
@@ -35,7 +35,7 @@ the LED on:
 
 To turn it off, simply execute
 
-::
+.. code-block:: forth
 
   > led high
 
@@ -67,27 +67,27 @@ A simple hardware would be as follows:
 The resistor is not really needed, the pin can be configured to use an internal
 resistor.
 
-::
+.. code-block:: forth
 
- >  PORTB 0 portpin: mykey
-  ok
- >  mykey is_input
-  ok
- >  mykey pin_pullup_on
+   >  PORTB 0 portpin: mykey
+    ok
+   >  mykey is_input
+    ok
+   >  mykey pin_pullup_on
 
 If the key is not pressed, the resistor (either the internal
-pull up or the external resistor) drive the voltage to high. If you
+pull up or the external resistor) drives the voltage to high. If you
 read the pin, you will get a 1 in this example:
 
-::
+.. code-block:: forth
 
-  > mykey pin@ .
-  1 ok
+   > mykey pin@ .
+   1 ok
 
 if the key gets pressed, it will connect the controller pin with
 ground level, giving a 0
 
-::
+.. code-block:: forth
 
   > mykey pin@ .
   0 ok

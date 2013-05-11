@@ -33,6 +33,12 @@
 # $d5 constant CRC8MSB
 # 10 constant max_number_of_users
 #
+# Invoke the shell with the argument --log log.frt to collect the lines
+# which were uploaded to the AmForth system that received an " ok"
+# response (log.frt is just a file-name example). This file can later be
+# uploaded to another system using a tool simpler than the shell. Leave
+# the shell by #exit to close log.frt properly.
+#
 # =====================================================================
 # DOCUMENTATION
 # =====================================================================
@@ -577,6 +583,8 @@ class AMForth(object):
             return 1
         finally:
             self.serial_disconnect()
+            if self._log:
+                self._log.close()
         return 0
 
     def parse_arg(self):
@@ -601,6 +609,8 @@ additional definitions (e.g. register names)
         parser.add_argument("--speed", "-s", action="store",
             type=int, default=self.serial_speed,
             help="Speed of serial port on which AMForth is connected")
+        parser.add_argument("--log", type=argparse.FileType('w'),
+                            help="Uploaded Forth log-file")
         parser.add_argument("--line-length", "-l", action="store",
             type=int, default=self.max_line_length,
             help="Maximum length of amforth input line")
@@ -626,6 +636,7 @@ additional definitions (e.g. register names)
         self.max_line_length = arg.line_length
         self._serial_port = arg.port
         self._serial_speed = arg.speed
+        self._log = arg.log
         self.editor = arg.editor
         behavior = self._config.current_behavior
         behavior.include_once = arg.include_once
@@ -830,6 +841,9 @@ additional definitions (e.g. register names)
                             if not self._config.current_behavior.ignore_errors:
                                 self._record_error(lineno)
                                 raise AMForthException(errmsg)
+                elif self._log:
+                    self._log.write(line + "\n")
+                    
             else:
                 self.progress_callback("Error", None, response)
                 if not self._config.current_behavior.ignore_errors:

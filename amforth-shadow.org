@@ -9,6 +9,10 @@
 This is a sandbox for AmForth development that is maintained by an experienced embedded programmer, yet a novice in Forth. It is hoped that the new ideas that are presented here would soon be adopted
 by [[http://amforth.sourceforge.net/][AmForth HQ]].
 
+* Important bugfixes
+
++ MARKER maintains wordlist order. Patch submitted to HQ.
+
 * Soft Interrupt Service
 
 One of AmForth features is the ability to write Interrupt Service Routines (ISR), aka Interrupt Handlers, in Forth. However, in the current implementation (SVN r1430) those ISRs should run with the
@@ -18,26 +22,18 @@ type I interrupt sources, those acknowledged by execution of their interrupt vec
 
 ** New words
 
-To the existing +int and -int ("hard front-end") words that control the SREG I-bit the following ("soft rear-end") words were added:
+The following ("soft rear-end") words were added to the existing +int and -int ("hard front-end") which control SREG I-bit
 
-*** int+  ( -- )  "soft interrupts on"
++ int+ ( -- ) "soft interrupts on" :: Enables soft interrupts. If ~int+~ is the ISR last instruction the ISR routine would return before the next queued interrupt is served.
 
-Enables soft interrupts. If ~int+~ is the ISR last instruction the ISR routine would return before the next queued interrupt is served.
++ int- ( -- ) "soft interrupts off" :: Disables soft interrupts. If this instruction is the ISR first the ISR will not be interrupted.
 
-*** int-  ( -- )  "soft interrupts off"
-
-Disables soft interrupts. If this instruction is the ISR first the ISR will not be interrupted.
-
-*** int'  ( -- addr )  "soft interrupts apostrophe" 
-
-Returns the address of a system variable where the lower byte, if non zero, indicates occurance of a hard interrupt overflow. The overflow mark is the interrupting-device program address. Clear this
-mark by: ~0 int' c!~
-
-The higher byte, if non-zero, indicates having the soft interrupts inhibited.
++ int' ( -- addr ) "soft interrupts apostrophe" :: Returns the address of a system variable where the lower byte, if non zero, indicates occurance of a hard interrupt overflow. The overflow mark is
+     the interrupting-device program address. Clear this mark by: ~0 int' c!~. The higher byte, if non-zero, indicates having the soft interrupts inhibited.
 
 ** Compatibility
 
-As by default soft interrupts are enabled existing code should not be impacted. ISRs should be regular Forth colon definitions!
+As by default soft interrupts are enabled, existing code should not be impacted. ISRs should be regular Forth colon definitions!
 
 ** Limitation
 
@@ -51,4 +47,22 @@ It is recommended to turn interrupts off (~int-~) when compiling new code.
 
 * WLSCOPE
 
-The Word List Scope mechanism was already accepted by HQ. What remains is to explain it better, promote its use and, of-course, fix MARKER which does not preserve wordlist order.
+The Word List Scope mechanism was already accepted by HQ. What remains is to explain it better and promote its use. 
+
+* Other useful new words
+
++ @C :: [ASM] Like C@ but reads the byte as a signed 8 bit integer (i.e., extends sign).
+
++ CINVERT :: [ASM] Complements a single byte.
+
++ REVERSE ( X1 .. Xn n -- Xn .. X1 n ) :: [FORTH] This word found use in MARKER bugfixing.
+
++ U2/ :: [ASM] Unsigned divide by two.
+
++ CELL- :: [ASM] Cell size address subtraction.
+
+* Utilities
+
++ A distiller function :: A --log option has been added to amforth-shell.py to collect the actual code that it sends to the AmForth system.
+
++ Emacs amforth mode :: amoforth.el is a fork of gforth.el. It enforces OpenFirmware indentation rules. It would need much attention to reach full usefulness.

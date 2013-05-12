@@ -49,17 +49,19 @@ It is recommended to turn interrupts off (~int-~) when compiling new code.
 
 The Word List Scope mechanism was already accepted by HQ. What remains is to explain it better and promote its use. 
 
-* Other useful new words
+* Useful new words
 
 + @C :: [ASM] Like C@ but reads the byte as a signed 8 bit integer (i.e., extends sign).
 
 + CINVERT :: [ASM] Complements a single byte.
 
-+ REVERSE ( X1 .. Xn n -- Xn .. X1 n ) :: [FORTH] This word found use in MARKER bugfixing.
-
 + U2/ :: [ASM] Unsigned divide by two.
 
 + CELL- :: [ASM] Cell size address subtraction.
+
++ RDROP ( R: x -- ) :: [ASM] drop top of run-time stack.
+
++ REVERSE ( X1 .. Xn n -- Xn .. X1 n ) :: [FORTH] This word found use in MARKER bugfixing.
 
 * Utilities
 

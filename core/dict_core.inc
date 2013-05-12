@@ -32,6 +32,7 @@
 .include "words/r_from.asm"
 .include "words/to_r.asm"
 .include "words/r_fetch.asm"
+.include "words/rdrop.asm"
 
 ;;;;;;;;;;;;;;;;;;;;;;;;
 .include "words/notequal.asm"

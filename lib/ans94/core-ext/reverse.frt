@@ -1,3 +1,4 @@
+\ LIFO made FIFO
 \ ( X1 .. Xn n -- Xn .. X1 n )
 : reverse
    >r

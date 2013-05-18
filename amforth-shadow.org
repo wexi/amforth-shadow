@@ -9,10 +9,6 @@
 This is a sandbox for AmForth development that is maintained by an experienced embedded programmer, yet a novice in Forth. It is hoped that the new ideas that are presented here would soon be adopted
 by [[http://amforth.sourceforge.net/][AmForth HQ]].
 
-* Important bugfixes
-
-+ MARKER maintains wordlist order. Patch submitted to HQ.
-
 * Soft Interrupt Service
 
 One of AmForth features is the ability to write Interrupt Service Routines (ISR), aka Interrupt Handlers, in Forth. However, in the current implementation (SVN r1430) those ISRs should run with the
@@ -59,12 +55,12 @@ The Word List Scope mechanism was already accepted by HQ. What remains is to exp
 
 + CELL- :: [ASM] Cell size address subtraction.
 
-+ RDROP ( R: x -- ) :: [ASM] drop top of run-time stack.
++ RDROP ( R: x -- ) :: [ASM] Drop top of run-time stack.
 
-+ REVERSE ( X1 .. Xn n -- Xn .. X1 n ) :: [FORTH] This word found use in MARKER bugfixing.
++ REVERSE ( X1 .. Xn n -- Xn .. X1 n ) :: [FORTH] LIFO made FIFO.
 
 * Utilities
 
-+ A distiller function :: A --log option has been added to amforth-shell.py to collect the actual code that it sends to the AmForth system.
++ A distiller function :: --log option was added to amforth-shell.py to collect the actual code that it sends to the AmForth system.
 
 + Emacs amforth mode :: amoforth.el is a fork of gforth.el. It enforces OpenFirmware indentation rules. It would need much attention to reach full usefulness.

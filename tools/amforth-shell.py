@@ -83,7 +83,9 @@
 # include:
 #
 #   #include <file>
+#   #install <file>
 #       Upload the file named by <file> before proceeding further.
+#       Note, #include-once is an option affecting #include only.
 #
 #   #cd <dir>
 #       Change the current local directory to the location specified.
@@ -379,13 +381,13 @@ class AMForth(object):
 
     amforth_error_cre = re.compile(" \?\? -\d+ \d+ \r\n> $")
     upload_directives = [
-        "#cd", "#include", "#directive", "#include-once", "#ignore-error",
+        "#cd", "#include", "#install", "#directive", "#include-once", "#ignore-error",
         "#ignore-error-next", "#error-on-output", "#expect-output-next",
         "#string-start-word", "#quote-char-word",
         "#timeout", "#timeout-next", "#interact", "#exit"
         ]
     interact_directives = [
-        "#cd", "#edit", "#include", "#directive", "#include-once", "#ignore-error",
+        "#cd", "#edit", "#include", "#install", "#directive", "#include-once", "#ignore-error",
         "#error-on-output", "#string-start-word", "#quote-char-word",
         "#timeout", "#timeout-next", "#update-words", "#exit", 
         "#update-cpu", "#update-files"
@@ -570,7 +572,7 @@ class AMForth(object):
                 if fn == "-":
                     self.interact()
                 else:
-                    self.upload_file(fn)
+                    self.upload_file(fn, install=True)
             if interact:
                 self.interact()
         except AMForthException:
@@ -709,8 +711,8 @@ additional definitions (e.g. register names)
             # Restore the current timeout
             self._serialconn.timeout = self._config.current_behavior.timeout
 
-    def upload_file(self, filename):
-        if self._config.current_behavior.include_once and filename in self._uploaded:
+    def upload_file(self, filename, install=False):
+        if not install and self._config.current_behavior.include_once and filename in self._uploaded:
             return False
         else:
             self._uploaded.add(filename)
@@ -959,9 +961,9 @@ additional definitions (e.g. register names)
         return result
 
     def handle_common_directives(self, directive, directive_arg):
-        if directive == "#include":
+        if directive == "#include" or directive == "#install":
             fn = directive_arg.strip()
-            if self.upload_file(fn):
+            if self.upload_file(fn, directive == "#install"):
                 resume_fn = self._config.current_behavior.filename
                 if resume_fn:
                     self.progress_callback("File", None, resume_fn + " (resumed)")

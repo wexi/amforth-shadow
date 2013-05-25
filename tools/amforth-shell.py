@@ -82,10 +82,12 @@
 # the only contents of a line or they will be ignored.  The directives
 # include:
 #
-#   #include <file>
 #   #install <file>
-#       Upload the file named by <file> before proceeding further.
-#       Note, #include-once is an option affecting #include only.
+#       Upload the named <file> before proceeding further.
+# 
+#   #include <file>
+#       Upload the named <file> before proceeding further.
+#       Skip if <file> was already uploaded in this session.
 #
 #   #cd <dir>
 #       Change the current local directory to the location specified.
@@ -131,11 +133,6 @@
 #       the next line is sent to the interpreter.  If this directive
 #       is encountered as the very last line of an upload file it will
 #       have no effect.
-#
-#   #include-once [<yes-or-no>]
-#       Controls whether to upload an already uploaded file.
-#       The default behavior is "no" unless the shell is launched
-#       with the --include-once option.
 #
 #   #error-on-output [<yes-or-no>]
 #       Controls whether an error is generated if unexpected output
@@ -274,7 +271,6 @@ class Behaviors(object):
         self.timeout = 15.0
         self.quote_char_words = ["[char]", "char"]
         self.start_string_words = ['s"', '."', 'abort"']
-        self.include_once = False
         self.error_on_output = True
         self.ignore_errors = False
         self.directive_uncommented = True
@@ -381,13 +377,13 @@ class AMForth(object):
 
     amforth_error_cre = re.compile(" \?\? -\d+ \d+ \r\n> $")
     upload_directives = [
-        "#cd", "#include", "#install", "#directive", "#include-once", "#ignore-error",
+        "#cd", "#install", "#include", "#directive", "#ignore-error",
         "#ignore-error-next", "#error-on-output", "#expect-output-next",
         "#string-start-word", "#quote-char-word",
         "#timeout", "#timeout-next", "#interact", "#exit"
         ]
     interact_directives = [
-        "#cd", "#edit", "#include", "#install", "#directive", "#include-once", "#ignore-error",
+        "#cd", "#edit", "#install", "#include", "#directive", "#ignore-error",
         "#error-on-output", "#string-start-word", "#quote-char-word",
         "#timeout", "#timeout-next", "#update-words", "#exit", 
         "#update-cpu", "#update-files"
@@ -624,8 +620,6 @@ additional definitions (e.g. register names)
         parser.add_argument("--editor", action="store",
             default = os.environ.get("EDITOR", None),
             help="Editor to use for #edit directive")
-        parser.add_argument("--include-once", action="store_true",
-            help="Skip #include if file already uploaded")
         parser.add_argument("--no-error-on-output", action="store_true",
             help="Indicate an error if upload causes output")
         parser.add_argument("--ignore-error", action="store_true",
@@ -641,7 +635,6 @@ additional definitions (e.g. register names)
         self._log = arg.log
         self.editor = arg.editor
         behavior = self._config.current_behavior
-        behavior.include_once = arg.include_once
         behavior.error_on_output = not arg.no_error_on_output
         behavior.directive_config = arg.directive
         behavior.timeout = arg.timeout
@@ -712,7 +705,7 @@ additional definitions (e.g. register names)
             self._serialconn.timeout = self._config.current_behavior.timeout
 
     def upload_file(self, filename, install=False):
-        if not install and self._config.current_behavior.include_once and filename in self._uploaded:
+        if not install and filename in self._uploaded:
             return False
         else:
             self._uploaded.add(filename)
@@ -993,10 +986,6 @@ additional definitions (e.g. register names)
             behavior = copy.deepcopy(self._config.current_behavior)
             behavior.timeout = timeout
             self._config.next_line_behavior = behavior
-        elif directive == "#include-once":
-            v = self._yes_or_no_arg(directive_arg)
-            behavior = self._config.current_file_behavior
-            behavior.include_once = v
         elif directive == "#ignore-error":
             v = self._yes_or_no_arg(directive_arg)
             self._config.current_file_behavior.ignore_errors = v

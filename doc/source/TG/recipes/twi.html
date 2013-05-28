@@ -1,0 +1,41 @@
+Here you can determine the SCL Clock speed for various settings. Just enter your
+parameters. You need to enable JavaScript.
+
+ <script Language="JavaScript">
+ <!--
+ function compute(form) {
+    fcpu=8000000;
+    br=10;
+    ps=0;
+    if (form.fcpu.value!=""){fcpu=(eval(form.fcpu.value));}
+    if (form.br.value!=""){br=(eval(form.br.value));}
+    if (form.ps.value!=""){ps=(eval(form.ps.value));}
+    scl=fcpu/(16+2*br*Math.pow(4,ps));
+    scl = scl.toFixed(0);
+    form.scl.value=scl;
+    d=document.getElementById("forth");
+    d.innerHTML="<pre>\\ at CPU " +fcpu+" Hz run the I2C clock at " + scl +" Hz\n"+ps+" " + br + " twi.init</pre>";
+  }// -->
+ </script>
+ <form name="TWI">
+ <table border=1><tr>
+ <tr><td>F_CPU (Hz)</td><td><input type="text" name="fcpu" size=15 value="8000000" onchange="compute(this.form)"></td></tr>
+ <tr><td>Bitrate Register (0..255)</td><td><input type="text" name="br" size=15 value="10" onchange="compute(this.form)"></td></tr>
+ <tr><td>Prescaler</td><td align=center>
+      <select name="ps" onChange="compute(this.form)">
+                                          <option value="0">0
+                                          <option value="1">1
+					  <option value="2">2
+					  <option value="3">3
+                                          </select></td></tr>
+ </table>
+ <hr>
+ <table border=1><tr>
+ <tr>
+    <td> SCL Frequency (Hz) </td><td> <input type="text" name="scl"   size=15></td>
+ </tr>
+ <tr>
+    <td> Forth Code</td><td><div id="forth"></div></td>
+ </tr>
+ </table>
+ </form></p>

@@ -1,0 +1,463 @@
+#!/usr/bin/perl
+use strict;
+
+my %XT;
+my %VOC;
+my %ASM;
+my %USEDBY;
+my %DESCRIPTION;
+my %STACK;
+my %DSTACK;
+my %RSTACK;
+
+my $htmldir="../doc/website/htdocs/words";
+my $asmdir="../core/words";
+
+sub readASM {
+    my ($filename) = @_;
+    open(ASM, $filename) or die ("$filename: $!\n");
+    my @ASM = <ASM>;
+    close(ASM);
+    my $ASM = "";
+    my ($lbl, $state, $voc, $xt, $stack, $dstack, $rstack, $cstack,$category);
+    my ($prevline1, $prevline2, $prevline3, $description) = ("","","", "");
+    foreach my $line (@ASM) {
+	$line =~ s/_VE_HEAD/VE_HEAD/;
+	$ASM .= $line;
+	if($line=~/^VE_(.*):/) {
+	    $ASM = "";
+	    $lbl = "XT_$1";
+	    $state = "new_header_found";
+	    $voc   = "(unnamed)";
+	    $category = "unclassified";
+	    $dstack = "( -- )";
+	    $dstack = "($1)" if $prevline3=~/\([S]?:?([^\)]+)/;
+	    $rstack = "";
+	    $rstack = "(R: $1)" if $prevline3=~/R:\s+(.+)\)/;
+	    $cstack = "";
+	    $cstack = "(C: $1)" if $prevline3=~/C:\s+(.+)\)/;
+            $description = $1 if $prevline1=~/^;(.*)/;
+	    if( $prevline2=~/;(.+)$/) {
+	        $category = $1;
+	    }
+	    $stack = "$dstack\n$rstack\n$cstack";
+	}
+	if($line=~/^;VE_(.*):/) {
+	    # start a new definition
+	    $ASM = "";
+	    $lbl = "XT_$1";
+	    $state = "new_header_found";
+	    $voc   = "(hidden)";
+	    $dstack = "( -- )";
+	    $dstack = "($1)" if $prevline3=~/\([S]?:?([^\)]+)/;
+	    $rstack = "";
+	    $rstack = "(R: $1)" if $prevline3=~/R:\s+(.+)\)/;
+	    $cstack = "";
+	    $cstack = "(C: $1)" if $prevline3=~/C:\s+(.+)\)/;
+            $description = $1 if $prevline1=~/^;(.*)/;
+	    if( $prevline2=~/;(.+)$/) {
+	        $category = $1;
+	    }
+	    $category = "internal/hidden";
+	    $stack = "$dstack\n$rstack\n$cstack";
+	    next;
+	}
+	if($state =~ /new_header_found/ && $line=~/.db\s*"(.*)"/) {
+		#$voc .= chr(hex($1)) if $v=~/\$([\da-fA-F]+)/;
+		$voc = $1;
+        print $voc;
+	    $state = "vocabulary entry found";
+	    $STACK{$lbl} = $stack;
+	    next;
+	}
+	if($line=~/^XT_(.*)/){
+	    $state = "xt_found";
+	    next;
+	}
+	if($state=~/xt_found/ && $line=~/.dw\s+(\w+)/) {
+	    $xt = $1;
+	    $state = "header_complete";
+	    next;
+	}
+	if($state =~ /header_complete/) {
+	    $DSTACK{$lbl} = $dstack;
+	    $RSTACK{$lbl} = $rstack;
+
+	    $XT{"$lbl"} = $xt;
+	    $VOC{"$lbl"} = $voc;
+            $DESCRIPTION{$lbl} = $description;
+	    $state = "parsing_body";
+	    next;
+	}
+        $prevline3 = $prevline2;
+        $prevline2 = $prevline1;
+        $prevline1 = $line;
+
+	if($state =~ /parsing_body/) {
+	    $ASM{$lbl} = $ASM if $ASM=~/\w/;
+	}
+    }
+}
+
+sub used_by {
+    foreach my $lbl (keys %XT) {
+	my $xt  = $XT{$lbl};
+	my $voc = $VOC{$lbl};
+	my $ASM = $ASM{$lbl};
+	my $shortlbl = substr($lbl, 3);
+	my @occ = ();
+	if($xt=~/PFA_$shortlbl/) {
+	    # print  "coded in assembly";
+	} elsif($xt=~/PFA_DOVARIABLE/) {
+	    # print "is a variable";
+	} elsif($xt=~/PFA_DOVALUE/) {
+	    # print "is a value";
+	} elsif($xt=~/PFA_DODEFER/) {
+	    # print "is a defer";
+	} elsif($xt=~/PFA_DOUSER/) {
+	    # print "   USER VARIABLE";
+	} elsif($xt=~/DO_COLON/) {
+	    foreach my $line (split /\n/, $ASM) {
+		next unless $line=~/(\s+)\.dw\s+(\S*)\s*.*/;
+		my ($curvoc, $curxt);
+		next unless $line=~/\.dw XT_(\S*)/;
+		my $curxt = "XT_".$1;
+		$USEDBY{$curxt}{$lbl} = 1;
+	    }
+	} else {
+	    print "  used by UNKNOWN TYPE: $xt $voc $ASM\n";
+	}
+    }
+
+}
+
+sub format_xt {
+    my ($xt,  $indent) = @_;
+    my $voc = $xt;
+    $xt = uc $xt;
+    $xt = "XT_${xt}" unless $xt=~/^XT_/;
+    if( defined $VOC{$xt} ) {
+	chomp($voc);
+	$voc = $VOC{$xt};
+	$voc =~ s/>/&gt;/g;
+	$voc =~ s/</&lt;/g;
+	$voc =  "&nbsp;" x $indent . " <a href=\"$xt.html\">$voc</a> ";
+    }
+    return $voc;
+}
+
+sub html_head {
+    my ($title) = @_;
+    return "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">
+<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\">
+<head>
+<title>amforth: Words $title</title>
+<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"/>
+<link href=\"/amforth.css\" rel=\"stylesheet\" type=\"text/css\"/>
+<!-- Piwik -->
+<script type=\"text/javascript\">
+var pkBaseURL = ((\"https:\" == document.location.protocol) ? \"https://sourceforge.net/apps/piwik/amforth/\" : \"http://sourceforge.net/apps/piwik/amforth/\");
+document.write(unescape(\"%3Cscript src='\" + pkBaseURL + \"piwik.js' type='text/javascript'%3E%3C/script%3E\"));
+</script><script type=\"text/javascript\">
+try {
+var piwikTracker = Piwik.getTracker(pkBaseURL + \"piwik.php\", 1);
+piwikTracker.trackPageView();
+piwikTracker.enableLinkTracking();
+} catch( err ) {}
+</script><noscript><p><img src=\"http://sourceforge.net/apps/piwik/amforth/piwik.php?idsite=1\" style=\"border:0\" alt=\"\"/></p></noscript>
+<!-- End Piwik Tag -->
+</head>
+<body>
+
+<div id=\"page_margins\">
+	<div id=\"page\">
+		<div id=\"header\" role=\"banner\">
+			<h1>amforth word $title</h1>
+		</div>
+	<!-- begin: main navigation #nav -->
+	<div id=\"nav\" role=\"navigation\">
+    	    <div class=\"hlist\">
+    	    <ul>
+					<li><a href=\"/\">Home</a></li>
+					<li><a href=\"/faq.html\">FAQ</a></li>
+					<li><a href=\"/recipes/index.html\">Recipes</a></li>
+					<li><a href=\"/links.html\">Links</a></li>
+					<li id=\"current\"><a href=\"/words/index.html\">Words</a></li>
+					<li><a href=\"http://sourceforge.net/projects/amforth\">Download</a></li>
+				</ul>
+			</div>
+		</div>
+		<!-- end: main navigation -->
+		<!-- begin: main content area #main -->
+		<div id=\"main\">
+			<!-- begin: #col1 static column -->
+			<div id=\"col1\">
+				<div id=\"col1_content\" class=\"clearfix\">
+				</div>
+				<div id=\"ie_clearing\">&nbsp;</div>
+				<!-- End: IE Column Clearing -->
+			</div>
+			<!-- end: #col1 -->
+
+			<!-- begin: #col2 static column -->
+			<div id=\"col2\">
+				<div id=\"col2_content\" class=\"clearfix\">
+				    <p></p>
+				</div>
+				<div id=\"ie_clearing\">&nbsp;</div>
+				<!-- End: IE Column Clearing -->
+			</div>
+			<!-- end: #col2 -->
+
+			<!-- begin: #col1 - first float column -->
+			<div id=\"col3\">
+				<div id=\"col3_content\" class=\"clearfix\"> <a id=\"content\" name=\"content\"></a>
+					<!-- skiplink anchor: Content -->
+
+    ";
+}
+
+sub html_foot {
+    return "
+
+				<div id=\"ie_clearing\">&nbsp;</div>
+				<!-- End: IE Column Clearing -->
+				</div>
+			</div>
+			<!-- end: #col3 -->
+		</div>
+		<!-- end: #main -->
+		<!-- begin: #footer -->
+		<div id=\"footer\">
+ <p>Hosted by <a 
+    href=\"http://sourceforge.net/projects/amforth\">
+    <img src=\"http://sflogo.sourceforge.net/sflogo.php?group_id=179967&type=10\" 
+    width=\"80\" height=\"15\" border=\"0\" 
+    alt=\"Get amforth: Forth for AVR ATmega at SourceForge.net. Fast, secure and Free Open Source software downloads\" />
+    </a>
+<br />
+Layout based on <a href=\"http://www.yaml.de/\">YAML</a></div>
+		<!-- end: #footer -->
+	</div>
+</div>
+</body>
+</html>
+    "
+}
+
+
+
+sub printHTML {
+    my @PRIMITIVES = ();
+    my @VARIABLES = ();
+    my @VALUES    = ();
+    my @USERVARS  = ();
+    my @COLONS    = ();
+    my @DEFERS    = ();
+    
+    foreach my $lbl (keys %XT) {
+	my $xt  = $XT{$lbl};
+	my $voc = $VOC{$lbl};
+	my $ASM = $ASM{$lbl};
+	my $shortlbl = substr($lbl, 3);
+	#print "$lbl $voc $xt $shortlbl";
+	open(HTML, ">$htmldir/$lbl.html");
+	print HTML html_head($voc);
+	print HTML "<h1>$voc</h1>\n";
+        print HTML "<p>$DESCRIPTION{$lbl}</p>\n";
+	print HTML "<h2>Stackeffects</h2>\n";
+	foreach my $s (split /\n/, $STACK{$lbl}) {
+	    $s =~ s/;//g; $s=~ s/</&lt;/g;
+	    print HTML "$s\n<br>" unless $s=~/ \s*$/;
+	}
+	print HTML "<h2>Definition</h2>\n";
+	if($xt=~/PFA_$shortlbl/) {
+	    print HTML "coded in assembler";
+	    push @PRIMITIVES, $lbl;
+	} elsif($xt=~/PFA_DOVARIABLE/) {
+	    print HTML "<pre>
+		variable $voc
+</pre>";
+	    push @VARIABLES, $lbl;
+	} elsif($xt=~/PFA_DOVALUE/) {
+	    my $offset = 0;
+	    if ($ASM=~/\.dw\s+(\w+)/m) {
+		$offset = $1;
+	    }
+	    print HTML "<pre>
+		value $voc
+</pre>";
+	    push @VALUES, $lbl;
+	} elsif($xt=~/PFA_DODEFER/) {
+	    my $offset = 0;
+	    if ($ASM=~/\.dw\s+(\d+)/) {
+		$offset = $1;
+	    }
+	    print HTML "<pre>
+		( $offset ) defer $voc
+</pre>";
+	    push @DEFERS, $lbl;
+	} elsif($xt=~/PFA_DOUSER/) {
+	    # print "   USER VARIABLE";
+	    my $offset = 0;
+	    if ($ASM=~/\.dw\s+(\d+)/) {
+		$offset = $1;
+	    }
+	    print HTML "<pre>
+		$offset user $voc
+</pre>";
+	    push @USERVARS, $lbl;
+	} elsif($xt=~/DO_COLON/) {
+	    my $state = "normal";
+	    my $indent = 2;
+	    push @COLONS, $lbl;
+	    print HTML "<code>\n: $voc<br>\n";
+	    my @lines = split /\n/, $ASM;
+	    my $curlin = 0;
+	    foreach my $line (@lines) {
+		last if $curlin++ == $#lines;
+		print HTML "\n<br>$line\n<br>" if $line=~/^PFA_.*\d:/;
+		next unless $line=~/(\s+)\.d[wb]\s+(.*)\s*.*/;
+		my $number = $2;
+		my $cindent = length($1);
+		my ($curvoc, $curxt);
+		if($state =~/print_number/) {
+		    $number = format_xt($number) if $number=~/XT_/;
+		    print HTML  format_xt("doliteral") . $number;
+		    $state = "normal";
+		    next;
+		}
+
+		if($state =~/print_compile (.*)/) {
+		    print HTML "\n<br>" .format_xt($1) . "\n<br>";
+		    $state = "normal";
+		    next;
+		}
+
+		if($state =~/print_string/) {
+		    $number = format_xt($number) if $number=~/XT_/;
+		    print HTML  format_xt("sliteral") . $number;
+		    $state = "normal";
+		    next;
+		}
+		if($state =~ /print_jump (.*)/) {
+		    print HTML "\n<br>" .format_xt($1) . $number . "\n<br>";
+		    $state = "normal";
+		    next;
+		}
+		next unless $line=~/\.dw XT_(\S*)/;
+		my $curxt = "XT_".$1;
+		if($curxt=~/XT_DOLITERAL/) {
+		    $state = "print_number";
+		    next;
+		}
+		if($curxt=~/XT_COMPILE/) {
+		    $state = "print_compile $curxt";
+		}
+		if($curxt=~/XT_SLITERAL/) {
+		    $state = "print_string";
+		    next;
+		}
+		if($curxt=~/XT_DO.*BRANCH/) {
+		    $state = "print_jump $curxt";
+		    next;
+		}
+
+		if($curxt=~/XT_DO.*LOOP/) {
+		    $state = "print_jump $curxt";
+		    next;
+		}
+
+		print HTML format_xt($curxt, $indent);
+	    }
+	    print HTML "\n<br>;\n</code>";
+	} else {
+	    print "     UNKNOWN TYPE: '$xt' $voc $ASM\n";
+	}
+	print HTML "<h2>Used by</h2>\n";
+	foreach my $xt (sort keys %{$USEDBY{$lbl}} ) {
+	    print $xt;
+	    print HTML format_xt($xt);
+	}
+	print HTML html_foot;
+	close(HTML);
+	# print "\n";
+    }
+
+    open(INDEX, ">$htmldir/index.html");
+    print INDEX html_head("Words");
+
+    print INDEX "<h1>Colon words</h1>";
+    open(HTML, ">$htmldir/colons.html");
+    print HTML html_head("Colon Words");
+    foreach my $variable (sort @COLONS) {
+	print HTML format_xt($variable)."\n";
+	print INDEX format_xt($variable) ."\n";
+    }
+    print HTML html_foot;
+    close(HTML);
+
+    print INDEX "<h1>Variables or Constants</h1>";
+    open(HTML, ">$htmldir/variables.html");
+    print HTML html_head("Variables");
+    foreach my $variable (sort @VARIABLES) {
+	print HTML format_xt($variable)."\n";
+	print INDEX format_xt($variable)."\n";
+    }
+
+    print INDEX "<h1>Values</h1>";
+    open(HTML, ">$htmldir/values.html");
+    print HTML html_head("Values");
+    foreach my $value (sort @VALUES) {
+	print HTML format_xt($value)."\n";
+	print INDEX format_xt($value)."\n";
+    }
+
+    print HTML html_foot;
+    close(HTML);
+
+    print INDEX "<h1>User Variables</h1>";
+    open(HTML, ">$htmldir/uservariables.html");
+    print HTML html_head("User Variables");
+    foreach my $variable (sort @USERVARS) {
+	print HTML format_xt($variable)."\n";
+	print INDEX format_xt($variable)."\n";
+    }
+    print HTML html_foot;
+    close(HTML);
+
+    print INDEX "<h1>Defered Words</h1>";
+    open(HTML, ">$htmldir/defer.html");
+    print HTML html_head("Defered Words");
+    foreach my $variable (sort @DEFERS) {
+	print HTML format_xt($variable)."\n";
+	print INDEX format_xt($variable) ."\n";
+    }
+    print HTML html_foot;
+    close(HTML);
+
+    print INDEX "<h1>Primitivs</h1>";
+    open(HTML, ">$htmldir/primitives.html");
+    print HTML html_head("Primitives");
+    foreach my $variable (sort @PRIMITIVES) {
+	print HTML format_xt($variable)."\n";
+	print INDEX format_xt($variable)."\n";
+    }
+    print HTML html_foot;
+    close(HTML);
+
+    print INDEX html_foot;
+    close(INDEX);
+}
+
+opendir(CWD, $asmdir);
+foreach (reverse sort readdir(CWD)) {
+        next unless -f "$asmdir/$_";
+        next unless /(.*).asm$/;
+        my $basename = "$asmdir/$_";
+        readASM($basename);
+}
+print "\n";
+used_by();
+printHTML();
+print "\n";

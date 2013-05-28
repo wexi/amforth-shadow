@@ -1,0 +1,35 @@
+<project name="pollins-32-8" basedir="." default="Help">
+    <target name="p32-8.asm">
+        <copy tofile="p32-8.asm" file="pollin.asm" overwrite="true">
+          <filterset>
+            <filter token="F_CPU" value="8000000"/>
+            <filter token="USART" value=""/>
+          </filterset>
+        </copy>
+    </target>
+    
+    <target name="p32-8.hex" depends="p32-8.asm" description="Hexfiles for p32-8">
+        <avrasm2 projectname="p32-8" mcu="atmega32"/>
+        <delete file="p32-8.asm"/>
+    </target>
+
+    <target name="p32-8" depends="p32-8.hex" description="Atmega32 @ 8 MHz">
+        <echo>Uploading Hexfiles for p32-8</echo>
+        <avrdude 
+		    type="stk200"
+		    mcu="atmega32"
+		    flashfile="p32-8.hex"
+		    eepromfile="p32-8.eep.hex"
+		/>
+    </target>
+    <target name="p32-8.fuses" description="Set fuses for P32-8">
+	<echo>Writing fuses</echo>
+	<avrdude-2fuses
+		    type="${programmer}"
+		    mcu="${mcu}"
+		    hfuse="0x99"
+		    lfuse="0xff"
+	/>
+    </target>
+
+</project>

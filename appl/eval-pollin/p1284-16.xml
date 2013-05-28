@@ -1,0 +1,36 @@
+<project name="pollins-1284-16" basedir="." default="Help">
+    <target name="p1284-16.asm">
+        <copy tofile="p1284-16.asm" file="pollin.asm" overwrite="true">
+          <filterset>
+            <filter token="F_CPU" value="16000000"/>
+            <filter token="USART" value="_0"/>
+          </filterset>
+        </copy>
+    </target>
+    
+    <target name="p1284-16.hex" depends="p1284-16.asm" description="Hexfiles for p1284-16">
+        <avrasm2 projectname="p1284-16" mcu="atmega1284p"/>
+        <delete file="p1284-16.asm"/>
+    </target>
+
+    <target name="p1284-16" depends="p1284-16.hex" description="Atmega1284 @ 16 MHz">
+        <echo>Uploading Hexfiles for p1284 - 16</echo>
+        <avrdude 
+		    type="stk200"
+		    mcu="atmega1284p"
+		    flashfile="p1284-16.hex"
+		    eepromfile="p1284-16.eep.hex"
+		/>
+    </target>
+    <target name="p1284-16.fuses" description="Set fuses for P16-8">
+	<echo>Writing fuses</echo>
+	<avrdude-3fuses
+		    type="${programmer}"
+		    mcu="${mcu}"
+		    efuse="0xff"
+		    hfuse="0x99"
+		    lfuse="0xc6"
+	/>
+    </target>
+
+</project>

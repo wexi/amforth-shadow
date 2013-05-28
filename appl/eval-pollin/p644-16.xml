@@ -1,0 +1,27 @@
+<project name="pollins-644-16" basedir="." default="Help">
+
+    <target name="p644-16.asm">
+        <copy tofile="p644-16.asm" file="pollin.asm" overwrite="true">
+          <filterset>
+            <filter token="F_CPU" value="16000000"/>
+            <filter token="USART" value="_0"/>
+          </filterset>
+        </copy>
+    </target>
+
+    <target name="p644-16.hex" depends="p644-16.asm" description="Hexfiles for p644-16">
+        <avrasm2 projectname="p644-16" mcu="atmega644"/>
+        <delete file="p644-16.asm"/>
+    </target>
+
+    <target name="p644-16" depends="p644-16.hex" description="Atmega644 @ 16 MHz">
+        <echo>Uploading Hexfiles for p644 - 16</echo>
+        <avrdude 
+		    type="mysmartusb"
+		    mcu="atmega644"
+		    flashfile="p644-16.hex"
+		    eepromfile="p644-16.eep.hex"
+		/>
+    </target>
+
+</project>

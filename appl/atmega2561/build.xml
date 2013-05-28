@@ -1,0 +1,21 @@
+<!-- make multiple targets with antelope -->
+<project name="Atmega256" basedir="." default="Help">
+
+    <import file="../avr-build.xml"/>
+    <target name="atmega256.hex" description="Hexfiles for AVR atmega256">
+        <avrasm2 projectname="atmega256" mcu="atmega2561"/>
+    </target>
+
+    <target name="atmega256" depends="atmega256.hex" description="AVR atmega256: Atmega2561 @ 14.7456 MHz">
+        <echo>Uploading Hexfiles for AVR atmega256</echo>
+        <avrdude 
+		    type="dragon"
+		    mcu="m2561"
+		    flashfile="atmega256.hex"
+		    eepromfile="atmega256.eep.hex"
+		/>
+    </target>
+    <target name="compile" depends="atmega256.hex">
+    </target>
+
+</project>

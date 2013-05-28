@@ -1,0 +1,202 @@
+#!/usr/bin/perl -w
+
+# pd2amforth: Read all XML files in the
+# current directory, assume they are
+# Atmel Atmega Partdescription files
+# and produce device files for assembler
+# and amforth. The generated files may
+# need some further corrections however
+
+use strict;
+
+my $PDDIR="../Atmel/Partdescriptionfiles/";
+# $PDDIR="local/";
+
+sub min {
+  my ($a, $b) = @_;
+  return $a if $a<$b;
+  return $b;
+}
+
+sub fmt_str {
+    my ($str, $format) = @_;
+    my $result;
+    my $len = sprintf("$format", length $str);
+    $result  = ".dw $len\n";
+    $result .= "\t.db \"$str\"";
+    $result .= ",0" if length($str)%2;
+    return $result;
+}
+
+sub readXML ($) {
+    my ($basename) = @_;
+    my ($timestamp, $number, $label, %regs, $partname, $defname);
+    my ($start, $ramsize, $esize, $ivecsize, $fsize, $mcustring, $coreversion, $pclen);
+    my ($numberusarts, %usartregs);
+    my ($firstentry) = (1);
+    use XML::LibXML;
+    my $parser = new XML::LibXML;
+    my $doc = $parser->parse_file ("$PDDIR/$basename");
+    $basename = lc $basename;
+
+    $basename =~ s/\.xml$//;
+    $basename =~ s/\.gz$//;
+    $fsize = $doc->getElementsByTagName("MEMORY")->item(0)->getElementsByTagName("PROG_FLASH");
+    $esize = $doc->getElementsByTagName("MEMORY")->item(0)->getElementsByTagName("EEPROM");    
+    return unless int($fsize)>8000;
+    my $admin = $doc -> getElementsByTagName("ADMIN") -> item(0);
+    $partname = $admin -> getElementsByTagName("PART_NAME");
+    $defname = "unknown";
+    $defname = "m$1def.inc" if $partname=~/ATmega(.*)/;
+    $defname = "usb$1def.inc" if $partname=~/AT90USB(.*)/;
+    $defname = "can$1def.inc" if $partname=~/AT90CAN(.*)/;
+    $defname = "pwm$1def.inc" if $partname=~/AT90PWM(.*)/;
+    $defname = "unknown" if $defname=~/comp/;
+    return if $defname=~/unknown/;
+
+    mkdir $basename unless -d $basename;
+
+    open(FRT, ">$basename/$basename.frt") or die "$basename: $!\n";
+    open(ASM, ">$basename/device.asm") or die "$basename: $!\n";
+    open(PY, ">$basename/device.py") or die "$basename: $!\n";
+    open(INC, ">$basename/device.inc") or die "$basename: $!\n";
+    
+    print FRT "\\ Partname: $partname\n";
+    print FRT "\\ Built using part description XML file version " . $admin -> getElementsByTagName("BUILD")."\n";
+    print FRT "\\ generated automatically\n\nhex\n";    
+    print ASM "; Partname:  $partname\n";
+    print ASM "; Built using part description XML file version " . $admin -> getElementsByTagName("BUILD")."\n";
+    print ASM "; generated automatically, do not edit\n";    
+    print INC "; Partname:  " . $admin -> getElementsByTagName("PART_NAME") ."\n";
+    print INC "; Built using part description XML file version " . $admin -> getElementsByTagName("BUILD")."\n";
+    print INC "; generated automatically, no not edit\n";
+    print PY "# Partname: $partname\n# Built using part description XML file version " . $admin -> getElementsByTagName("BUILD")."\n";
+    print PY "# generated automatically, do not edit\n";
+    print PY "MCUREGS = {";
+    print ASM "\n.nolist\n\t.include \"$defname\"\n.list\n\n";    
+    
+    $start = $doc->getElementsByTagName("MEMORY")->item(0)->getElementsByTagName("INT_SRAM")->item(0)->getChildrenByTagName("START_ADDR");
+    $ramsize = $doc->getElementsByTagName("MEMORY")->item(0)->getElementsByTagName("INT_SRAM")->item(0)->getChildrenByTagName("SIZE");
+
+    print ASM ".equ ramstart =  $start\n";
+
+    print ASM ".equ CELLSIZE = 2\n";
+
+
+    print ASM ".macro readflashcell\n";
+    print ASM "\tlsl zl\n\trol zh\n\tlpm \@0, Z+\n\tlpm \@1, Z+\n" if int($fsize) <= 65536;
+    print ASM "\tclr temp7\n\tlsl zl\n\trol zh\n\trol temp7\n\tout_ RAMPZ, temp7\n\telpm \@0, Z+\n\telpm \@1, Z+\n" if int($fsize) > 65536;
+    print ASM ".endmacro\n";
+
+    print ASM ".macro writeflashcell\n";
+    print ASM "\tlsl zl\n\trol zh\n" if int($fsize) <= 65536;
+    print ASM "\tclr temp7\n\tlsl zl\n\trol zh\n\trol temp7\n\tout_ RAMPZ, temp7\n" if int($fsize) > 65536;
+    print ASM ".endmacro\n";
+    print ASM "\n; the following definitions are shortcuts for the respective forth source segments if set to 1\n";
+    foreach my $iomodule ($doc -> getElementsByTagName("IO_MODULE")) {
+
+	my $iomods = $iomodule -> getElementsByTagName("MODULE_LIST");
+	$iomods =~ s/\[//;
+	$iomods =~ s/\]//;
+	my @iomds = sort split /:/, $iomods;
+	foreach my $iomd (@iomds) {
+          my ($name, $iv, $li, $source, $descr, $collectusartregs);
+	  print FRT "\n\\ $iomd\n";
+	  print INC "\n; ********\n.if WANT_$iomd == 1\n; ********\n";
+	  $iv = $iomodule -> getElementsByTagName($iomd) ;
+	  $li = $iv->[0] -> getElementsByTagName("LIST");
+	  $descr = $iv->[0] -> getElementsByTagName("TEXT");
+	  print ASM ".set WANT_${iomd} = 0\n";
+          $li =~ s/\[//;
+	  $li =~ s/\]//;
+	  foreach my $reg ( sort split /:/, $li) {
+	     my $addr = $iv->[0] -> getElementsByTagName($reg) ->[0]->getElementsByTagName("MEM_ADDR");
+	     my $name = $iv->[0] -> getElementsByTagName($reg) ->[0]->getChildrenByTagName("DESCRIPTION");
+	     $addr =~ s/\$//;
+	     $addr =~ s/0x//;
+	     next if $regs{$addr};
+	     $regs{$addr} = 1;
+	     print FRT "$addr constant $reg\t\\ $name\n";
+	     print INC "; ( -- addr ) System Constant\n; R( -- )\n; $name";
+	     print INC "\nVE_${reg}:\n\t" . fmt_str($reg, "\$ff%02d")."\n\t.dw VE_HEAD\n\t.set VE_HEAD=VE_${reg}\n";
+	     print INC "XT_${reg}:\n\t.dw PFA_DOVARIABLE\nPFA_${reg}:\n\t.dw \$$addr\n";
+	     if($firstentry==0) { print PY ","; } else {$firstentry=0;}
+	     print PY "\n\t'${reg}': '\$$addr'";
+	  }
+
+	  print INC "\n.endif\n";
+	}
+
+    }
+    print ASM "\n";
+    print ASM "\n.ifndef SPMEN\n .equ SPMEN = SELFPRGEN\n.endif\n";
+    print ASM "\n.ifndef SPMCSR\n .equ SPMCSR = SPMCR\n.endif\n";    
+    print ASM "\n.ifndef EEPE\n .equ EEPE = EEWE\n.endif\n";    
+    print ASM "\n.ifndef EEMPE\n .equ EEMPE = EEMWE\n.endif\n";    
+    $ivecsize = "2";
+    $ivecsize = "1" if int($fsize) <= 8192; # educated guess
+    $pclen    = "2";
+    $pclen    = "3" if int($fsize) > 132000; 
+
+    print ASM ".equ intvecsize = $ivecsize ; please verify; flash size: $fsize bytes\n";
+    print ASM ".equ pclen = $pclen ; please verify\n";
+    print FRT "\n\\ Interrupts\n";
+    print ASM ".overlap\n";
+    foreach my $ivector ($doc -> getElementsByTagName("INTERRUPT_VECTOR")) {
+	$number     = $ivector -> getElementsByTagName("NMB_VECTORS");
+	print ASM ".equ INTVECTORS = $number\n";
+	foreach my $i (1 .. $number) {
+          my ($name, $iv, $addr, $source);	
+	  $iv = $ivector -> getElementsByTagName("VECTOR$i") ;
+	  next unless $iv;
+          $name = $iv->[0] -> getElementsByTagName("DEFINITION");
+	  $addr = $iv->[0] -> getElementsByTagName("PROGRAM_ADDRESS");
+	  $addr =~ s/\$//g;
+	  $addr =~ s/0x//g;
+	  next if $addr=~/^00+$/;
+	  $source = $iv->[0] -> getElementsByTagName("SOURCE");
+	  $source =~ s/ /_/g;
+	  $source =~ s/,//g;
+	  if($firstentry==0) { print PY ","; } else {$firstentry=0;}
+	  print PY  "\n\t'${source}Addr': '\$$addr'";
+          # print "$addr '$source': $name\n";
+    	  $source = "$addr  constant ${source}Addr \\ $name";
+	  print FRT "".substr($source, 0, 75)."\n"; # make sure the lines fit amforth' TIB
+	  print ASM ".org \$$addr\n\t rcall isr ; $name\n";
+
+	}
+    }
+    print ASM ".nooverlap\n";
+    print ASM "mcu_info:\n";
+    my $nrww = $doc->getElementsByTagName("NRWW_START_ADDR");
+    $nrww =~ s/\$/0x/;
+    my $maxdp = min(hex($nrww), hex('0xffff'));
+    print ASM "mcu_ramsize:\n\t.dw $ramsize\n";
+    print ASM "mcu_eepromsize:\n\t.dw $esize\n";
+    print ASM "mcu_maxdp:\n\t.dw $maxdp ; minimum of $nrww (from XML) and 0xffff\n";
+    print ASM "mcu_numints:\n\t.dw $number\n";
+    print ASM "mcu_name:\n\t". fmt_str($partname, "%2d")."\n";
+    print ASM ".set codestart=pc\n";
+
+    close(FRT);
+    print PY "\n}";
+}
+
+
+
+sub main {
+    my( $basename);
+    $|=1;
+    opendir(CWD, $PDDIR);
+    foreach (reverse sort readdir(CWD)) {
+        next if /attiny/i;
+        next if /atxmega/i;
+        next unless /(.*).xml(\.gz)?$/;
+        $basename = $_;
+        print "$basename\n";
+        readXML($basename);
+    }
+    closedir(CWD);
+}
+
+main();

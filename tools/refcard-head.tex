@@ -1,0 +1,36 @@
+\documentclass[a4paper,10pt]{scrartcl}
+\usepackage[english]{babel}
+\usepackage[utf8x]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[landscape,lmargin=5mm,rmargin=5mm,bmargin=10mm]{geometry}
+
+\usepackage{multicol,supertabular}
+\usepackage{fancyvrb}
+\columnsep=7mm
+
+\usepackage{lmodern}
+\usepackage[bookmarks]{hyperref}
+
+%\setkomafont{descriptionlabel}{fseries	tfamily}
+\def\colsa{|p{2cm}|p{4cm}|}
+\begin{document}
+\section*{AmForth *VERSION* Reference Card}
+\begin{multicols}{4}
+\section*{General}
+AmForth is a 16bit ITC forth. It is almost compatible with
+the forth standards from 1994 and 200x. It runs on the
+bare metal controller with no further dependencies. 
+The interpreter operates on whitespace delimited words.
+The compiler is a single pass compiler that writes
+directly to the flash based dictionary.
+
+There are three distinct address spaces for flash, 
+eeprom and RAM. Flash is addressed word wise (16 bits 
+per address unit), RAM  and EEPROM is accessed byte 
+wise (8bits per address unit). The standard return stack
+has 40 cells, the data stack is limited by the available
+RAM size.
+
+Numbers can be prefixed by \$ to indicate hexadecimal,
+\% for binary and \# for decimal numbers. A trailing
+dot is used for double cell numbers.

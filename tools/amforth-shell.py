@@ -86,8 +86,8 @@
 #       Upload the named <file> before proceeding further.
 # 
 #   #include <file>
-#       Upload the named <file> before proceeding further.
-#       Skip if <file> was already uploaded in this session.
+#       Like #install but would skip if <file> was already uploaded
+#       during the shell session.
 #
 #   #cd <dir>
 #       Change the current local directory to the location specified.
@@ -1149,7 +1149,7 @@ additional definitions (e.g. register names)
                             print "No file to edit"
                         continue
                     self.handle_common_directives(directive, directive_arg)
-                    if directive == "#include":
+                    if directive == "#include" or directive == "#install":
                         self._update_words()
                     continue
                 if in_comment or not line:
@@ -1246,7 +1246,7 @@ additional definitions (e.g. register names)
             while line_words and line_words[-1] == "":
                 line_words = line_words[:-1]
             if line_words:
-                if line_words[-1] in ["#include", "#edit"]:
+                if line_words[-1] in ["#install", "#include", "#edit"]:
                     self._rl_matches = [f for f in self._filedirs.keys()
                                           if f.startswith(text)]
                 elif line_words[-1] == "#cd":

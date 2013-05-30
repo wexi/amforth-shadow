@@ -87,5 +87,7 @@ As a bonus, all operations are save against overflows:
    AD ok
    >
 
-.. note:: :command:`cvalue` requires amforth version 5.1 since :command:`reveal`
-          is not available in earlier versions.
+.. note::
+
+   :command:`cvalue` requires amforth version 5.1 since :command:`reveal`
+   is not available in earlier versions.

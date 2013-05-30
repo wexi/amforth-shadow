@@ -234,7 +234,7 @@ which is equivalent to
   definion names at build time.
 * core: massivly restructured the :file:`devices/` filesystem entry. Change your application
   files to include :file:`device.asm` instead of the device name. Set the include directory
-  to the proper subdirectory under core/devices as well.
+  to the proper subdirectory under :file:`core/devices` as well.
 * core: dynamically calculate the free space. Do not use all of it however, the data stack may grow.
 
 .. code-block:: forth
@@ -243,7 +243,7 @@ which is equivalent to
 
 
 * core: Simplified the Pictured Numeric Output words. They now use the memory area below
-  PAD (which is 100 bytes above HEAP) as the buffer region.
+  :command:`pad` (which is 100 bytes above HEAP) as the buffer region.
 * appl: added the arduino board with some example codes. Currently with the
   Mega (Atmega1280), Duemilanove (Atmega328) and Sanguino (Atmega644p) controller types.
 
@@ -266,16 +266,16 @@ which is equivalent to
 * core: re-implemented the :command:`i!` in (mostly) assembly language to ease
   integration into bootloaders.
 * core: factor the three prompts into compile time changable words.
-* appl: the :command:`dict_minimum.inc` und :command:`dict_core.inc` files need to be included
+* appl: the :file:`dict_minimum.inc` und :file:`dict_core.inc` files need to be included
   within the application defition files.
-* core: :command:`PAD` is no longer used by amforth itself.
+* core: :command:`pad` is no longer used by amforth itself.
 * core: reorder internal code in :command:`interpret` to get rid of :command:`0=` calls.
 
 24.1.2010: release 3.7
 ......................
 
 * core: atxmega 128 support (no compiler yet).
-* core: new word :command:`&gt;number`. :command:`number` accepts trailing (!)
+* core: new word :command:`>number`. :command:`number` accepts trailing (!)
   dots to enter double cell numbers.
 * lib: enhanced multitasker with turnkey support. Thanks to Erich W&auml;lde for
   in depth debugging and testing.
@@ -304,11 +304,11 @@ which is equivalent to
 
 * core: re-structure the usart code, added a non-interrupt based transmit word (TX),
   selectable at compile time.
-* lib:  added :command:`xt&gt;nfa` that goes from the XT to the name field address.
+* lib:  added :command:`xt>nfa` that goes from the XT to the name field address.
 * core: bugfix :command:`recurse`.
 * core: restructured EEPROM, never depend on fixed
   addresses for system values.
-* core: added a :command:`dict_wl.inc` file with most
+* core: added a :file:`dict_wl.inc` file with most
   of the non-core wordlist commands.
 
 11.4.2009: release 3.4
@@ -349,7 +349,7 @@ which is equivalent to
 * core: split application dictionary definition into 2 parts, one for the lower flash, one for the
   upper (NRWW) flash. Both can be empty, but need to exists.
 * core: changed some names for internal constants (baudrate -> BAUD) and registers (EEPE vs EEWE).
-* core: new directory :command:`drivers` for low level driver functions. Currently only the generic
+* core: new directory :file:`drivers/` for low level driver functions. Currently only the generic
   ISR and the USART0 interrupt handler.
 
 10.11.2008: release 3.1
@@ -377,7 +377,7 @@ works at the command prompt. The compiled version is
 
 * core: Placement of Stacks is now an application setting. See example apps.
 * core: added VM register A and B. See
-  `Stephen Pelc Slides <http://www.complang.tuwien.ac.at/anton/euroforth/ef08/papers/pelc.pdf>`_
+  `Stephen Pelc' Slides <http://www.complang.tuwien.ac.at/anton/euroforth/ef08/papers/pelc.pdf>`_
   for details. Uses Atmega Register R6:R7, R8:R9 resp.
 * core: added :command:`cmove` as a primitve.
 * core: :command:`f_cpu` used the old (pre-2.7) stack order for double cell values.
@@ -405,7 +405,7 @@ works at the command prompt. The compiled version is
 
 * core: Lubos Pekny found that :command:`-jtag` sometimes used the wrong mcu register.
 * core: Bernard Mentink wrote a Atmega128 device file, Thanks alot.
-* core: Atmega88 &amp; Atmega168 work too.
+* core: Atmega88 & Atmega168 work too.
 * core: Fixed regression for atmega128.
 * core: Moved serial interface words to application dictionary (not every amforth installation
   may have a serial terminal).
@@ -445,7 +445,7 @@ works at the command prompt. The compiled version is
 * Moved init of :command:`base` from :command:`quit` to :command:`cold`. :command:`turnkey` be
   used to change it permanently. Thanks to Lubos for the hint.
 * nice looking dumper words for RAM/EEPROM/FLASH, dropped idump.asm.
-* Extended Upload utility (tools/amforth-upload.py) from piix:
+* Extended Upload utility (:file:`tools/amforth-upload.py`) from piix:
   include files using following syntax:
 
 .. code-block:: none
@@ -465,7 +465,7 @@ works at the command prompt. The compiled version is
 * Added AT90CAN128. Other Atmega128 style controllers should work too.
 * lot of fine tuning.
 * dropped the assembler device init portion.
-* New file: :command:`dict_compiler.inc`. Without these words the forth system is (more or less) a
+* New file: :file:`dict_compiler.inc`. Without these words the forth system is (more or less) a
   pure interactive system without extensibility.
 * new words :command:`[char]`, :command:`fill`.
 * re-arranged usart code. fixed bug when usart baud rate calculation leads to values greater 255.
@@ -494,14 +494,14 @@ works at the command prompt. The compiled version is
 
 * changed stack effect for :command:`#` to ansi (from single cell value to double cell). Double cell values do not work (yet).
 * introduced :command:`deferred` words instead of tick-variables. Works for EEPROM based vectors (turnkey),
-  RAM based (PAUSE) and User based (EMIT etc) vectors.
-* new words: :command:`wdr` (Watchdog reset), :command:`d&gt;` and :command:`d&lt;` (double cell compare).
+  RAM based (:command:`pause`) and User based (:command:`emit` etc) vectors.
+* new words: :command:`wdr` (Watchdog reset), :command:`d>` and :command:`d<` (double cell compare).
 
 2.5.2007 release 2.0
 ....................
 
 * internal restructure of targets.
-* new words: :command:`u&gt;` and :command:`u&lt;`.
+* new words: :command:`u>` and :command:`u<`.
 * bugfixing interrupts.
 * new word: :command:`log2` logarithm to base 2, or the number of the highest 1 bit.
 * fixed wrong addresses for usart-io (esp. butterfly)
@@ -509,10 +509,10 @@ works at the command prompt. The compiled version is
 25.4.2007 release 1.9
 .....................
 
-* renamed :command:`dict_low.asm` to :command:`dict_minimal.asm`.
+* renamed :file:`dict_low.asm` to :file:`dict_minimal.asm`.
 * new word :command:`parse` ( c -- addr len) parses :command:`source` for char delimited strings.
 * new word :command:`sleep` ( -- ) puts the controller into (previously defined) sleep mode.
-* new words :command:`s&quot;` ( -- addr len) parses TIB for &quot; character and compiles it into flash,
+* new words :command:`s"` ( -- addr len) parses TIB for " character and compiles it into flash,
   :command:`s,` ( addr len -- ) does the real copying of the string into flash at :command:`here` together with
   the invisible word :command:`(sliteral)` (-- flash-addr len).
 * bugfix: :command:`f_cpu` had wrong word order. Use :command:`swap` as a temporary work around.`
@@ -529,24 +529,24 @@ works at the command prompt. The compiled version is
 3.4.2007 release 1.7
 ....................
 * new word: :command:`f_cpu` sets a double cell value with the cpu clock rate.
-* :command:`HLD` is now at :command:`PAD` to save RAM.
+* :command:`hld` is now at :command:`pad` to save RAM.
 * :command:`pad` did return some compile-time stochastic value`
 * lots of internal changes.
-* optional dictionary: :command:`d-`, :command:`d+`, :command:`s&gt;d` and :command:`d&gt;s`.
+* optional dictionary: :command:`d-`, :command:`d+`, :command:`s>d` and :command:`d>s`.
 
 25.3.2007 release 1.6
 .....................
-* split :command:`blocks/ans.frt` into pieces.
+* split :file:`blocks/ans.frt` into pieces.
 * :command:`sign` no longer inserts a space for non-negative values.
 * new word: :command:`/key`. It is vectorized via
   :command:`'/key` and gets called by :command:`accept`
   to signal the sender to stop transmission.
-  See :command:`blocks/xonxoff.frt` for example usage.
+  See :file:`blocks/xonxoff.frt` for example usage.
 * replaces :command:`up` with :command:`up@` and :command:`up!`.
 * new word: :command:`j` ( -- n).
 * new word: :command:`?execute` ( xt|0 -- ) if non-zero execute the XT.
 * The Atmega644 works fine :=) but needs the Atmel assembler (see :ref:`FAQ`) :=(
-* Bugfix: :command:`+!` did a :command:`+`.
+* Bugfix: :command:`+!` did a :command:`+` only.
 * Bugfix: too many spaces in :command:`.` (dot).
 * give user variables :command:`rp` and :command:`sp` a name.
 
@@ -559,10 +559,10 @@ works at the command prompt. The compiled version is
 * new word: :command:`u.` to display unsigned values.
 * fixed bug in :command:`/mod` for values less -FF (hex).
 * :command:`create` left the address of the XT insted of the PFA. Fixed.
-* deleted word: :command:`idump`. It is now in the file :command:`blocks/misc.frt`.
+* deleted word: :command:`idump`. It is now in the file :file:`blocks/misc.frt`.
 * new word: :command:`:noname` ( -- xt) creates headerless entry in the dictionary.
 * new word: :command:`cold` as main entry point. It executes the turnkey action.
-  :command:`abort` &amp; co do not trigger the turnkey action.
+  :command:`abort` & co do not trigger the turnkey action.
 
 5.3.2007 release 1.4
 ....................
@@ -578,7 +578,7 @@ works at the command prompt. The compiled version is
 24.2.2007 release 1.3
 .....................
 * bug: :command:`digit` did not work properly
-* bug: :command:`&lt;`: equal is not less
+* bug: :command:`<`: equal is not less
 * interrupts are processed faster
 * Interrupt counter are now only 1 byte long (access with :command:`c@`)
 * change: :command:`allot` works now for ram not for flash
@@ -646,7 +646,7 @@ works at the command prompt. The compiled version is
 
 * new word: :command:`turnkey`: executed whenever :command:`quit` starts.
 * numbers may contain lower case characters (if :command:`base` permits)
-* bugfixing case &amp; co.
+* bugfixing :command:`case` & co.
 * :command:`number` emits -13 if an invalid character is found
 * renamed :command:`vheader` to :command:`(create)`
 * :command:`abort` re-initializes both stacks

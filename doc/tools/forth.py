@@ -16,11 +16,6 @@ from pygments.token import Error, Punctuation, Literal, Token, \
 from pygments.lexers.web import HtmlLexer
 
 
-# backwards compatibility
-from pygments.lexers.sql import SqlLexer, MySqlLexer, SqliteConsoleLexer
-from pygments.lexers.shell import BashLexer, BashSessionLexer, BatchLexer, \
-     TcshLexer
-
 __all__ = ['ForthLexer']
 
 

@@ -3,4 +3,4 @@
 
 .include "dict_interrupt.inc"
 .include "dict_minimum.inc"
-
+.include "words/marker.asm"

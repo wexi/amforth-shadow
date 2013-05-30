@@ -1,38 +1,23 @@
-\ defines a word which resets the dictionary when called 
-\ better then forget but still has limitations
+\ Defines a word which resets the dictionary and removes itself
+\ when called.
+\ Better then forget but still has limitations.
 
-\ #include reverse.frt
+\ all information is in the first few EEPROM cells.
+\ (marker) is a value that holds the max eeprom address
 
-: marker ( c<chars> -- )
-   get-order
-   get-current dup @e
-   dp
-   edp
-   here
-   \ maybe save turnkey as well
-   create 
-   , , , , ,
-   \ for save the search order wordlists
-   dup ,
-   0 ?do
-      dup ,
-      @e  ,
-   loop
+: marker
+    \ get information to remove the marker itself
+    get-current @e dp
+    \ create the wordlist entry
+    create
+    \ save all data
+    (marker) 0 do i @e , 2 +loop
+    \ save the marker-remove data
+    , ,
   does>
-   dup @i to here
-   1+ dup @i to edp 
-   1+ dup @i to dp
-   1+ dup @i swap 1+ dup @i swap >r
-   swap over !e set-current
-   r>
-   1+ dup @i				\ # of entries in search order "n"
-   dup >r				\ ( f-addr )
-   0 ?do
-      1+ dup @i
-      swap 1+ dup @i over !e
-   loop
-   drop					\ ( WID1 .. WIDn ) ( R: n )
-   r> reverse				\ ( WIDn .. WID1  n )
-   set-order
+    \ restore data from saved state
+    (marker) 0 do dup @i i !e 1+ 2 +loop
+    \ purge the marker itself
+    dup @i to dp
+    1+  @i get-current !e
 ;
-

@@ -26,3 +26,4 @@
 
 .include "words/applturnkey.asm"
 .include "words/qmark.asm"
+.include "words/marker.asm"

@@ -1,7 +1,7 @@
-.. _User Guide:
 
-User's Manual
-=============
+=========================
+User's Manual for Windows
+=========================
 
 
 .. toctree::

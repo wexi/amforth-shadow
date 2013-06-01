@@ -1,13 +1,12 @@
-.. _User Guide:
 
-User's Manual
-=============
+=========================
+User's Manual for Windows
+=========================
 
 
 .. toctree::
    :maxdepth: 1
 
-<<<<<<< HEAD
 by Karl Lunt for amforth v4.2
 
 
@@ -668,8 +667,3 @@ Revision History
 +---------+----------------+------------------------------------------+
 | 4.2.2   | Matthias Trute | Reformatted with ReST                    |
 +---------+----------------+------------------------------------------+
-=======
-   linux
-   windows
-
->>>>>>> hq

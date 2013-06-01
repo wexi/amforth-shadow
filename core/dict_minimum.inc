@@ -5,7 +5,10 @@
 
 .include "words/cells.asm"
 .include "words/cellplus.asm"
+<<<<<<< HEAD
 .include "words/cellminus.asm"
+=======
+>>>>>>> hq
 
 .include "words/g_in.asm"
 .include "words/sharptib.asm"

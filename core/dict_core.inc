@@ -16,10 +16,7 @@
 .include "words/store.asm"
 .include "words/cstore.asm"
 .include "words/cfetch.asm"
-<<<<<<< HEAD
 .include "words/fetchc.asm"
-=======
->>>>>>> hq
 .include "words/fetch-u.asm"
 .include "words/store-u.asm"
 
@@ -35,10 +32,7 @@
 .include "words/r_from.asm"
 .include "words/to_r.asm"
 .include "words/r_fetch.asm"
-<<<<<<< HEAD
 .include "words/rdrop.asm"
-=======
->>>>>>> hq
 
 ;;;;;;;;;;;;;;;;;;;;;;;;
 .include "words/notequal.asm"
@@ -63,15 +57,10 @@
 .include "words/umslashmod.asm"
 .include "words/umstar.asm"
 
-<<<<<<< HEAD
 .include "words/cinvert.asm"
 .include "words/invert.asm"
 .include "words/2slash.asm"
 .include "words/u2slash.asm"
-=======
-.include "words/invert.asm"
-.include "words/2slash.asm"
->>>>>>> hq
 .include "words/2star.asm"
 .include "words/and.asm"
 .include "words/or.asm"

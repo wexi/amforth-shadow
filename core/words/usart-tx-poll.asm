@@ -37,8 +37,5 @@ PFA_TXQ_POLL:
   .dw XT_DOLITERAL
   .dw bm_USART_TXRD
   .dw XT_AND
-<<<<<<< HEAD
   .dw XT_GREATERZERO
-=======
->>>>>>> hq
   .dw XT_EXIT

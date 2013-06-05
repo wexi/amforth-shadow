@@ -52,6 +52,11 @@
     st -Y, tosl
 .endmacro
 
+.macro ldiw
+  ldi	@0l,low(@1)
+  ldi	@0h,high(@1)
+.endm
+	
 .macro in_
 .if (@1 < $40)
   in @0,@1

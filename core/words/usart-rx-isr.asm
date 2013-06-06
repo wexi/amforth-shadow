@@ -10,6 +10,6 @@ XT_RX_ISR:
     .dw DO_COLON
 PFA_RX_ISR:
     .dw XT_PAUSE
-    .dw XT_RXR_ISR		;(rx-isr) in drivers/usart-isr-rx.asm
-    .dw PFA_RX_ISR		;no input
+    .dw XT_RXR_ISR		;see drivers/usart-isr-rx.asm
+    .dw PFA_RX_ISR		;no input branch
     .dw XT_EXIT

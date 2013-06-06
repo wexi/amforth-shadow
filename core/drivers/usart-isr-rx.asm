@@ -1,4 +1,4 @@
-;;; usart receiver
+;;; usart receiver interrupt service
 
 .set pc_ = pc
 .org URXCaddr
@@ -55,32 +55,18 @@ usart_rx_isr_finish:
   pop	xl
   reti
 
-; ( -- f ) return true if rx is not empty
-;; VE_RXQ_ISR:
-;;     .dw  $ff07
-;;     .db  "rx?-isr",0
-;;     .dw  VE_HEAD
-;;     .set VE_HEAD = VE_RXQ_ISR
-XT_RXQ_ISR:
-    .dw  PFA_RXQ_ISR
-PFA_RXQ_ISR:
+; ( -- f ) true if rx not empty
+XT_RXQ_ISR: .dw  pc + 1
   savetos
   lds	temp0, usart_rx_out
   lds	temp1, usart_rx_in
   movw	tosl, zerol
   cpse	temp0, temp1
   sbiw	tosl, 1
-  jmp_	DO_NEXT			; 
+  jmp_	DO_NEXT
 
-; return a character ( -- c ) or take a branch
-;; VE_RXR_ISR:
-;;     .dw  $ff08
-;;     .db  "(rx-isr)"
-;;     .dw  VE_HEAD
-;;     .set VE_HEAD = VE_RXR_ISR
-XT_RXR_ISR:
-    .dw  PFA_RXR_ISR
-PFA_RXR_ISR:
+; ( -- c ) or if empty take next branch
+XT_RXR_ISR: .dw  pc + 1
   lds	temp0, usart_rx_out
   lds	temp1, usart_rx_in
   cp	temp0, temp1
@@ -110,15 +96,8 @@ RXR_ISR1:
 RXR_ISR2:
   jmp_	DO_NEXT
 
-; initialize usart
-;VE_USART_INIT_RX:
-;  .dw $ff06
-;  .db "+usart"
-;  .dw VE_HEAD
-;  .set VE_HEAD = VE_USART_INIT_RX
-XT_USART_INIT_RX_ISR:
-    .dw PFA_USART_INIT_RX_ISR
-PFA_USART_INIT_RX_ISR:
+; ( -- ) called by +usart
+XT_USART_INIT_RX_ISR: .dw pc + 1
   sts	usart_rx_in, zerol
   sts	usart_rx_out, zeroh
 #ifdef	CTS_ENABLE

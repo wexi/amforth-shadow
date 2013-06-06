@@ -6,16 +6,6 @@ VE_CELLPLUS:
     .db "cell+",0
     .dw VE_HEAD
     .set VE_HEAD = VE_CELLPLUS
-XT_CELLPLUS:
-    .dw DO_COLON
-PFA_CELLPLUS:
-.if CELLSIZE == 2 ;
-    .dw XT_1PLUS
-    .dw XT_1PLUS
-.else
-    .dw XT_DOLITERAL
-    .dw CELLSIZE
-    .dw XT_PLUS
-.endif
-    .dw XT_EXIT
-; maybe align data?
+XT_CELLPLUS: .dw pc + 1
+  adiw tosl, CELLSIZE
+  jmp_ DO_NEXT

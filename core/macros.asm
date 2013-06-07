@@ -42,6 +42,10 @@
   .def wl = r22
   .def wh = r23
 
+.macro _pfa_			;ijmp target is next word
+  .dw	pc + 1
+.endmacro
+	
 .macro loadtos
     ld tosl, Y+
     ld tosh, Y+

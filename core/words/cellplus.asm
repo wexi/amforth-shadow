@@ -7,15 +7,7 @@ VE_CELLPLUS:
     .dw VE_HEAD
     .set VE_HEAD = VE_CELLPLUS
 XT_CELLPLUS:
-    .dw DO_COLON
+    .dw PFA_CELLPLUS
 PFA_CELLPLUS:
-.if CELLSIZE == 2 ;
-    .dw XT_1PLUS
-    .dw XT_1PLUS
-.else
-    .dw XT_DOLITERAL
-    .dw CELLSIZE
-    .dw XT_PLUS
-.endif
-    .dw XT_EXIT
-; maybe align data?
+    adiw tosl, CELLSIZE
+    jmp_ DO_NEXT

@@ -1,6 +1,6 @@
 ; ( -- c)
 ; MCU
-; pause for the next usart input isr character
+; wait (pause) for the next usart input isr character
 ;; VE_RX_ISR:
 ;;     .dw $ff06
 ;;     .db "rx-isr"

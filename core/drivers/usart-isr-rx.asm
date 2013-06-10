@@ -5,15 +5,16 @@
   jmp_ usart_rx_isr
 .org pc_
 
-.equ usart_rx_size = 16		;must be a power of 2
-.equ usart_rx_off = 3		;CTS_OFF vacancies .lt.
-.equ usart_rx_onn = 8		;CTS_ON vacancies  .ge.
-.equ usart_rx_mask = usart_rx_size - 1
+.equ usart_rx_siz = 16		;must be a power of 2
+.equ usart_rx_msk = usart_rx_siz - 1
+.equ usart_rx_off = usart_rx_siz - 2 ;≤ cnt: CTS_OFF 
+.equ usart_rx_onn = usart_rx_siz / 2 ;≥ cnt: CTS_ON  
 	
 .dseg
-usart_rx_in: .byte 1
+usart_rx_inp: .byte 1
 usart_rx_out: .byte 1
-usart_rx_data: .byte usart_rx_size
+usart_rx_cnt: .byte 1
+usart_rx_dat: .byte usart_rx_siz
 
 .cseg
 usart_rx_isr:
@@ -24,31 +25,31 @@ usart_rx_isr:
   push 	zl
   push 	zh
 
-  lds xh, USART_DATA
-  ; optional: check for certain character(s) (e.g. CTRL-C)
-  ; and trigger a soft interrupt instead of storing the
-  ; charater into the input queue.
-  lds	xl, usart_rx_in
-  ldiw	z, usart_rx_data
-  add	zl, xl
-  adc	zh, zeroh
-  st 	z, xh
-
-  inc 	xl
-  andi 	xl, usart_rx_mask
-  lds	xh, usart_rx_out
-  cpse	xl, xh			;drop char on overflow
-  sts 	usart_rx_in, xl
+  lds	xh, USART_DATA		;clears interrupt
+  lds	xl, usart_rx_cnt
 
 #ifdef	CTS_ENABLE
-  sub	xh, xl
-  andi	xh, usart_rx_mask	;number of vacancies
-  cpi	xh, usart_rx_off
-  brsh	usart_rx_isr_finish
+  cpi	xl, usart_rx_off - 1
+  brlo	usart_rx_isr_store
   CTS_OFF
 #endif
 
-usart_rx_isr_finish:
+usart_rx_isr_store:
+  cpi	xl, usart_rx_siz
+  brsh	usart_rx_isr_done	;overflow?
+  inc	xl
+  sts	usart_rx_cnt, xl
+	
+  lds	xl, usart_rx_inp
+  ldiw	z, usart_rx_dat
+  add	zl, xl
+  adc	zh, zeroh
+  st	z, xh
+  inc	xl
+  andi	xl, usart_rx_msk
+  sts	usart_rx_inp, xl
+
+usart_rx_isr_done:
   pop	zh
   pop	zl
   pop	xh
@@ -57,53 +58,58 @@ usart_rx_isr_finish:
   pop	xl
   reti
 
-; ( -- f ) true if rx not empty
+; ( -- u ) number of characters in queue
 XT_RXQ_ISR: _pfa_
   savetos
-  lds	temp0, usart_rx_out
-  lds	temp1, usart_rx_in
-  movw	tosl, zerol
-  cpse	temp0, temp1
-  sbiw	tosl, 1
+  lds	tosl, usart_rx_cnt
+  clr	tosh
   jmp_	DO_NEXT
 
 ; ( -- c ) or, if empty, take the next branch
 XT_RXR_ISR: _pfa_
-  lds	temp0, usart_rx_out
-  lds	temp1, usart_rx_in
-  cp	temp0, temp1
+  lds	temp0, usart_rx_cnt
+  tst	temp0
   brne	RXR_ISR1
   movw 	zl, xl			;empty rx queue
   readflashcell xl,xh		;take the branch
   jmp_	DO_NEXT
+	
 RXR_ISR1:
   adiw	xl, 1			;skip the branch
-  ldiw	z, usart_rx_data
+  lds	temp0, usart_rx_out
+  ldiw	z, usart_rx_dat
   add 	zl, temp0
   adc	zh, zeroh
   ld	tosl, z
   clr	tosh
   inc	temp0
-  andi	temp0, usart_rx_mask
+  andi	temp0, usart_rx_msk
   sts	usart_rx_out, temp0
+
+  in	temp0, SREG		;uninterruptible count dec
+  cli
+  lds	temp1, usart_rx_cnt
+  dec	temp1
+  sts	usart_rx_cnt, temp1
 #ifdef	CTS_ENABLE
-  IS_CTS_OFF			;skip next if CTS is OFF
-  jmp_	DO_NEXT			;CTS is ON
-  sub	temp0, temp1
-  andi	temp0, usart_rx_mask	;number of vacancies
-  cpi	temp0, usart_rx_onn
-  brlo	RXR_ISR2
-  CTS_ON			;enough vanacies
+  cpi	temp1, usart_rx_onn + 1
+  brsh	RXR_ISR2
+  CTS_ON
 #endif
 RXR_ISR2:
+  out	SREG, temp0  
   jmp_	DO_NEXT
 
-; ( -- ) called by +usart
+; called by +usart, flushes receiver input. 
 XT_USART_INIT_RX_ISR: _pfa_
-  sts	usart_rx_in, zerol
-  sts	usart_rx_out, zeroh
+  in	temp0, SREG
+  cli
+  sts	usart_rx_inp, zerol
+  sts	usart_rx_out, zerol
+  sts	usart_rx_cnt, zerol
 #ifdef	CTS_ENABLE
   CTS_OUT
   CTS_ON
-#endif	
+#endif
+  out	SREG, temp0  
   jmp_	DO_NEXT	

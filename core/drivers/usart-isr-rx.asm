@@ -1,75 +1,107 @@
-;;; usart driver, receiving
+;;; usart receiver interrupt service
 
 .set pc_ = pc
 .org URXCaddr
   jmp_ usart_rx_isr
 .org pc_
 
-; sizes have to be powers of 2!
-.equ usart_rx_size = $10
-.equ usart_rx_mask = usart_rx_size - 1
+.equ usart_rx_siz = 16		;must be a power of 2
+.equ usart_rx_msk = usart_rx_siz - 1
+.equ usart_rx_off = usart_rx_siz - 2 ;≤ cnt: CTS_OFF 
+.equ usart_rx_onn = usart_rx_siz / 2 ;≥ cnt: CTS_ON  
+	
 .dseg
-usart_rx_in: .byte 1
+usart_rx_inp: .byte 1
 usart_rx_out: .byte 1
-usart_rx_data: .byte usart_rx_size+2
+usart_rx_cnt: .byte 1
+usart_rx_dat: .byte usart_rx_siz
+
 .cseg
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; forth code:
-; : rx-isr USART_DATA c@
-;    usart_rx_data usart_rx_in c@ dup >r
-;    + !
-;    r> 1+ usart_rx_mask and usart_rx_in c!
-; ;
-; setup with
-; ' rx-isr URXCaddr int!
 usart_rx_isr:
-  push xl
-  in xl, SREG
-  push xl
-  push xh
-  push zl
-  push zh
+  push 	xl
+  in 	xl, SREG
+  push 	xl
+  push 	xh
+  push 	zl
+  push 	zh
 
-  lds xh, USART_DATA
-  ; optional: check for certain character(s) (e.g. CTRL-C)
-  ; and trigger a soft interrupt instead of storing the
-  ; charater into the input queue.
-  lds xl,usart_rx_in
-  ldi zl, low(usart_rx_data)
-  ldi zh, high(usart_rx_data)
-  add zl, xl
-  adc zh, zeroh
-  st Z, xh
+  lds	xh, USART_DATA		;clears interrupt
+  lds	xl, usart_rx_cnt
 
-  inc xl
-  andi xl,usart_rx_mask
+#ifdef	CTS_ENABLE
+  cpi	xl, usart_rx_off - 1
+  brlo	usart_rx_isr_store
+  CTS_OFF
+#endif
 
-  sts usart_rx_in, xl
+usart_rx_isr_store:
+  cpi	xl, usart_rx_siz
+  brsh	usart_rx_isr_done	;overflow?
+  inc	xl
+  sts	usart_rx_cnt, xl
+	
+  lds	xl, usart_rx_inp
+  ldiw	z, usart_rx_dat
+  add	zl, xl
+  adc	zh, zeroh
+  st	z, xh
+  inc	xl
+  andi	xl, usart_rx_msk
+  sts	usart_rx_inp, xl
 
-usart_rx_isr_finish:
-  pop zh
-  pop zl
-  pop xh
-  pop xl
-  out SREG, xl
-  pop xl
+usart_rx_isr_done:
+  pop	zh
+  pop	zl
+  pop	xh
+  pop	xl
+  out	SREG, xl
+  pop	xl
   reti
 
-; ( -- ) Hardware Access
-; R( --)
-; initialize usart
-;VE_USART_INIT_RX:
-;  .dw $ff06
-;  .db "+usart"
-;  .dw VE_HEAD
-;  .set VE_HEAD = VE_USART_INIT_RX
-XT_USART_INIT_RX_ISR:
-  .dw DO_COLON
-PFA_USART_INIT_RX_ISR:          ; ( -- )
-  .dw XT_ZERO
-  .dw XT_DOLITERAL
-  .dw usart_rx_in
-  .dw XT_STORE
+; ( -- num ) number of characters in queue
+XT_RXQ_ISR: _pfa_
+  savetos
+  lds	tosl, usart_rx_cnt
+  clr	tosh
+  jmp_	DO_NEXT
 
-  .dw XT_EXIT
+; ( -- c ) assuming the queue is non empty
+XT_RXR_ISR: _pfa_
+  savetos
+  lds	temp0, usart_rx_out
+  ldiw	z, usart_rx_dat
+  add 	zl, temp0
+  adc	zh, zeroh
+  ld	tosl, z
+  clr	tosh
+  inc	temp0
+  andi	temp0, usart_rx_msk
+  sts	usart_rx_out, temp0
+
+  in	temp0, SREG		;uninterruptible count dec
+  cli
+  lds	temp1, usart_rx_cnt
+  dec	temp1
+  sts	usart_rx_cnt, temp1
+#ifdef	CTS_ENABLE
+  cpi	temp1, usart_rx_onn + 1
+  brsh	RXR_ISR
+  CTS_ON
+#endif
+RXR_ISR:
+  out	SREG, temp0  
+  jmp_	DO_NEXT
+
+; called by +usart, flushes receiver input. 
+XT_USART_INIT_RX_ISR: _pfa_
+  in	temp0, SREG
+  cli
+  sts	usart_rx_inp, zerol
+  sts	usart_rx_out, zerol
+  sts	usart_rx_cnt, zerol
+#ifdef	CTS_ENABLE
+  CTS_OUT
+  CTS_ON
+#endif
+  out	SREG, temp0  
+  jmp_	DO_NEXT	

@@ -5,7 +5,11 @@
   jmp_ usart_rx_isr
 .org pc_
 
-.equ usart_rx_siz = 16		;must be a power of 2
+#ifdef RXR_SIZE
+.equ usart_rx_siz = RXR_SIZE	;must be a power of 2
+#else
+.equ usart_rx_siz = 16
+#endif
 .equ usart_rx_msk = usart_rx_siz - 1
 .equ usart_rx_off = usart_rx_siz - 2 ;≤ cnt: CTS_OFF 
 .equ usart_rx_onn = usart_rx_siz / 2 ;≥ cnt: CTS_ON  

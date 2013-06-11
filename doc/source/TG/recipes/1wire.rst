@@ -24,7 +24,7 @@ almost the same.
 
 To use the 1-wire module new AmForth hexfiles have to be created with the
 file :file:`drivers/1wire.asm` included into your project master file (e.g.
-:file:`template.asm`) All configuration is done using 4 constants that are set
+:file:`template.asm`) All configuration is done with 2 constants that are set
 in the same file. They define, which pin is connected to the 1-wire bus.
 There are no defaults
 

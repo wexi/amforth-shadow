@@ -58,24 +58,16 @@ usart_rx_isr_done:
   pop	xl
   reti
 
-; ( -- u ) number of characters in queue
+; ( -- num ) number of characters in queue
 XT_RXQ_ISR: _pfa_
   savetos
   lds	tosl, usart_rx_cnt
   clr	tosh
   jmp_	DO_NEXT
 
-; ( -- c ) or, if empty, take the next branch
+; ( -- c ) assuming the queue is non empty
 XT_RXR_ISR: _pfa_
-  lds	temp0, usart_rx_cnt
-  tst	temp0
-  brne	RXR_ISR1
-  movw 	zl, xl			;empty rx queue
-  readflashcell xl,xh		;take the branch
-  jmp_	DO_NEXT
-	
-RXR_ISR1:
-  adiw	xl, 1			;skip the branch
+  savetos
   lds	temp0, usart_rx_out
   ldiw	z, usart_rx_dat
   add 	zl, temp0
@@ -93,10 +85,10 @@ RXR_ISR1:
   sts	usart_rx_cnt, temp1
 #ifdef	CTS_ENABLE
   cpi	temp1, usart_rx_onn + 1
-  brsh	RXR_ISR2
+  brsh	RXR_ISR
   CTS_ON
 #endif
-RXR_ISR2:
+RXR_ISR:
   out	SREG, temp0  
   jmp_	DO_NEXT
 

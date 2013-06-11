@@ -41,6 +41,22 @@ It is recommended to turn interrupts off (~int-~) when compiling new code.
 2. core/amforth-interpreter.asm: SLIH launcher.
 3. core/words/swi??.asm: Soft interrupts control words.
 
+* USART ISR receiver with CTS handshake
+
+Define the following macros in your application main file ("template.asm"). For example:
+#+BEGIN_EXAMPLE
+#define CTS_ENABLE
+.macro	CTS_OUT
+	sbi	DDRD, 7
+.endm
+.macro	CTS_ON                  # invite
+	cbi	PORTD, 7
+.endmacro
+.macro	CTS_OFF                 # dis-invite 
+	sbi	PORTD, 7
+.endmacro
+#+END_EXAMPLE
+ 
 * WLSCOPE
 
 The Word List Scope mechanism was already accepted by HQ. What remains is to explain it better and promote its use. 

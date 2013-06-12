@@ -6,6 +6,9 @@ VE_CELLPLUS:
     .db "cell+",0
     .dw VE_HEAD
     .set VE_HEAD = VE_CELLPLUS
-XT_CELLPLUS: .dw pc + 1
-  adiw tosl, CELLSIZE
-  jmp_ DO_NEXT
+XT_CELLPLUS:
+    .dw PFA_CELLPLUS
+PFA_CELLPLUS:
+    adiw tosl, CELLSIZE
+    jmp_ DO_NEXT
+

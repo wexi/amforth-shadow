@@ -53,11 +53,11 @@ usart_udre_next:
   ldiw	z, usart_tx_dat
   add	zl, xl
   adc	zh, zeroh
-  ld	xl, z
-  sts	USART_DATA, xl
   inc	xl
   andi	xl, usart_tx_msk
   sts	usart_tx_out, xl
+  ld	xl, z
+  sts	USART_DATA, xl
 
 usart_udre_exit:
   pop zh

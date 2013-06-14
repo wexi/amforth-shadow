@@ -41,45 +41,39 @@ It is recommended to turn interrupts off (~int-~) when compiling new code.
 2. core/amforth-interpreter.asm: SLIH launcher.
 3. core/words/swi??.asm: Soft interrupts control words.
 
-* USART tx/rx isr with DTR/RTS/CTS support
+* USART tx/rx isr with RTS/CTS support
 
-Define the following macros in your application main file ("template.asm") as necessary and as applicable to your project.
+Define the following macros in your application main file ("template.asm") as applicable to your project.
 
 #+BEGIN_EXAMPLE
-#define RXR_SIZE 16		;receive buffer size override
-#define TXR_SIZE 32		;transmit buffer size override
+.set WANT_ISR_RX = 1		;interrupt driven receive
+.set WANT_ISR_TX = 1		;interrupt driven transmit
+
+#define RXR_SIZE 16		;= 2⁴ receive queue size
+#define TXR_SIZE 32		;= 2⁵ transmit queue size
 	
-#define CTS_ENABLE
-.macro	CTS_OUT
-  sbi	DDRD, 7
+#define CTS_ENABLE		;input queue gate
+.macro	CTS_INIT
+  sbi	DDRD, 7			;defaults to CTS_ON
 .endmacro
-.macro	CTS_ON		;invite serial input
+.macro	CTS_ON			;invite serial input
   cbi	PORTD, 7
 .endmacro
 .macro	CTS_OFF
   sbi	PORTD, 7
 .endmacro
 
-#define RTS_ENABLE
-.macro	RTS_IN
-  cbi	DDRE, 6
+#define RTS_ENABLE		;output queue gate
+.macro	RTS_INIT
+.set pc_ = pc
+.org INT6addr
+  jmp_ usart_rts_isr
+.org pc_
+  sbi_	EICRB, ISC61, temp0	;sense RTS activation
+  sbi	EIMSK, INT6
 .endmacro
-.macro	IS_RTS_ON
-  sbic	PINE, 6
-.endmacro
-.macro	IS_RTS_OFF	;hold off serial output
-  sbis	PINE, 6
-.endmacro
-
-#define DTR_ENABLE
-.macro	DTR_IN
-  cbi	DDRE, 7
-.endmacro
-.macro	IS_DTR_ON	;skip if host is up
-  sbis	PINE, 7
-.endmacro
-.macro	IS_DTR_OFF	;skip if host is down
-  sbic	PINE, 7
+.macro	IS_RTS_OFF
+  sbis	PINE, 6			;skip next instruction if on hold
 .endmacro
 #+END_EXAMPLE
  

@@ -1,76 +1,140 @@
-;;; usart driver, transmitting
-
-;; bit definitions
+;;; usart transmitter interrupt service
 
 .set pc_ = pc
 .org UDREaddr
-  jmp_ usart_udre_isr
+  jmp_ usart_tx_isr
 .org pc_
 
-; sizes have to be powers of 2!
-.equ usart_tx_size = $10
-.equ usart_tx_mask = usart_tx_size - 1
+#ifdef TXR_SIZE
+.equ usart_tx_siz = TXR_SIZE	;must be a power of 2
+#else
+.equ usart_tx_siz = 16
+#endif
+.equ usart_tx_msk = usart_tx_siz - 1
+	
 .dseg
-usart_tx_in: .byte 1
+usart_tx_inp: .byte 1
 usart_tx_out: .byte 1
-usart_tx_data: .byte usart_tx_size
+usart_tx_cnt: .byte 1
+usart_tx_dat: .byte usart_tx_siz
+
 .cseg
+usart_tx_isr:
+  push 	xl
+  in 	xl, SREG
+  push 	xl
+  push 	zl
+  push 	zh
 
-usart_udre_isr:
-  push xl
-  in xl,SREG
-  push xl
-  push xh
-  push zl
-  push zh
+  lds	xl, usart_tx_cnt
+  dec	xl
+  sts	usart_tx_cnt, xl
+	
+#ifdef	RTS_ENABLE
+  IS_RTS_OFF
+#endif
+  brne	usart_udre_next
 
-  lds xl,usart_tx_in
-  lds xh,usart_tx_out
-  cp xh,xl
-  brne usart_udre_next
+usart_udre_halt:
+  lds	xl, USART_B		;disable transmit empty interrupts
+  cbr	xl, bm_ENABLE_INT_TX
+  sts	USART_B, xl
+  rjmp usart_udre_exit
 
-usart_udre_last:
+#ifdef	RTS_ENABLE
+usart_udre_resume:
   lds xl, USART_B
-  cbr xl, bm_ENABLE_INT_TX
-  sts USART_B,xl
-
-  rjmp usart_udre_done
+  sbr xl, bm_ENABLE_INT_TX
+  sts USART_B, xl
+#endif
 
 usart_udre_next:
-  inc xh
-  andi xh,usart_tx_mask
-  sts usart_tx_out,xh
+  lds	xl, usart_tx_out
+  ldiw	z, usart_tx_dat
+  add	zl, xl
+  adc	zh, zeroh
+  inc	xl
+  andi	xl, usart_tx_msk
+  sts	usart_tx_out, xl
+  ld	xl, z
+  sts	USART_DATA, xl
 
-  ldi zl,low(usart_tx_data)
-  ldi zh,high(usart_tx_data)
-  add zl,xh
-  adc zh,zeroh
-usart_udre_send:
-  ld xl,z
-  sts USART_DATA,xl
-
-usart_udre_done:
+usart_udre_exit:
   pop zh
   pop zl
-  pop xh
   pop xl
   out SREG,xl
   pop xl
   reti
 
-; ( -- ) Hardware Access
-; R( --)
-; initialize usart
-;VE_USART_INIT_TX:
-;  .dw $ff06
-;  .db "+usart"
-;  .dw VE_HEAD
-;  .set VE_HEAD = VE_USART_INIT_TX
-XT_USART_INIT_TX_ISR:
-  .dw DO_COLON
-PFA_USART_INIT_TX_ISR:          ; ( -- )
-  .dw XT_ZERO
-  .dw XT_DOLITERAL
-  .dw usart_tx_in
-  .dw XT_STORE
-  .dw XT_EXIT
+#ifdef	RTS_ENABLE
+usart_rts_isr:			;RTS OFF→ON
+  push 	xl
+  in 	xl, SREG
+  push 	xl
+  push 	zl
+  push 	zh
+
+  lds	xl, usart_tx_cnt
+  tst	xl
+  brne	usart_udre_resume
+  rjmp	usart_udre_exit
+#endif	
+
+; ( -- num ) number of char places in queue
+XT_TXQ_ISR: _pfa_
+  savetos
+  lds	temp0, usart_tx_cnt
+  ldi	tosl, usart_tx_siz
+  sub	tosl, temp0
+  clr	tosh
+  jmp_	DO_NEXT
+
+; ( c -- ) assuming the queue is not full!
+XT_TXR_ISR: _pfa_
+  lds	temp0, usart_tx_inp	;insert c to queue
+  ldiw	z, usart_tx_dat
+  add 	zl, temp0
+  adc	zh, zeroh
+  st	z, tosl
+  loadtos
+  inc	temp0
+  andi	temp0, usart_tx_msk
+  sts	usart_tx_inp, temp0
+
+  in	temp0, SREG
+  cli
+  lds	temp1, usart_tx_cnt
+  tst	temp1
+#ifdef	RTS_ENABLE
+  IS_RTS_OFF
+#endif
+  breq	TXR_ISR1		;first queue insertion?
+  rjmp	TXR_ISR2		;active tx or RTS is OFF
+TXR_ISR1:
+  lds temp2, USART_B
+  sbr temp2, bm_ENABLE_INT_TX
+  sts USART_B, temp2		;force tx empty interrupt
+  inc	temp1			;account for ghost char tx
+TXR_ISR2:
+  inc	temp1
+  sts	usart_tx_cnt, temp1
+  out	SREG, temp0  
+  jmp_	DO_NEXT
+
+; called by +usart
+XT_USART_INIT_TX_ISR: _pfa_
+  in	temp0, SREG
+  cli
+  sts	usart_tx_inp, zerol
+  sts	usart_tx_out, zerol
+  sts	usart_tx_cnt, zerol
+  lds	temp1, USART_B		;disable transmit empty interrupts
+  cbr	temp1, bm_ENABLE_INT_TX
+  sts	USART_B, temp1
+  out	SREG, temp0  
+#ifdef	RTS_ENABLE
+  RTS_INIT
+#endif
+  jmp_	DO_NEXT	
+

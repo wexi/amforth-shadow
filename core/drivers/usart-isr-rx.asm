@@ -69,7 +69,7 @@ XT_RXQ_ISR: _pfa_
   clr	tosh
   jmp_	DO_NEXT
 
-; ( -- c ) assuming the queue is non empty
+; ( -- c ) assuming the queue is not empty!
 XT_RXR_ISR: _pfa_
   savetos
   lds	temp0, usart_rx_out
@@ -96,16 +96,15 @@ RXR_ISR:
   out	SREG, temp0  
   jmp_	DO_NEXT
 
-; called by +usart, flushes receiver input. 
+; called by +usart
 XT_USART_INIT_RX_ISR: _pfa_
   in	temp0, SREG
   cli
   sts	usart_rx_inp, zerol
   sts	usart_rx_out, zerol
   sts	usart_rx_cnt, zerol
-#ifdef	CTS_ENABLE
-  CTS_OUT
-  CTS_ON
-#endif
   out	SREG, temp0  
+#ifdef	CTS_ENABLE
+  CTS_INIT
+#endif
   jmp_	DO_NEXT	

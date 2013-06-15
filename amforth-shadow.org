@@ -43,8 +43,8 @@ It is recommended to turn interrupts off (~int-~) when compiling new code.
 
 * USART tx/rx isr with RTS/CTS/DTR support
 
-Define the following macros in your application "template.asm" as your project requires. The following CTS/RTS/DTR controls are independent of each other. RTS requires an edge sensitive interrupt
-input.
+Define the following macros in your application "template.asm" as your project requires. The following CTS/RTS/DTR controls are independent of each other, you can implement any of them, none or
+all. Note that RTS requires an edge sensitive interrupt input.
 
 #+BEGIN_EXAMPLE
 .set WANT_ISR_RX = 1		;interrupt driven receive

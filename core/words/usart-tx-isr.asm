@@ -10,9 +10,15 @@ XT_TX_ISR:
     .dw	DO_COLON
 PFA_TX_ISR:
     .dw	XT_PAUSE
-    .dw	XT_TXQ_ISR		;no of char places in queue
+    .dw	XT_TXQ_ISR		;no of available char places
+    .dw	XT_QDUP			;?dup
     .dw	XT_DOCONDBRANCH
     .dw	PFA_TX_ISR		;full queue
-    .dw	XT_TXR_ISR		;put one char
+    .dw	XT_GREATERZERO		;0>
+    .dw	XT_DOCONDBRANCH
+    .dw	PFA_TX_ISR2		;DTR is OFF
+    .dw	XT_TXR_ISR		;putch
     .dw	XT_EXIT
-
+PFA_TX_ISR2:
+    .dw	XT_DROP
+    .dw	XT_EXIT

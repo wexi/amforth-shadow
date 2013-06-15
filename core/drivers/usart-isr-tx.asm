@@ -81,9 +81,16 @@ usart_rts_isr:			;RTS OFF→ON
   rjmp	usart_udre_exit
 #endif	
 
-; ( -- num ) number of char places in queue
+; ( -- n ) return the number of char places in queue or -1 if the DTR is OFF
 XT_TXQ_ISR: _pfa_
   savetos
+#ifdef	DTR_ENABLE
+  IS_DTR_OFF
+  rjmp	TXQ_ISR
+  ldiw	tos, -1
+  jmp_	DO_NEXT
+#endif
+TXQ_ISR:	
   lds	temp0, usart_tx_cnt
   ldi	tosl, usart_tx_siz
   sub	tosl, temp0

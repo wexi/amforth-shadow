@@ -24,7 +24,7 @@ The following ("soft rear-end") words were added to the existing +int and -int (
 
 + int- ( -- ) "soft interrupts off" :: Disables soft interrupts. If this instruction is the ISR first the ISR will not be interrupted.
 
-+ int' ( -- addr ) "soft interrupts apostrophe" :: Returns the address of a system variable where the lower byte, if non zero, indicates occurance of a hard interrupt overflow. The overflow mark is
++ int' ( -- addr ) "soft interrupts apostrophe" :: Returns the address of a system variable where the lower byte, if non zero, indicates occurrence of a hard interrupt overflow. The overflow mark is
      the interrupting-device program address. Clear this mark by: ~0 int' c!~. The higher byte, if non-zero, indicates having the soft interrupts inhibited.
 
 ** Compatibility
@@ -41,41 +41,62 @@ It is recommended to turn interrupts off (~int-~) when compiling new code.
 2. core/amforth-interpreter.asm: SLIH launcher.
 3. core/words/swi??.asm: Soft interrupts control words.
 
-* USART tx/rx isr with RTS/CTS support
+* USART tx/rx isr with RTS/CTS/DTR support
 
-Define the following macros in your application main file ("template.asm") as applicable to your project.
+Define the following macros in your application "template.asm" as your project requires. The following CTS/RTS/DTR controls are independent of each other. RTS requires an edge sensitive interrupt
+input.
 
 #+BEGIN_EXAMPLE
 .set WANT_ISR_RX = 1		;interrupt driven receive
 .set WANT_ISR_TX = 1		;interrupt driven transmit
 
-#define RXR_SIZE 16		;= 2⁴ receive queue size
-#define TXR_SIZE 32		;= 2⁵ transmit queue size
+#define RXR_SIZE 32		;= 2⁵ receive queue size
+#define TXR_SIZE 64		;= 2⁶ transmit queue size
+#+END_EXAMPLE
+
+Overrides the default 16/16 char I/O buffer sizes.
 	
+#+BEGIN_EXAMPLE
 #define CTS_ENABLE		;input queue gate
 .macro	CTS_INIT
   sbi	DDRD, 7			;defaults to CTS_ON
 .endmacro
-.macro	CTS_ON			;invite serial input
+.macro	CTS_ON		;invite serial input
   cbi	PORTD, 7
 .endmacro
 .macro	CTS_OFF
   sbi	PORTD, 7
 .endmacro
+#+END_EXAMPLE
 
+The CTS mechanism enables AmForth to control its input characters rate. CTS turns OFF when the input buffer can accommodate just two more characters. The input buffer then has to become half empty
+before CTS turns ON again. See core/drivers/usart-isr-rx.asm
+
+#+BEGIN_EXAMPLE
 #define RTS_ENABLE		;output queue gate
 .macro	RTS_INIT
 .set pc_ = pc
 .org INT6addr
   jmp_ usart_rts_isr
 .org pc_
-  sbi_	EICRB, ISC61, temp0	;sense RTS activation
+  sbi_	EICRB, ISC61, temp0 ;sense RTS activation
   sbi	EIMSK, INT6
 .endmacro
 .macro	IS_RTS_OFF
-  sbis	PINE, 6			;skip next instruction if on hold
+  sbis	PINE, 6		;skip next instruction if on hold
 .endmacro
 #+END_EXAMPLE
+
+The RTS mechanism enables the host computer to control AmForth output characaters rate. 
+
+#+BEGIN_EXAMPLE
+#define DTR_ENABLE
+.macro	IS_DTR_OFF
+  sbic	PINE, 7		;skip next instruction if DTR is down
+.endmacro
+#+END_EXAMPLE
+
+Output characters are dropped when the host computer is down or not connected.
  
 * WLSCOPE
 

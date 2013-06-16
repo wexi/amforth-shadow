@@ -39,6 +39,9 @@
 # uploaded to another system using a tool simpler than the shell. Leave
 # the shell by #exit to close log.frt properly.
 #
+# Invoke the shell with the argument --rtscts to enable serial port
+# RTS/CTS hardware handshake connection.
+# 
 # =====================================================================
 # DOCUMENTATION
 # =====================================================================
@@ -485,12 +488,13 @@ class AMForth(object):
         # *** Wordset TOOLS-EXT-obsolescent
         "FORGET",
     ]
-    def __init__(self, serial_port="/dev/amforth", speed=38400):
+    def __init__(self, serial_port="/dev/amforth", rtscts=False, speed=38400):
         self.debug = False
         self.max_line_length = 80
         self.progress_callback = self.print_progress
         self.editor = None
         self._serial_port = serial_port
+        self._serial_rtscts = rtscts
         self._serial_speed = speed
         self._serialconn = None
         self._readline_initialized = False
@@ -542,6 +546,17 @@ class AMForth(object):
         opened."""
         if self._serial_port != value:
             self._serial_port = value
+            self.serial_reconnect()
+
+    @property
+    def serial_rtscts(self):
+        "RTS/CTS enable of serial connection to AMForth"
+        return self._serial_rtscts
+
+    @serial_rtscts.setter
+    def serial_rtscts(self, value):
+        if self._serial_rtscts != value:
+            self._serial_rtscts = value
             self.serial_reconnect()
 
     @property
@@ -600,13 +615,13 @@ additional definitions (e.g. register names)
         )
         parser.add_argument("--timeout", "-t", action="store",
             type=float, default=15.0,
-            help="Timeout for response in seconds (float value)")
+            help="Response timeout (seconds, float value)")
         parser.add_argument("--port", "-p", action="store",
-            default=self.serial_port,
-            help="Name of serial port on which AMForth is connected")
+            type=str, default=self.serial_port, help="Serial port name")
+        parser.add_argument("--rtscts", action="store_true",
+            default=self.serial_rtscts, help="Serial port RTS/CTS enable")
         parser.add_argument("--speed", "-s", action="store",
-            type=int, default=self.serial_speed,
-            help="Speed of serial port on which AMForth is connected")
+            type=int, default=self.serial_speed, help="Serial port speed")
         parser.add_argument("--log", type=argparse.FileType('w'),
                             help="Uploaded Forth log-file")
         parser.add_argument("--line-length", "-l", action="store",
@@ -631,6 +646,7 @@ additional definitions (e.g. register names)
         self.debug = arg.debug_serial
         self.max_line_length = arg.line_length
         self._serial_port = arg.port
+        self._serial_rtscts = arg.rtscts
         self._serial_speed = arg.speed
         self._log = arg.log
         self.editor = arg.editor
@@ -641,7 +657,7 @@ additional definitions (e.g. register names)
         behavior.ignore_errors = arg.ignore_error
         return arg.files, (arg.interact or len(arg.files) == 0)
 
-    def serial_connect(self, port=None, speed=None):
+    def serial_connect(self, port=None, rtscts=None, speed=None):
         """Connect to AMForth on a serial port
 
         The port and speed argument are optional.  If not specified
@@ -655,6 +671,8 @@ additional definitions (e.g. register names)
         connection is made."""
         if port != None:
             self.serial_port = port
+        if rtscts != None:
+            self.serial_rtscts = rtscts
         if speed != None:
             self.serial_speed = speed
         if self._serialconn:
@@ -666,7 +684,9 @@ additional definitions (e.g. register names)
                                              serial.EIGHTBITS,
                                              serial.PARITY_NONE,
                                              serial.STOPBITS_ONE,
-                                             timeout, False, False, None, False)
+                                             timeout, False,
+                                             self.serial_rtscts,
+                                             None, False)
         except serial.SerialException, e:
             raise AMForthException("Serial port connect failure: %s" % str(e))
 

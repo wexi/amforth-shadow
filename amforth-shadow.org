@@ -116,8 +116,14 @@ The Word List Scope mechanism was already accepted by HQ. What remains is to exp
 
 + REVERSE ( X1 .. Xn n -- Xn .. X1 n ) :: [FORTH] LIFO made FIFO.
 
-* Utilities
+* amforth-shell.py enhancements
 
-+ A distiller function :: --log option was added to amforth-shell.py to collect the actual code that it sends to the AmForth system.
++ #include vs. #install :: #include would skip uploading if the file has already been uploaded. #install is unconditional.
+
++ A distiller function :: The --log option was added to amforth-shell.py to collect the actual code that it sends to the AmForth system.
+
++ Hardware handshake :: The --rts/cts option is for a more reliable serial connection if your AmForth supports.
+
+* Emacs support
 
 + Emacs amforth mode :: amoforth.el is a fork of gforth.el. It enforces OpenFirmware indentation rules. It would need much attention to reach full usefulness.

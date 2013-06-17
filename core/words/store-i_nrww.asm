@@ -13,6 +13,9 @@ PFA_DO_STOREI_NRWW:
   in temp1,SREG
   push temp1
   cli
+#ifdef	CTS_ENABLE
+  CTS_OFF
+#endif
 
   movw temp2, tosl ; save the (word) address
   loadtos          ; get the new value for the flash cell

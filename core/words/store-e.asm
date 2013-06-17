@@ -23,6 +23,9 @@ PFA_STOREE0:
     loadtos
     in_ temp2, SREG
     cli
+#ifdef	CTS_ENABLE
+    CTS_OFF
+#endif
     rcall PFA_STOREE1
     adiw zl,1
 

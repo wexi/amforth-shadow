@@ -43,47 +43,51 @@ It is recommended to turn interrupts off (~int-~) when compiling new code.
 
 * USART tx/rx isr with RTS/CTS/DTR support
 
-Define the following macros in your application "template.asm" as your project requires. The following CTS/RTS/DTR controls are independent of each other, you can implement any of them, none or
-all. Note that RTS requires an edge sensitive interrupt input.
+Define the following macros in your application "template.asm" as your project ports/pins use. The following CTS/RTS/DTR controls are independent of each other -- you can implement any of them, none
+or all. Note that RTS requires an edge sensitive interrupt input.
 
 #+BEGIN_EXAMPLE
-.set WANT_ISR_RX = 1		;interrupt driven receive
-.set WANT_ISR_TX = 1		;interrupt driven transmit
+.set WANT_ISR_RX = 1	;interrupt driven receive
+.set WANT_ISR_TX = 1	;interrupt driven transmit
 
-#define RXR_SIZE 32		;= 2⁵ receive queue size
-#define TXR_SIZE 64		;= 2⁶ transmit queue size
+#define RXR_SIZE 32	;= 2⁵ receive queue size
+#define TXR_SIZE 64	;= 2⁶ transmit queue size
 #+END_EXAMPLE
 
-Overrides the default 16/16 char I/O buffer sizes.
+Overrides the default 16/16 character I/O buffer
 	
 #+BEGIN_EXAMPLE
-#define CTS_ENABLE		;input queue gate
-.macro	CTS_INIT
-  sbi	DDRD, 7			;defaults to CTS_ON
+#define CTS_ENABLE	;input queue gate
+.macro CTS_INIT
+  sbi	DDRD, 7		;defaults to CTS_ON
 .endmacro
-.macro	CTS_ON		;invite serial input
+.macro CTS_ON		;invite serial input
   cbi	PORTD, 7
 .endmacro
-.macro	CTS_OFF
+.macro CTS_OFF
   sbi	PORTD, 7
+.endmacro
+.macro IS_CTS_OFF
+  sbis PORTD, 7	;skip if CTS is OFF
 .endmacro
 #+END_EXAMPLE
 
-The CTS mechanism enables AmForth to control its input characters rate. CTS turns OFF when the input buffer can accommodate just two more characters. The input buffer then has to become half empty
-before CTS turns ON again. See core/drivers/usart-isr-rx.asm
+The CTS mechanism enables AmForth to control its input characters rate. CTS turns OFF when the input buffer can accommodate just two more characters. *IMPORTANT*: The CTS also turns OFF before writing
+to the FLASH and to the E²PROM memories as these operations are executed with the interrupt system disabled. The input buffer has to become half empty before CTS turns ON again. Change the definitions
+in drivers/usart-isr-rx.asm if you need different ON/OFF levels.
 
 #+BEGIN_EXAMPLE
-#define RTS_ENABLE		;output queue gate
-.macro	RTS_INIT
+#define RTS_ENABLE	;output queue gate
+.macro RTS_INIT
 .set pc_ = pc
 .org INT6addr
   jmp_ usart_rts_isr
 .org pc_
-  sbi_	EICRB, ISC61, temp0 ;sense RTS activation
-  sbi	EIMSK, INT6
+  sbi_ EICRB, ISC61, temp0 ;interrupt on RTS OFF→ON
+  sbi	 EIMSK, INT6
 .endmacro
-.macro	IS_RTS_OFF
-  sbis	PINE, 6		;skip next instruction if on hold
+.macro IS_RTS_OFF
+  sbis PINE, 6	;skip if RTS is OFF
 .endmacro
 #+END_EXAMPLE
 
@@ -91,8 +95,8 @@ The RTS mechanism enables the host computer to control AmForth output characater
 
 #+BEGIN_EXAMPLE
 #define DTR_ENABLE
-.macro	IS_DTR_OFF
-  sbic	PINE, 7		;skip next instruction if DTR is down
+.macro IS_DTR_OFF
+  sbic PINE, 7		;skip if DTR is OFF
 .endmacro
 #+END_EXAMPLE
 

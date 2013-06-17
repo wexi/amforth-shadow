@@ -1,5 +1,5 @@
 ; Partname:  AT90CAN128
-; generated automatically, do not edit
+; flash cell read/write changed to preserve temp7
 
 .nolist
 	.include "can128def.inc"
@@ -8,20 +8,20 @@
 .equ ramstart =  256
 .equ CELLSIZE = 2
 .macro readflashcell
-	clr temp7
-	lsl zl
-	rol zh
-	rol temp7
-	out_ RAMPZ, temp7
-	elpm @0, Z+
-	elpm @1, Z+
+  lsl	zl
+  rol	zh
+  rol	zh
+  out	RAMPZ, zh
+  ror	zh
+  elpm	@0, Z+
+  elpm	@1, Z+
 .endmacro
 .macro writeflashcell
-	clr temp7
-	lsl zl
-	rol zh
-	rol temp7
-	out_ RAMPZ, temp7
+  lsl	zl
+  rol	zh
+  rol	zh
+  out	RAMPZ, zh
+  ror	zh
 .endmacro
 .set WANT_PORTA = 0
 .set WANT_PORTB = 0

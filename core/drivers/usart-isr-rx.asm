@@ -62,13 +62,21 @@ usart_rx_isr_done:
   pop	xl
   reti
 
-; ( -- num ) number of characters in queue
+; ( -- cnt ) number of characters in queue
 XT_RXQ_ISR: _pfa_
   savetos
   lds	tosl, usart_rx_cnt
   clr	tosh
+#ifdef	CTS_ENABLE
+  IS_CTS_OFF
+  rjmp	RXQ_ISR			;already ON 
+  cpi	tosl, usart_rx_onn + 1
+  brsh	RXQ_ISR
+  CTS_ON			;cnt ≤ usart_rx_onn
+#endif
+RXQ_ISR:
   jmp_	DO_NEXT
-
+	
 ; ( -- c ) assuming the queue is not empty!
 XT_RXR_ISR: _pfa_
   savetos
@@ -87,12 +95,6 @@ XT_RXR_ISR: _pfa_
   lds	temp1, usart_rx_cnt
   dec	temp1
   sts	usart_rx_cnt, temp1
-#ifdef	CTS_ENABLE
-  cpi	temp1, usart_rx_onn + 1
-  brsh	RXR_ISR
-  CTS_ON
-#endif
-RXR_ISR:
   out	SREG, temp0  
   jmp_	DO_NEXT
 

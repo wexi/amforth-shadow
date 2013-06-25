@@ -1,11 +1,11 @@
 ; ( n1 -- ) (R: loop-sys1 -- loop-sys2| )
 ; System
 ; runtime of +loop
-;VE_DOPLUSLOOP:
-;    .dw $ff07
-;    .db "(+loop)"
-;    .dw VE_HEAD
-;    .set VE_HEAD = VE_DOPLUSLOOP
+VE_DOPLUSLOOP:
+   .dw $ff07
+   .db "(+loop)",0
+   .dw VE_HEAD
+   .set VE_HEAD = VE_DOPLUSLOOP
 XT_DOPLUSLOOP:
     .dw PFA_DOPLUSLOOP
 PFA_DOPLUSLOOP:

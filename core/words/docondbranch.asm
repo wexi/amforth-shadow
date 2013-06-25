@@ -1,11 +1,11 @@
 ; ( f -- )
 ; System
 ; runtime of ?branch
-;VE_DOCONDBRANCH:
-;    .dw $ff09
-;    .db "(?branch)"
-;    .dw  VE_HEAD
-;    .set VE_HEAD = VE_DOCONDBRANCH
+VE_DOCONDBRANCH:
+   .dw $ff09
+   .db "(?branch)",0
+   .dw  VE_HEAD
+   .set VE_HEAD = VE_DOCONDBRANCH
 XT_DOCONDBRANCH:
     .dw PFA_DOCONDBRANCH
 PFA_DOCONDBRANCH:

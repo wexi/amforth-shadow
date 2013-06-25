@@ -1,11 +1,11 @@
 ; ( limit counter -- ) (R: -- loop-sys| )
 ; System
 ; runtime of ?do
-;VE_DOQDO:
-;    .dw $ff05
-;    .db "(?do)"
-;    .dw VE_HEAD
-;    .set VE_HEAD = VE_DOQDO
+VE_DOQDO:
+   .dw $ff05
+   .db "(?do)",0
+   .dw VE_HEAD
+   .set VE_HEAD = VE_DOQDO
 XT_DOQDO:
     .dw PFA_DOQDO
 PFA_DOQDO:

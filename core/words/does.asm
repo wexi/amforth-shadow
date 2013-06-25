@@ -36,15 +36,18 @@ DO_DODOES: ; ( -- PFA )
 ; ( -- )
 ; System
 ; replace the XT written by CREATE to call the code that follows does>
-;VE_DODOES:
-;   .dw $ff07
-;   .db "(does>)"
-;   .set VE_HEAD = VE_DODOES
+VE_DODOES:
+  .dw $ff07
+  .db "(does>)",0
+  .dw VE_HEAD
+  .set VE_HEAD = VE_DODOES
 XT_DODOES:
     .dw DO_COLON
 PFA_DODOES:
     .dw XT_R_FROM
-    .dw XT_GET_CURRENT
+    .dw XT_DOLITERAL
+    .dw COLON_SMUDGE+2
+    .dw XT_FETCH		;last create wid
     .dw XT_FETCHE
     .dw XT_NFA2LFA
     .dw XT_1PLUS   ; lfa>xt

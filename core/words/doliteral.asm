@@ -1,11 +1,11 @@
 ; ( -- n1 )
 ; System
 ; runtime of literal
-;VE_DOLITERAL:
-;    .dw $ff09
-;    .db "(literal)"
-;    .dw VE_HEAD
-;    .set VE_HEAD = VE_DOLITERAL
+VE_DOLITERAL:
+   .dw $ff09
+   .db "(literal)",0
+   .dw VE_HEAD
+   .set VE_HEAD = VE_DOLITERAL
 XT_DOLITERAL:
     .dw PFA_DOLITERAL
 PFA_DOLITERAL:

@@ -63,6 +63,11 @@ usart_rx_isr_done:
   reti
 
 ; ( -- cnt ) number of characters in queue
+VE_RXQ_ISR:
+    .dw $ff07
+    .db "rxq-isr",0
+    .dw VE_HEAD
+    .set VE_HEAD = VE_RXQ_ISR
 XT_RXQ_ISR: _pfa_
   savetos
   lds	tosl, usart_rx_cnt

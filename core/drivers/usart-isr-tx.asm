@@ -82,6 +82,11 @@ usart_rts_isr:			;RTS OFF→ON
 #endif	
 
 ; ( -- n ) return the number of char places in queue or -1 if the DTR is OFF
+VE_TXQ_ISR:
+    .dw $ff07
+    .db "txq-isr",0
+    .dw VE_HEAD
+    .set VE_HEAD = VE_TXQ_ISR
 XT_TXQ_ISR: _pfa_
   savetos
 #ifdef	DTR_ENABLE

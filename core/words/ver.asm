@@ -31,7 +31,7 @@ PFA_VER:
     .dw XT_STORE
 
     .dw XT_TYPE
-    .dw XT_SPACE
-    .dw XT_ENV_CPU
-    .dw XT_ITYPE
+    ;; .dw XT_SPACE
+    ;; .dw XT_ENV_CPU
+    ;; .dw XT_ITYPE
     .dw XT_EXIT

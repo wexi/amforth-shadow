@@ -10,6 +10,6 @@ XT_ENV_FORTHNAME:
     .dw DO_COLON
 PFA_EN_FORTHNAME:
     .dw XT_DOSLITERAL
-    .dw 7
-    .db "amforth",0
+    .dw 14
+    .db "amforth-shadow"
     .dw XT_EXIT

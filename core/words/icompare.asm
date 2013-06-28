@@ -44,7 +44,7 @@ PFA_ICOMPARE_LOOP:
     ;.dw XT_BYTESWAP
     .dw XT_DOLITERAL
     .dw $100
-    .dw XT_LESS
+    .dw XT_ULESS
     .dw XT_DOCONDBRANCH
     .dw PFA_ICOMPARE_LASTCELL
     .dw XT_SWAP

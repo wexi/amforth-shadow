@@ -40,6 +40,17 @@ See the code section at Sourceforge to get the
 * improved documentation
 * core: added :command:`d0=` and :command:`0=` as assembly primitives and
   use them in other compare operations. Saves a lot of code space.
+* Wordlist entries are now 8bit clean. Words with umlauts or e.g.
+  Greek commands work as expected, unless the terminal does not cooperate.
+  Thanks to Enoch.
+
+.. code-block:: forth
+
+   > : Σ  0 swap 0  do  +  loop  ;
+    ok
+   > 7 8 9 3 Σ .
+    24  ok
+   >
 
 More To Read
 ----------------

@@ -6,17 +6,17 @@ User's Manual For Linux
 Initial Setup
 -------------
 
-This guide makes a few assumtions. Your linux should be a fairly new
+This guide makes a few assumtions. Your linux should be a fairly recent
 linux distribution. For this document an Ubuntu 12.04 LTS is used, 
 others should work in a similiar way.
 
-Install the following applications with the package manager
+First you'll have to install some packages with the package manager:
 
 * wine (any version)
 * ant or make (any version)
 * avrdude
 
-They may need a lot of more packages, install all of them.
+They may need quite a lot more packages, install all of them.
 
 Next download the amforth package and un-tar (or unzip) it 
 into a new, empty folder:
@@ -36,7 +36,8 @@ into a new, empty folder:
 
 Now you need access to an installed Atmel Studio 6 installation. Locate
 the program directory and copy the file :file:`avrasm2.exe` and the whole
-Appnotes2 directory into a newly created directory Atmel:
+:file:`Appnotes2` directory into a newly created directory called 
+:file:`Atmel`:
 
 .. code-block:: bash
 
@@ -44,9 +45,9 @@ Appnotes2 directory into a newly created directory Atmel:
    avrasm2.exe Appnotes2/
    >
 
-The Appnotes2 directory contains a lot of :file:`inc` files. They are
-text files. There is no need to convert them from DOS to unix text
-format. Take them as they are.
+The :file:`Appnotes2` directory contains a lot of :file:`inc` files. 
+They are text files. There is no need to convert them from DOS to unix 
+text format. Take them as they are.
 
 Testing
 -------
@@ -65,7 +66,7 @@ test the assembler setup.
    >
 
 Ant works similiar, note the warning at startup, it can safely
-ignored (or fixed, it doesn't matter)
+ignored:
 
 .. code-block:: bash
 
@@ -81,7 +82,8 @@ ignored (or fixed, it doesn't matter)
    Total time: 4 seconds
    >
 
-There should be a number of new files in this directory:
+After this step, there  should be a number of new files in the 
+directory:
 
 .. code-block:: bash
 
@@ -90,7 +92,7 @@ There should be a number of new files in this directory:
    template.hex  template.map   dict_appl_core.inc  
    makefile       template.eep.hex  template.lst  words
 
-If anything went wrong, read the error messages and fix them and
+If something went wrong, read the error messages, fix them and
 repeat this step until all is well.
 
 Create Your Project

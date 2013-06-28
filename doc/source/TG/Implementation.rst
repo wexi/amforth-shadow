@@ -134,14 +134,19 @@ into the dictionary (flash).
 Control Structures
 ------------------
 
-Control Structures organize the program execution flow. Since Edsgar Dijkstra
-the structured programming is the preferred way to do it. AmForth provides all
-kinds of them: sequences, selections and repetitions. Selections are made with
-the :command:`ìf` command. Multiple selections can be made with :command:`case`.
-Repetitions can be unlimited or limited. Limited Repetitions can use flags and
-counter/limits to leave the loop.
+The inner interpreter, the forth virtual machine, can, just like a real CPU, 
+only execute words, one after the next. This linear control flow is usually 
+not sufficient to do real work. The Forth VM needs to be redirected to other
+places instead of the next one, often depending on runtime decisions.
 
-There is support for out-of-band control flow too: Exceptions. They provide
+Since Edsgar Dijkstra the structured programming is the preferred way to do it. 
+AmForth provides all kinds of them: sequences, selections and repetitions. Sequences
+are the simple, linear execution of consecutive words. Selections provide a conditional
+jump over code segments. They are usually implemented with the :command:`ìf` command. 
+Multiple selections can be made with :command:`case`. Repetitions can be unlimited or 
+limited. Limited Repetitions can use flags and counter/limits to leave the loop.
+
+There is also support for out-of-band control flow: Exceptions. They provide
 some kind of emergency exits to solve hard problems. They can be catched at any
 level up to the outer text interpreter. It will print a message on the command
 terminal and will wait for commands.
@@ -149,22 +154,23 @@ terminal and will wait for commands.
 Building Blocks
 ...............
 
-All control structures are based upon jumps and conditional jumps. Every
-control operation does either a forward or a backward jump. Thus
+All control structures can be implemented using jumps and conditional jumps. 
+Every control operation results in either a forward or a backward jump. Thus
 6 building blocks are needed to create them all: :command:`(branch)`,
 :command:`(0branch)`, :command:`>mark`, :command:`<mark`, :command:`>resolve`
 and :command:`<resolve`. None of them are directly accessible however. Most
 of these words are used in pairs. The data stack is used as the control flow
-stack. All words are used in immediate words. They are executed at compile
-time and produce code for the runtime action.
+stack. At runtime the top-of-stack element is the flag. All words are used in 
+immediate words. They are executed at compile time and produce code for the 
+runtime action.
 
 :command:`(branch)` is a unconditional jump. It reads the flash cell after the
-command and takes it as the branch destination. Jumps can be at any distance
-in any direction. :command:`(0branch)` jumps only if the Top-Of-Stack
-element is zero (e.g. logically FALSE). If it is non-zero, the jump is not made
-and execution continues with the next command. In this case, the branch
-destination field is ignored. These two words are implemented in assembly.
-A equivalent forth implementation would be
+command and takes it as the jump destination. Jumps can be at any distance
+in any direction. :command:`(0branch)` reads the Top-Of-Stack element and
+jumps if it is zero (e.g. logically FALSE). If it is non-zero, the jump is not 
+made and execution continues with the next XT in the dictionary. In this case, 
+the branch destination field is ignored. These two words are implemented in 
+assembly. A equivalent forth implementation would be
 
 .. code-block:: forth
 

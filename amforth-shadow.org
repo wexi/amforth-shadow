@@ -102,17 +102,17 @@ The RTS mechanism enables the host computer to control AmForth output characater
 
 Output characters are dropped when the host computer is down or not connected.
  
-* TODO WLSCOPE
+* WLSCOPE
 
 The shadow is proud to have contributed the Word List Scope idea and implementation. Still remains:
 
-** words/does.asm bug-fix
+** DONE words/does.asm bug-fix
 
 DOES> was erronesously using get-current to access the last created code which, through WLSCOPE mechanism, can be different.
 
-* TODO UTF-8
+* DONE words/icompare.asm bug-fix
 
-Unicode UTF-8 strings are currently accepted by ." and s". Currently though UTF-8 dictionary words cannot be found (therefore used). The shadow would like to enter code like:
+Signed comparison prevented us until now from enjoying UTF-8 strings. Not any more.
 
 : : Σ 0 swap 0  do  +  loop  ;  ( X1 X2 .. Xn n -- sigma )
 

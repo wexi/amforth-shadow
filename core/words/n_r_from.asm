@@ -1,6 +1,6 @@
-; ( xn .. x0 n -- ) (R: -- xn .. x0 n)
+; ( -- xn .. x0 n ) (R: xn .. x0 n -- )
 ; Stack
-; move n items from data stack to return stack
+; move n items from return stack to data stack
 VE_N_R_FROM:
     .dw $ff03
     .db "nr>",0

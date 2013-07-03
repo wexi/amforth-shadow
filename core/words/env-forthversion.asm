@@ -1,4 +1,4 @@
-; ( -- n ) 
+; ( -- n )
 ; Environment
 ; version number of amforth
 VE_ENV_FORTHVERSION:

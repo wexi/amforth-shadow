@@ -16,7 +16,7 @@ hardware interrupt system disabled. This means that one has to keep ISRs short a
 queue, allowing the Forth code Second Level Interrupt Handlers (SLIH) to be interruptible and thus be as slow to execute as necessary. The new first level interrupt handling (FLIH) is suitable for
 type I interrupt sources, those acknowledged by execution of their interrupt vectors.
 
-CAN interrupts, if the application CANQUE asm switch is "1", are safely routed to the queue by CANGIE.ENIT auto disable. The Forth code should acknowledge the specific CAN interrupt cause before
+CAN interrupts, in the supported at90can32/64/128 \micro{}C's, are safely routed to the queue by CANGIE.ENIT auto disable. The Forth code should acknowledge the specific CAN interrupt cause before
 resetting ENIT.
 
 ** New words

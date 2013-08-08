@@ -1,11 +1,11 @@
 ; ( -- addr len ) 
 ; String
 ; runtime portion of sliteral
-;VE_DOSLITERAL:
-;  .dw $ff0a
-;  .db "(sliteral)"
-;  .dw VE_HEAD
-;  .set VE_HEAD = VE_DOSLITERAL
+VE_DOSLITERAL:
+ .dw $ff0a
+ .db "(sliteral)"
+ .dw VE_HEAD
+ .set VE_HEAD = VE_DOSLITERAL
 XT_DOSLITERAL:
   .dw DO_COLON
 PFA_DOSLITERAL:

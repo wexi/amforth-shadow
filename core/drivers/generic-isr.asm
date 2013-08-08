@@ -9,7 +9,17 @@ intvec:	.byte INTVECTORS * CELLSIZE
 ; enable/disable soft interrupts by:   int+ int-
 	
 .cseg
-.if	CANQUE
+#ifdef	_CAN32DEF_INC_
+#define	_CANDEF_
+#endif
+#ifdef	_CAN64DEF_INC_
+#define	_CANDEF_
+#endif
+#ifdef	_CAN128DEF_INC_
+#define	_CANDEF_
+#endif
+
+#ifdef	_CANDEF_
 .set pc_ = pc
 .org CANITaddr
   rjmp	can_isr
@@ -23,7 +33,7 @@ can_isr:			;since CAN interrupts are not ack'ed by handler exec
   sts	CANGIE, temp0
   ldi	temp0, CANITaddr	;interrupt ID
   rjmp	isr_join  
-.endif	
+#endif	
 
 ; interrupt routine gets called (again) by rcall! This gives the
 ; address of the int-vector on the stack.

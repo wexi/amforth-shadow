@@ -1,0 +1,5 @@
+This AVR8 bootloader was derived by Enoch
+<https://github.com/wexi/amforth-shadow> from Roland Riegel's BOOFA code
+<http://www.roland-riegel.de/boofa/>. It is GPLv2 licensed.  Tailor
+boof_config.asm and Makefile to suit your needs.
+

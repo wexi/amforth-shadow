@@ -1,34 +1,28 @@
-# in debug mode .org 0 and no bypass
-DEBUG ?= 1
-# Which board to communicate with?
-COM ?= 2
-RATE ?= 38400
+# EXTRA := -D DEBUG
+EXTRA ?= 
 
 MAIN := boofa
 ASM := $(MAIN).asm
 HEX := $(MAIN).hex
 LIST := $(MAIN).lst
 SOURCES := $(wildcard *.asm)
+DEF := can128def.inc
 MFC := c128
 
 ATMEL := $(HOME)/avr/Atmel/AVR\ Tools/AvrAssembler2
-XASM := wine $(ATMEL)/avrasm2.exe -fI -I $(ATMEL)/Appnotes $(if DEBUG,-D DEBUG,-U DEBUG)
+XASM := wine $(ATMEL)/avrasm2.exe -fI -I $(ATMEL)/Appnotes
 DUDE := avrdude -P usb -c jtag2 -p $(MFC)
-TTY := /dev/ttyUSB$(COM)
 
 all: $(HEX)
 
 $(HEX): $(SOURCES) Makefile
-	$(XASM) -D BAUD=$(RATE) -o $(HEX) -l $(LIST) $(ASM)
+	$(XASM) $(EXTRA) -o $(HEX) -l $(LIST) -i $(DEF) $(ASM)
 
 install: $(HEX)
-	$(DUDE) -e -U flash:w:$<
-
-term:
-	picocom --baud $(RATE) --flow h --parity n --databits 8 $(TTY)
+	$(DUDE) -e -U flash:w:$(HEX):i -U efuse:w:0xfd:m -U hfuse:w:0xbe:m -U lfuse:w:0xcf:m
 
 clean:
 	rm -f $(HEX) $(LIST)
 
-.PHONY: all clean install term
+.PHONY: all clean install
 

@@ -8,17 +8,22 @@
 
 .include "boofa_config.asm"
 
-#ifdef	DEBUG
-.org 0
-	jmp	boofa
-#endif
-
 ; put boot loader into boot section
-.org DEVBOOTSTART
-boofa:	boofa_init
-#ifndef	DEBUG
-        boofa_skip		; skip boofa?
-#endif
+.org	DEVBOOT
+	boot	load		;conditional
+	
+.ifndef	DEBUG
+	clr	zl		;launch application if possible
+	clr	zh
+	lpm	yl, z+
+	lpm	yh, z+		;Y is first flash word
+	adiw	yh:yl, 1
+	breq	load		;no code?
+	jmp	0
+.endif
+	
+load:	boofa
+
         ; setup stack pointer
         ldi	gen1, LOW(RAMEND)
         out_	SPL, gen1
@@ -124,11 +129,7 @@ boofa_cmd_B_F:
 
 boofa_cmd_B_F_word:
         ; receive a flash word
-        rcall	uart_rec
-        push	gen1
-        rcall	uart_rec
-        mov	gen2, gen1
-        pop	gen1
+        rcall	uart_rec_word
 
         ; store flash word into internal page buffer
         rcall	flash_load_word
@@ -213,16 +214,10 @@ boofa_cmd_g_F_word:
         rcall	flash_read_word
 
         ; send data word
-        rcall	uart_send
-        mov	gen1, gen2
-        rcall	uart_send
-
+	rcall	uart_send_word
+	
         ; repeat until we reached the end address
-        subi	gen3, 2
-        clr	gen1
-        sbc	gen4, gen1
-        mov	gen1, gen3
-        or	gen1, gen4
+	sbiw	gen4:gen3, 2
         brne	boofa_cmd_g_F_word
 
         rjmp	boofa_cmd_g_common
@@ -271,9 +266,7 @@ boofa_cmd_R_:
         rcall	flash_read_word
 
         ; send memory word
-        rcall	uart_send
-        mov	gen1, gen2
-        rcall	uart_send
+        rcall	uart_send_word
 
         ; reset block buffer position
         clr	blockposl
@@ -567,11 +560,11 @@ boofa_cmd_s:
         cpi	gen1, 's'
         brne	boofa_cmd_ESC
 
-        ldi	gen1, ((DEVSIG >> 0) & 0xff)
+        ldi	gen1, SIGNATURE_002
         rcall	uart_send
-        ldi	gen1, ((DEVSIG >> 8) & 0xff)
+        ldi	gen1, SIGNATURE_001
         rcall	uart_send
-        ldi	gen1, ((DEVSIG >> 16) & 0xff)
+        ldi	gen1, SIGNATURE_000
         rcall	uart_send
 
         rjmp	boofa_loop

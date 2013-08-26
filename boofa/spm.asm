@@ -7,7 +7,7 @@
 
         ; waits until spm operation is complete
 spm_wait:
-	sbis_	SPMCSR, SPMEN
+	sbic_	SPMCSR, SPMEN
         rjmp	spm_wait
         ret
 

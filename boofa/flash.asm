@@ -42,9 +42,9 @@ flash_erase_page:
         adc	addrh, gen1
 
         ; repeat if we did not yet reach the bootloader section
-        ldi	gen1, LOW(DEVBOOTSTART)
+        ldi	gen1, LOW(DEVBOOT)
         cp	addrl, gen1
-        ldi	gen1, HIGH(DEVBOOTSTART)
+        ldi	gen1, HIGH(DEVBOOT)
         cpc	addrh, gen1
         brne	flash_erase_page
 

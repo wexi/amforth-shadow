@@ -5,16 +5,16 @@
 ; it under the terms of the GNU General Public License version 2 as
 ; published by the Free Software Foundation.
 
-.nolist
-.include "can128def.inc"
-.list
-
+.ifndef F_CPU
 .equ F_CPU = 16000000
+.endif
+.ifndef BAUD
+.equ BAUD = 38400
+.endif
 
 ; device specific boofa configuration
-.equ DEVBOOTSTART = SMALLBOOTSTART
+.equ DEVBOOT = SMALLBOOTSTART
 .equ DEVCODE = 0x44
-.equ DEVSIG = 0x1e9781
 .equ DEVELPM = 1
 
 ; device specific register handling
@@ -33,11 +33,11 @@
 .equ RXC = RXC0
 
 ; general registers
-.def gen1 = r16
-.def gen2 = r17
-.def gen3 = r18
-.def gen4 = r19
-.def spad = r20
+.def spad = r16			;for temporary macro use only
+.def gen1 = r22
+.def gen2 = r23
+.def gen3 = r24			;adiw/sbiw capable
+.def gen4 = r25
 
 ; address latch
 .def addrl = r8
@@ -102,18 +102,19 @@
 .endif
 .endmacro
 	
-.macro	boofa_init
-	sbi_	DDRB, 5		;output TP low
-	sbi_	DDRB, 7		;GREEN LED OFF
-	sbi_	PORTB, 4	;input TP pulled high
-	sbi_	PORTB, 7	;GREEN LED ON
-	sbi_	DDRD, 7		;CTS ON
-	sbi_	DDRE, 5		;RED LED OFF
+.macro	boot
+	sbi_	PORTB, 4	;input TP6 pulled high
+	sbi_	DDRB, 5		;output TP5 low
+	sbis_	PINB, 4		;skip if TP6 ≠ TP5
+	rjmp	@0		;boot loader
+	sbi_	DDRE, 5
+	sbi_	PORTE, 5	;RED LED ON
 .endmacro
 	
-.macro	boofa_skip
-	sbic_	PINB, 4
-	jmp	0
+.macro	boofa
+	sbi_	DDRB, 7
+	sbi_	PORTB, 7	;GREEN LED ON
+	sbi_	DDRD, 7		;CTS ON
 .endmacro
 
 .macro	boofa_led_on
@@ -121,5 +122,11 @@
 .endmacro
 
 .macro	boofa_led_off
-	cbi_ PORTE, 5
+	cbi_	PORTE, 5
+.endmacro
+
+.macro	xchg
+	mov	spad,@0
+	mov	@0,@1
+	mov	@1,spad
 .endmacro

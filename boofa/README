@@ -1,5 +1,15 @@
-This AVR8 bootloader was derived by Enoch
-<https://github.com/wexi/amforth-shadow> from Roland Riegel's BOOFA code
-<http://www.roland-riegel.de/boofa/>. It is GPLv2 licensed.  Tailor
-boof_config.asm and Makefile to suit your needs.
+# -*- Mode: Org; Coding: utf-8 -*-
+
+* General
+
+  This is an AVR8 bootloader that was derived from [[http://www.roland-riegel.de/boofa/][Roland Riegel's BOOFA code]] by [[https://github.com/wexi/amforth-shadow][Enoch from AmForth-Shadow]]. It is GPLv2 licensed.
+
+* Set-up
+
+  Make sure that this bootloader fits the smallest 1KB boot size. Set Fuse High Byte to BOOTSZ1=1, BOOTSZ0=1, BOOTRST=1. Tailor boof_config.asm and Makefile to suit your application.  Here BOOFA is
+  invoked if a TP5-TP6 link is detected (RED LED OFF) or when application code is missing (RED LED ON). The GREEN LED is initially ON.
+
+  
+
+
 

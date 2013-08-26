@@ -17,7 +17,13 @@
 .include "dict_appl_core.inc"
 
 .set flashlast = pc
-.if (pc>FLASHEND)
+#ifdef BOOFA
+.equ FLASHTOP = SMALLBOOTSTART-1
+#else
+.equ FLASHTOP = FLASHEND
+#endif
+
+.if (pc>FLASHTOP)
   .error "*** Flash size exceeded, please edit your dict_appl_core file to use less space! Aborting."
 .endif
 

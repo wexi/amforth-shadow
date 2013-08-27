@@ -107,7 +107,7 @@
 	sbi_	DDRB, 5		;output TP5 low
 	sbis_	PINB, 4		;skip if TP6 ≠ TP5
 	rjmp	@0		;boot loader
-	sbi_	DDRE, 5
+	sbi_	DDRE, 5		;boot application
 	sbi_	PORTE, 5	;RED LED ON
 .endmacro
 	

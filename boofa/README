@@ -1,4 +1,9 @@
 # -*- Mode: Org; Coding: utf-8 -*-
+#+TITLE: AVR109 compatible bootloader
+#+AUTHOR: Enoch
+#+EMAIL: ixew@hotmail.com
+#+OPTIONS: email:t
+#+STARTUP: indent
 
 * General
 

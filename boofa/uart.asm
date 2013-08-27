@@ -27,10 +27,6 @@ uart_init:
 	pop	gen1
         ret
 
-uart_send_word:
-        sbis_	UCSRA, UDRE
-        rjmp	uart_send_word	; wait until transmit buffer is empty
-        out_	UDR, gen2
 uart_send:
         sbis_	UCSRA, UDRE
         rjmp	uart_send	; wait until transmit buffer is empty
@@ -53,10 +49,6 @@ uart_send_nibble_ok:
 	pop	gen1
 	ret
 
-uart_rec_word:			; gen2:gen1 (out): word received
-        sbis_	UCSRA, RXC
-        rjmp	uart_rec_word
-        in_	gen2, UDR
 uart_rec:			; gen1 (out): byte received
         sbis_	UCSRA, RXC
         rjmp	uart_rec

@@ -18,12 +18,11 @@
         ; erases all flash in the application section
 flash_erase:
         push	gen1
-        push	ZL
-        push	ZH
+        push	Zl
+        push	Zh
 
         ; begin with first page
-        clr	addrl
-        clr	addrh
+        movw	addrh:addrl, Xh:Xl
 
 flash_erase_page:
         rcall	flash_set_addr
@@ -48,16 +47,16 @@ flash_erase_page:
         cpc	addrh, gen1
         brne	flash_erase_page
 
-        pop	ZH
-        pop	ZL
+        pop	Zh
+        pop	Zl
         pop	gen1
         ret
 
         ; reads a single instruction word from flash
 flash_read_word: ; addrh:addrl (in,out): instruction word address
                  ; gen2:gen1 (out): instruction word
-        push	ZL
-        push	ZH
+        push	Zl
+        push	Zh
 
         ; set address to read from
         rcall	flash_set_addr
@@ -69,24 +68,24 @@ flash_read_word: ; addrh:addrl (in,out): instruction word address
         ; get new address
         rcall	flash_get_addr
 
-        pop	ZH
-        pop	ZL
+        pop	Zh
+        pop	Zl
         ret
 
         ; loads an instruction word into the internal flash page buffer
 flash_load_word: ; blockposh:blockposl (in,out): page offset
                  ; gen2:gen1 (in): word to load into page buffer
         push	gen1
-        push	ZL
-        push	ZH
+        push	Zl
+        push	Zh
         push	r0
         push	r1
 
         ; move parameters to the required locations
         mov	r0, gen1
         mov	r1, gen2
-        mov	ZL, blockposl
-        mov	ZH, blockposh
+        mov	Zl, blockposl
+        mov	Zh, blockposh
 
         ; start the page buffer write
         ldi	gen1, (1 << SPMEN)
@@ -97,22 +96,22 @@ flash_load_word: ; blockposh:blockposl (in,out): page offset
         rcall	spm_wait
 
         ; advance buffer position
-        adiw	ZH:ZL, 2
-        mov	blockposl, ZL
-        mov	blockposh, ZH
+        adiw	Zh:Zl, 2
+        mov	blockposl, Zl
+        mov	blockposh, Zh
 
         pop	r1
         pop	r0
-        pop	ZH
-        pop	ZL
+        pop	Zh
+        pop	Zl
         pop	gen1
         ret
 
         ; initiates write operation from internal page buffer to flash
 flash_write_page: ; addrh:addrh (in): flash page word address
         push	gen1
-        push	ZL
-        push	ZH
+        push	Zl
+        push	Zh
 
         ; set address to read from
         rcall	flash_set_addr
@@ -127,37 +126,33 @@ flash_write_page: ; addrh:addrh (in): flash page word address
         ; reenable application section
         rcall	spm_rww_enable
 
-        pop	ZH
-        pop	ZL
+        pop	Zh
+        pop	Zl
         pop	gen1
         ret
 
 .if DEVELPM
 flash_set_addr: ; addrh:addrl (in): flash word address
-                ; RAMPZ:ZH:ZL (out): flash byte address
+                ; RAMPZ:Zh:Zl (out): flash byte address
         push	gen1
 
-        mov	ZL, addrl
-        mov	ZH, addrh
-        clc
+        movw	Zh:Zl, addrh:addrl
         clr	gen1
-        rol	ZL
-        rol	ZH
+        lsl	Zl
+        rol	Zh
         rol	gen1
         out_	RAMPZ, gen1
 
         pop	gen1
         ret
 
-flash_get_addr: ; RAMPZ:ZH:ZL (in): flash byte address
+flash_get_addr: ; RAMPZ:Zh:Zl (in): flash byte address
                 ; addrh:addrl (out): flash word address
         push	gen1
 
-        mov	addrl, ZL
-        mov	addrh, ZH
+        movw	addrh:addrl, Zh:Zl
         in_	gen1, RAMPZ
-        clc
-        ror	gen1
+        lsr	gen1
         ror	addrh
         ror	addrl
 
@@ -165,23 +160,19 @@ flash_get_addr: ; RAMPZ:ZH:ZL (in): flash byte address
         ret
 .else
 flash_set_addr: ; addrh:addrl (in): flash word address
-                ; ZH:ZL (out): flash byte address
+                ; Zh:Zl (out): flash byte address
 
-        mov	ZL, addrl
-        mov	ZH, addrh
-        clc
-        rol	ZL
-        rol	ZH
+        movw	Zh:Zl, addrh:addrl
+        lsl	Zl
+        rol	Zh
 
         ret
 
-flash_get_addr: ; ZH:ZL (in): flash byte address
+flash_get_addr: ; Zh:Zl (in): flash byte address
                 ; addrh:addrl (out): flash word address
 
-        mov	addrl, ZL
-        mov	addrh, ZH
-        clc
-        ror	addrh
+        movw	addrh:addrl, Zh:Zl
+        lsr	addrh
         ror	addrl
 
         ret

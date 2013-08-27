@@ -10,14 +10,15 @@
 
 ; put boot loader into boot section
 .org	DEVBOOT
-	boot	load		;conditional
+	boot	load
 	
+	clr	Xl		;always
+	clr	Xh		; zero
 .ifndef	DEBUG
-	clr	zl		;launch application if possible
-	clr	zh
-	lpm	yl, z+
-	lpm	yh, z+		;Y is first flash word
-	adiw	yh:yl, 1
+	movw	Zh:Zl, Xh:Xl	;launch application if possible
+	lpm	Yl, Z+
+	lpm	Yh, Z+		;Y is first flash word
+	adiw	Yh:Yl, 1
 	breq	load		;no code?
 	jmp	0
 .endif
@@ -34,10 +35,8 @@ load:	boofa
         rcall	uart_init
 
         ; reset state
-        clr	addrl
-        clr	addrh
-        clr	blockposl
-        clr	blockposh
+	movw	addrh:addrl, Xh:Xl
+	movw	blockposh:blockposl, Xh:Xl
 
         ; main loop
 boofa_loop:
@@ -124,12 +123,14 @@ boofa_cmd_B_F:
         brne	boofa_cmd_B_E
 
         ; start at internal page buffer's beginning
-        clr	blockposl
-        clr	blockposh
+        movw	blockposh:blockposl, Xh:Xl
 
 boofa_cmd_B_F_word:
         ; receive a flash word
-        rcall	uart_rec_word
+	rcall	uart_rec
+	mov	gen2, gen1
+	rcall	uart_rec
+	xchg	gen1, gen2
 
         ; store flash word into internal page buffer
         rcall	flash_load_word
@@ -137,14 +138,13 @@ boofa_cmd_B_F_word:
         ; repeat until we reached the page buffer's end
         cp	blockposl, gen3
         cpc	blockposh, gen4
-        brne	boofa_cmd_B_F_word
+        brcs	boofa_cmd_B_F_word
 
         ; write page buffer to flash
         rcall	flash_write_page
 
         ; advance address pointer by block size in words
-        clc
-        ror	gen4
+        lsr	gen4
         ror	gen3
         add	addrl, gen3
         adc	addrh, gen4
@@ -184,8 +184,7 @@ boofa_cmd_B_common:
         rcall	uart_send
 
         ; reset block buffer position
-        clr	blockposl
-        clr	blockposh
+	movw	blockposh:blockposl, Xh:Xl
 
         rjmp	boofa_loop
 
@@ -214,7 +213,9 @@ boofa_cmd_g_F_word:
         rcall	flash_read_word
 
         ; send data word
-	rcall	uart_send_word
+	rcall	uart_send
+	mov	gen1, gen2
+	rcall	uart_send
 	
         ; repeat until we reached the end address
 	sbiw	gen4:gen3, 2
@@ -251,8 +252,7 @@ boofa_cmd_g_unknown:
 
 boofa_cmd_g_common:
         ; reset block buffer position
-        clr	blockposl
-        clr	blockposh
+	movw	blockposh:blockposl, Xh:Xl
 
         rjmp	boofa_loop
 
@@ -266,11 +266,13 @@ boofa_cmd_R_:
         rcall	flash_read_word
 
         ; send memory word
-        rcall	uart_send_word
+	xchg	gen1, gen2
+        rcall	uart_send
+	mov	gen1, gen2
+	rcall	uart_send
 
         ; reset block buffer position
-        clr	blockposl
-        clr	blockposh
+	movw	blockposh:blockposl, Xh:Xl
 
         rjmp	boofa_loop
 
@@ -315,8 +317,7 @@ boofa_cmd_m:
         rcall	flash_write_page
 
         ; reset block buffer position
-        clr	blockposl
-        clr	blockposh
+        movw	blockposh:blockposl, Xh:Xl
 
         rjmp	boofa_loop
 
@@ -333,8 +334,7 @@ boofa_cmd_D_:
         rcall	eeprom_write
 
         ; reset block buffer position
-        clr	blockposl
-        clr	blockposh
+        movw	blockposh:blockposl, Xh:Xl
 
         rjmp	boofa_loop
 
@@ -351,8 +351,7 @@ boofa_cmd_d:
         rcall	uart_send
 
         ; reset block buffer position
-        clr	blockposl
-        clr	blockposh
+	movw	blockposh:blockposl, Xh:Xl
 
         rjmp	boofa_loop
 

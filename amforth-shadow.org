@@ -123,10 +123,6 @@ The shadow is proud to have contributed the Word List Scope idea and implementat
 
 + REVERSE ( X1 .. Xn n -- Xn .. X1 n ) :: [FORTH] LIFO made FIFO.
 
-* boofa
-
-[[file:boofa/README][AVR109 compatible 1KB boot loader]].
-
 * amforth-shell.py enhancements
 
 + #include vs. #install :: #include would skip uploading if the file has already been uploaded. #install is unconditional.

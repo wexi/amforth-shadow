@@ -13,17 +13,14 @@
 .set DPSTART = pc
 
 .org NRWW_START_ADDR
+#ifdef BOOFA			;The BOOFA bootloader
+.org	pc+512			; is 512 words max!
+#endif
 .include "amforth-interpreter.asm"
 .include "dict_appl_core.inc"
 
 .set flashlast = pc
-#ifdef BOOFA
-.equ FLASHTOP = SMALLBOOTSTART-1
-#else
-.equ FLASHTOP = FLASHEND
-#endif
-
-.if (pc>FLASHTOP)
+.if (pc>FLASHEND)
   .error "*** Flash size exceeded, please edit your dict_appl_core file to use less space! Aborting."
 .endif
 

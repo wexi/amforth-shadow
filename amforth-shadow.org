@@ -123,6 +123,10 @@ The shadow is proud to have contributed the Word List Scope idea and implementat
 
 + REVERSE ( X1 .. Xn n -- Xn .. X1 n ) :: [FORTH] LIFO made FIFO.
 
+* BOOFA bootloader support
+
+Place ~#define BOOFA~ in your application's "template.asm" to reserve 512 words at the beginning of the NRWW section. BOOFA can be obtained from [[https://github.com/wexi/boofa][GitHub]].
+
 * amforth-shell.py enhancements
 
 + #include vs. #install :: #include would skip uploading if the file has already been uploaded. #install is unconditional.

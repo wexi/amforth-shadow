@@ -1,4 +1,5 @@
 
+.include "words/traverse-wordlist.asm"
 .include "words/set-current.asm"
 .include "words/previous.asm"
 .include "words/definitions.asm"

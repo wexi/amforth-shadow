@@ -36,7 +36,7 @@ As by default soft interrupts are enabled, existing code should not be impacted.
 
 ** Limitation
 
-It is recommended to turn interrupts off (~int-~) when compiling new code.
+If you are not using USART CTS, see [[handshake]], it is recommended to turn interrupts off (~int-~) when compiling new code.
 
 ** Implementation
 
@@ -44,7 +44,7 @@ It is recommended to turn interrupts off (~int-~) when compiling new code.
 2. core/amforth-interpreter.asm: SLIH launcher.
 3. core/words/swi??.asm: Soft interrupts control words.
 
-* USART tx/rx isr with RTS/CTS/DTR support
+* <<handshake>> USART tx/rx isr with RTS/CTS/DTR support
 
 Define the following macros in your application "template.asm" according to your project ports/pins use. AmForth is considered a DCE device -- RTS and DTR are input signals, CTS is output. Note that
 these controls are independent of each other -- you can implement any of them, none or all. Also note that RTS requires an edge sensitive interrupt input.

@@ -37,6 +37,7 @@ released but will be part of the next release.
 See the code section at Sourceforge to get the
 `most recent sources <http://sourceforge.net/p/amforth/code/HEAD/tree/trunk/>`__
 
+* Forth 2012 `Traverse-Wordlist <http://www.forth200x.org/traverse-wordlist.html>`__
 * improved documentation
 * core: added :command:`d0=` and :command:`0=` as assembly primitives and
   use them in other compare operations. Saves a lot of code space.

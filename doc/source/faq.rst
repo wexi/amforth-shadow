@@ -81,11 +81,24 @@ For some targets a hex-file is provided (e.g AVR Butterfly).
 I get no serial prompt!
 -----------------------
 
-First you need to check your hardware. Plug off all programmers (they may keep the RESET
-pin). Check the serial settings. Default is 9600 8N1, no flow control. Check the fuses. Try
-to maximize the CPU frequency. The factory default of 1MHz works almost never reliably.
+You need to program two hex files, one for the flash memory and one for the EEPROM.
+The makefiles do that already automatically.
 
-Ask on the mailing list for help.
+Next check are the frequency settings. Atmegas need a configuration (fuse setting) to
+use an external clock source. By default they run with an unstabilized 1MHz internal
+clock source, which is not well suited for serial communication. Check the datasheet 
+of your controller to find the correct fuse settings, they are different for different
+atemgas and very sensitive, be absolutly careful! Rebuilt the hex files with the proper
+frequency (F_CPU setting).
+
+Finally check the terminal settings: default are 9600 8N1, no flow control. If your terminal
+has different settings, change them.
+
+Finally check the hardware. You may add a LED (or a scope) to the TX pin to check wether 
+the controller sends out the boot message upon reset. Plug off all programmers (they may 
+keep the RESET pin). 
+
+Check the mailing list archive for other hints or (finally) ask there for help.
 
 What do all the words do?
 -------------------------

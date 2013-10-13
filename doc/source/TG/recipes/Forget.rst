@@ -8,8 +8,9 @@ more modern approach: :command:`marker`.
 
 :command:`marker` needs planning. Before use, include the `file:`dict_wl.inc` into
 your list of include packages to generate the hex files. Next two forth source files
-need to be uploaded to the controller: :file:`lib/ans94/postpone.frt` and
-:file:`lib/ans94/marker.frt` (in that order).
+need to be uploaded to the controller: :file:`lib/ans94/core/postpone.frt` and
+:file:`lib/ans94/core-ext/marker.frt` (in that order). If you encouter errors that
+the word ``set-current`` is not defined, you forgot to include the :file:`dict_wl.inc`.
 
 Now the command :command:`marker` is used to create a named snapshot of the current
 memory state to that you can return to any time afterwards. This includes all definitions

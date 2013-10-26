@@ -9,19 +9,27 @@
 ; first is to include the macros from the amforth
 ; directory
 
+.equ MCUSR = MCUCSR
+
 .include "macros.asm"
 
 ; include the amforth device definition file. These
 ; files include the *def.inc from atmel internally.
 .include "device.asm"
 
+; now define your own WANT options, if the settings from
+; the files included above are not ok. Use the .set
+; instruction, not the .equ. e.g.:
+;
+; .set WANT_XY = 1
+;
 ; there are many WANT options available. There are two
-; places where they are defined: core/macros.asm and
-; core/devices/<mcutype>/device.asm. Setting the value
+; places where they are defined initially: core/macros.asm 
+; and core/devices/<mcutype>/device.asm. Setting the value
 ; to 1 enables the feature, setting to 0 disables it.
 ; Most options are disabled by default. You should never
-; change the files mentioned above, only change them in
-; this file.
+; change the files mentioned above, setting the options here
+; is absolutly sufficient.
 
 ; the dictionary search treats lowercase and uppercase
 ; letters the same. Set to 0 if you do not want it
@@ -30,19 +38,6 @@
 ; amforth needs two essential parameters
 ; cpu clock in hertz, 1MHz is factory default
 .equ F_CPU = 8000000
-
-; terminal settings
-; check http://amforth.sourceforge.net/recipes/usart-settings.html
-; for further information
-.set WANT_ISR_RX = 1 ; interrupt driven receive
-.set WANT_ISR_TX = 0 ; send slowly but with less code space
-
-; 9600 @ 8N1 is commonly used.
-.equ BAUD = 9600
-
-; define which usart to use.
-.include "drivers/usart_0.asm"
-
 .equ TIBSIZE  = $64    ; ANS94 needs at least 80 characters per line
 .equ APPUSERSIZE = 10  ; size of application specific user area in bytes
 
@@ -52,10 +47,23 @@
 ; change only if you know what to you do
 .equ NUMWORDLISTS = 8 ; number of word lists in the searh order, at least 8
 
+;
+; DRIVER SECTION
+; 
 ; settings for 1wire interface, if desired
-.equ OW_PORT=PORTA
+.equ OW_PORT=PORTE
 .EQU OW_BIT=4
 .include "drivers/1wire.asm"
+
+; terminal settings
+; check http://amforth.sourceforge.net/recipes/usart-settings.html
+; for further information
+.set WANT_ISR_RX = 1 ; interrupt driven receive
+.set WANT_ISR_TX = 0 ; send slowly but with less code space
+; 9600 @ 8N1 is commonly used.
+.equ BAUD = 9600
+; define which usart to use.
+.include "drivers/usart_0.asm"
 
 ; include the whole source tree.
 .include "amforth.asm"

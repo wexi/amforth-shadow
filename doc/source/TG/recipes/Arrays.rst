@@ -39,3 +39,60 @@ The use of the array is quite simple:
 
   : my-array-@ cells my-array + @ ;
   : my-array-! cells my-array + ! ;
+
+Arrays of structures
+--------------------
+
+This example uses structures. Structures can be
+used after including of the :file:`structures.frt` 
+file. First a hash data structure consisting of 
+two elements is defined. This structure is used
+to create an array of a few elements afterwards.
+
+.. code-block:: forth
+
+   begin-structure hash
+    field: hash.key
+    field: hash.value
+   end-structure
+
+   \ inspired by CELLS
+   \ ( n -- size )
+   \ calculates the size of n items of the
+   \ type hash
+   : hash-cells hash * ;
+
+   \ define a hash-array
+   : hash:
+       hash-cells buffer:
+     does>
+       swap hash-cells  + 
+   ;
+
+The helper word ``hash-cells`` calculates the size of the 
+data structure in terms of byes, just like the standard 
+word ``cells`` does it.
+
+Now we're using the words (using the amforth-shell). 
+First define an array of 4 hash pairs. After that store 
+a key/value pair at a particular position and retrieve 
+it again later.
+
+.. code-block:: console
+
+   (ATmega16)> 4 hash: my-hash
+     ok
+   (ATmega16)> 42 3 my-hash hash.key !
+     ok
+   (ATmega16)> 4711 3 my-hash hash.value !
+     ok
+   (ATmega16)> 3 my-hash hash.key @ .
+     42  ok
+   (ATmega16)> 3 my-hash hash.value @ .
+     4711  ok
+   (ATmega16)> 
+
+If you place the data structure in a different memory (e.g. the EEPROM) adapt the
+code accordingly. ``buffer:`` needs to be replaced with a similiar allocation word and
+``@``/``!`` with the proper memory access words. Remember, memory is not always 2 bytes per
+cell.

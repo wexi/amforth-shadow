@@ -258,9 +258,9 @@ PARSED-TYPE specifies what kind of text is parsed. It should be on of 'name',
 	 "[ \t\n]" t name (font-lock-function-name-face . 3))
 	(("immediate" "compile-only" "restrict")
 	 immediate (font-lock-keyword-face . 1))
-	(("does>") compile-only (font-lock-keyword-face . 1))
-	((":noname") definition-starter (font-lock-keyword-face . 1))
-	((";" ";code" ";abi-code") definition-ender (font-lock-keyword-face . 1))
+	(("does>") definition-starter (font-lock-keyword-face . 1))
+	((":noname" "comp:" "post:" "[:") definition-starter (font-lock-keyword-face . 1))
+	((";" ";code" ";abi-code" ";]") definition-ender (font-lock-keyword-face . 1))
 	(("include" "require" "needs" "use") 
 	 non-immediate (font-lock-keyword-face . 1) 
 	 "[\n\t ]" t string (font-lock-string-face . 1))
@@ -307,7 +307,7 @@ PARSED-TYPE specifies what kind of text is parsed. It should be on of 'name',
 
 	(("true" "false" "c/l" "bl" "cell" "pi" "w/o" "r/o" "r/w") 
 	 non-immediate (font-lock-constant-face . 2))
-	(("~~" "break:" "dbg") compile-only (font-lock-warning-face . 2))
+	(("~~" "break:" "dbg" "???" "wtf??" "!!fixme!!" "~~bt" "~~1bt" "bt") compile-only (font-lock-warning-face . 2))
 	(("break\"") compile-only (font-lock-warning-face . 1)
 	 "[\"\n]" nil string (font-lock-string-face . 1))
 	(("postpone" "[is]" "defers" "[']" "[compile]") 
@@ -345,6 +345,13 @@ PARSED-TYPE specifies what kind of text is parsed. It should be on of 'name',
 	(("c-function" "c-value") non-immediate (font-lock-type-face . 1)
 	 "[ \t\n]" t name (font-lock-function-name-face . 3)
 	 "[ \t\n]" t name (font-lock-function-name-face . 3)
+	 "[\n]" nil comment (font-lock-variable-name-face . 3))
+	(("c-callback") non-immediate (font-lock-type-face . 1)
+	 "[ \t\n]" t name (font-lock-function-name-face . 3)
+	 "[\n]" nil comment (font-lock-variable-name-face . 3))
+	(("c-funptr") non-immediate (font-lock-type-face . 1)
+	 "[ \t\n]" t name (font-lock-function-name-face . 3)
+	 "[}]" t name (font-lock-function-name-face . 3)
 	 "[\n]" nil comment (font-lock-variable-name-face . 3))
 	(("\\c") non-immediate (font-lock-keyword-face . 1)
 	 "[\n]" nil string (font-lock-string-face . 1))
@@ -460,10 +467,10 @@ INDENT1 and INDENT2 are indentation specifications of the form
 	  "[if]" "[ifdef]" "[ifundef]" "[begin]" "[for]" "[do]" "[?do]")
 	 (0 . 2) (0 . 2))
 	((":" ":noname" "code" "abi-code" "struct" "m:" ":m" "class" 
-	  "interface" "c-library" "c-library-name")
+	  "interface" "c-library" "c-library-name" "[:" "comp:" "post:")
 	 (0 . 2) (0 . 2) non-immediate)
 	("\\S-+%$" (0 . 2) (0 . 0) non-immediate)
-	((";" ";m") (-2 . 0) (0 . -2))
+	((";" ";m" ";]") (-2 . 0) (0 . -2))
 	(("again" "then" "endif" "endtry" "endcase" "endof" 
 	  "[then]" "[endif]" "[loop]" "[+loop]" "[next]" 
 	  "[until]" "[again]" "loop")
@@ -475,9 +482,9 @@ INDENT1 and INDENT2 are indentation specifications of the form
 	(("+loop" "-loop" "until") (-2 . 0) (-2 . 0))
 	(("else" "recover" "restore" "endtry-iferror" "[else]")
 	 (-2 . 2) (0 . 0))
-	(("does>" ";code" ";abi-code") (-1 . 1) (0 . 0))
-	(("while" "[while]") (-2 . 2) (0 . 0))
-	(("repeat" "[repeat]") (-2 . 0) (-2 . 0))))
+	(("does>" "compile>" "int>" ";code" ";abi-code") (-1 . 1) (0 . 0))
+	(("while" "[while]") (-2 . 4) (0 . 2))
+	(("repeat" "[repeat]") (-4 . 0) (0 . -4))))
 
 (defvar forth-local-indent-words nil 
   "List of Forth words to prepend to `forth-indent-words', when a forth-mode
@@ -768,12 +775,11 @@ End:\" construct).")
 		 (get-text-property from 'fontified))
        (forth-update-properties from to)))))
 
-(eval-when-compile
-  (byte-compile 'forth-set-word-properties)
-  (byte-compile 'forth-next-known-forth-word)
-  (byte-compile 'forth-update-properties)
-  (byte-compile 'forth-delete-properties)
-  (byte-compile 'forth-get-regexp-branch)) 
+(byte-compile 'forth-set-word-properties)
+(byte-compile 'forth-next-known-forth-word)
+(byte-compile 'forth-update-properties)
+(byte-compile 'forth-delete-properties)
+(byte-compile 'forth-get-regexp-branch)
 
 ;;; imenu support
 ;;;

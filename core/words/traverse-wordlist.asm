@@ -1,6 +1,6 @@
 ; ( nt -- addr len ) 
 ; Tools Ext (2012)
-; get a (flash) string from a name token
+; get a (flash) string from a name token nt
 VE_NAME2STRING:
     .dw $ff0b
     .db "name>string",0
@@ -17,7 +17,7 @@ PFA_NAME2STRING:
 
 ; ( i*x xt wid -- j*x ) 
 ; Tools Ext (2012)
-; iterate over a wordlist
+; call the xt for every member of the wordlist wid until xt returns false
 VE_TRAVERSEWORDLIST:
     .dw $ff11
     .db "traverse-wordlist",0

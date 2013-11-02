@@ -46,8 +46,7 @@ PFA_TRAVERSEWORDLIST1:
     .dw XT_DOBRANCH      ; ( -- addr )
     .dw PFA_TRAVERSEWORDLIST1       ; ( -- addr )
 PFA_TRAVERSEWORDLIST2:
-    .dw XT_DROP
-    .dw XT_DROP
+    .dw XT_2DROP
     .dw XT_EXIT
 
 ; : traverse-wordlist ( i*x xt wid -- i*x' ) 

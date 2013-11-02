@@ -49,8 +49,7 @@ PFA_INTERPRET3:
     .dw XT_DOLOOP
     .dw PFA_INTERPRET2
 PFA_INTERPRET4:
-    .dw XT_DROP
-    .dw XT_DROP
+    .dw XT_2DROP
     .dw XT_QSTACK
     .dw XT_DOBRANCH
     .dw PFA_INTERPRET1

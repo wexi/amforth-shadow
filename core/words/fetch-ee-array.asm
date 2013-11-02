@@ -29,8 +29,7 @@ PFA_FETCH_EE_ARRAY1:
     .dw XT_DOPLUSLOOP
     .dw PFA_FETCH_EE_ARRAY1
 PFA_FETCH_EE_ARRAY2:
-    .dw XT_DROP
-    .dw XT_DROP
+    .dw XT_2DROP
     .dw XT_R_FROM ; get the counter from r-stack
     .dw XT_EXIT
 

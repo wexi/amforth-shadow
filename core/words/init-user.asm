@@ -38,8 +38,7 @@ PFA_EE2RAM_1:
     .dw XT_DOLOOP
     .dw PFA_EE2RAM_1
 PFA_EE2RAM_2:
-    .dw XT_DROP
-    .dw XT_DROP
+    .dw XT_2DROP
     .dw XT_EXIT
 
 ; ( -- )

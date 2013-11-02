@@ -9,8 +9,7 @@ VE_SHARP_G:
 XT_SHARP_G:
     .dw DO_COLON
 PFA_SHARP_G:
-    .dw XT_DROP
-    .dw XT_DROP
+    .dw XT_2DROP
     .dw XT_HLD
     .dw XT_FETCH
     .dw XT_DUP

@@ -56,8 +56,7 @@ PFA_NUMBER3:
 	.dw XT_DOBRANCH
 	.dw PFA_NUMBER5
 PFA_NUMBER2:
-	.dw XT_DROP
-	.dw XT_DROP
+	.dw XT_2DROP
 	.dw XT_DROP
 	.dw XT_R_FROM
 	.dw XT_DROP
@@ -67,8 +66,7 @@ PFA_NUMBER2:
 	.dw XT_ZERO
 	.dw XT_EXIT
 PFA_NUMBER1:
-    .dw XT_DROP ; remove the address
-    .dw XT_DROP ; make it a single cell value
+    .dw XT_2DROP ; remove the address
     ; incorporate sign into number
     .dw XT_R_FROM
     .dw XT_DOCONDBRANCH

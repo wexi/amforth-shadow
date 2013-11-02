@@ -31,8 +31,7 @@ PFA_FINDNAME3:
     .dw PFA_FINDNAME4
 	.dw XT_TO_R
 	.dw XT_TO_R
-	.dw XT_DROP
-	.dw XT_DROP
+	.dw XT_2DROP
 	.dw XT_R_FROM
 	.dw XT_R_FROM
 	.dw XT_UNLOOP
@@ -41,7 +40,6 @@ PFA_FINDNAME4:
     .dw XT_DOLOOP
     .dw PFA_FINDNAME1
 PFA_FINDNAME2:
-    .dw XT_DROP
-    .dw XT_DROP
+    .dw XT_2DROP
     .dw XT_ZERO
     .dw XT_EXIT

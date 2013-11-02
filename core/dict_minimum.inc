@@ -6,6 +6,9 @@
 .include "words/cells.asm"
 .include "words/cellplus.asm"
 
+.include "words/2dup.asm"
+.include "words/2drop.asm"
+
 .include "words/g_in.asm"
 .include "words/sharptib.asm"
 .include "words/pad.asm"
@@ -112,7 +115,6 @@
 .include "words/noop.asm"
 .include "words/unused.asm"
 
-.include "words/value.asm"
 .include "words/to.asm"
 
 .include "words/edefer-fetch.asm"
@@ -135,7 +137,6 @@
 .include "words/dabs.asm"
 .include "words/dnegate.asm"
 .include "words/cmove.asm"
-.include "words/d-2slash.asm"
 .include "words/2swap.asm"
 
 .include "words/tib.asm"

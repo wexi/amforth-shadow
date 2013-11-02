@@ -17,8 +17,7 @@ PFA_FINDNAME:
     .dw PFA_FINDNAME2
 PFA_FINDNAME1:
     ; ( addr len --)
-    .dw XT_OVER
-    .dw XT_OVER
+    .dw XT_2DUP
     .dw XT_DOLITERAL
     .dw EE_ORDERLIST
     .dw XT_I

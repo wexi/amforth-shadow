@@ -36,12 +36,11 @@ PFA_SKIPSCANCHAR:
     .dw XT_CSCAN
 
     ; adjust >IN
-    .dw XT_OVER
-    .dw XT_OVER     
-    .dw XT_PLUS     
+    .dw XT_2DUP
+    .dw XT_PLUS
     .dw XT_SOURCE 
-    .dw XT_DROP     
-    .dw XT_MINUS 
-    .dw XT_G_IN 
-    .dw XT_STORE 
+    .dw XT_DROP
+    .dw XT_MINUS
+    .dw XT_G_IN
+    .dw XT_STORE
     .dw XT_EXIT

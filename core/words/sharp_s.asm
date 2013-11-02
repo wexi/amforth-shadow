@@ -10,8 +10,7 @@ XT_SHARP_S:
     .dw DO_COLON
 PFA_SHARP_S:
     .dw XT_SHARP
-    .dw XT_OVER
-    .dw XT_OVER
+    .dw XT_2DUP
     .dw XT_OR
     .dw XT_EQUALZERO
     .dw XT_DOCONDBRANCH

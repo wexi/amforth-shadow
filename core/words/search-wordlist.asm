@@ -32,8 +32,7 @@ PFA_ISWORD:
     ; ( c-addr len 0 nt -- c-addr len 0 true| xt +/-1 false )
     .dw XT_TO_R
     .dw XT_TO_R
-    .dw XT_OVER
-    .dw XT_OVER
+    .dw XT_2DUP
     .dw XT_R_FROM
     .dw XT_ROT
     .dw XT_ROT

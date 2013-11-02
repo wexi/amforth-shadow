@@ -2,7 +2,6 @@
 #include core/postpone.frt
 #include core/q-negate.frt
 #include core/2drop.frt
-#include core/2dup.frt
 #include core/2over.frt
 #include core/2swap.frt
 #include core/aligned.frt

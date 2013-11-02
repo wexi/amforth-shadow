@@ -9,8 +9,7 @@ VE_PLACE:
 XT_PLACE:
     .dw DO_COLON
 PFA_PLACE:
-    .dw XT_OVER        ; ( -- addr1 len1 addr2 len1)
-    .dw XT_OVER        ; ( -- addr1 len1 addr2 len1 addr2)
+    .dw XT_2DUP        ; ( -- addr1 len1 addr2 len1 addr2)
     .dw XT_CSTORE      ; ( -- addr1 len1 addr2)
     .dw XT_1PLUS       ; ( -- addr1 len1 addr2')
     .dw XT_SWAP        ; ( -- addr1 addr2' len1)

@@ -9,8 +9,7 @@ VE_MIN:
 XT_MIN:
     .dw DO_COLON
 PFA_MIN:
-    .dw XT_OVER
-    .dw XT_OVER
+    .dw XT_2DUP
     .dw XT_GREATER
     .dw XT_DOCONDBRANCH
     .dw PFA_MIN1

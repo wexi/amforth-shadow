@@ -9,8 +9,7 @@ VE_STORE_EE_ARRAY:
 XT_STORE_EE_ARRAY:
     .dw DO_COLON
 PFA_STORE_EE_ARRAY:
-    .dw XT_OVER
-    .dw XT_OVER
+    .dw XT_2DUP
     .dw XT_STOREE ; ( -- i_n .. i_0 n e-addr )
     .dw XT_SWAP    
     .dw XT_ZERO

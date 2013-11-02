@@ -19,8 +19,7 @@ PFA_SEARCH_WORDLIST:
     .dw XT_EQUALZERO
     .dw XT_DOCONDBRANCH
     .dw PFA_SEARCH_WORDLIST1
-       .dw XT_DROP
-       .dw XT_DROP
+       .dw XT_2DROP
        .dw XT_DROP
        .dw XT_ZERO
 PFA_SEARCH_WORDLIST1:
@@ -32,8 +31,7 @@ PFA_ISWORD:
     ; ( c-addr len 0 nt -- c-addr len 0 true| xt +/-1 false )
     .dw XT_TO_R
     .dw XT_TO_R
-    .dw XT_OVER
-    .dw XT_OVER
+    .dw XT_2DUP
     .dw XT_R_FROM
     .dw XT_ROT
     .dw XT_ROT
@@ -43,8 +41,7 @@ PFA_ISWORD:
     .dw XT_DOCONDBRANCH
     .dw PFA_ISWORD3
       ; we found the word, now clean up iteration data ...
-      .dw XT_DROP
-      .dw XT_DROP
+      .dw XT_2DROP
       .dw XT_DROP
       ; ... get the XT ...
       .dw XT_R_FETCH

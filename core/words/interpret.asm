@@ -25,8 +25,7 @@ PFA_INTERPRET1:
 PFA_INTERPRET2:
     ; ( -- addr len )
     ; I comes from the return stack.
-    .dw XT_OVER ; ( -- addr len addr )
-    .dw XT_OVER ; ( -- addr len addr len  )
+    .dw XT_2DUP ; ( -- addr len addr len  )
     .dw XT_I    ; ( -- addr len addr len i )
     .dw XT_ROT  ; ( -- addr len len i addr )
     .dw XT_ROT  ; ( -- addr len i addr len )
@@ -50,8 +49,7 @@ PFA_INTERPRET3:
     .dw XT_DOLOOP
     .dw PFA_INTERPRET2
 PFA_INTERPRET4:
-    .dw XT_DROP
-    .dw XT_DROP
+    .dw XT_2DROP
     .dw XT_QSTACK
     .dw XT_DOBRANCH
     .dw PFA_INTERPRET1

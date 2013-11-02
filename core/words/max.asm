@@ -9,8 +9,7 @@ VE_MAX:
 XT_MAX:
     .dw DO_COLON
 PFA_MAX:
-    .dw XT_OVER
-    .dw XT_OVER
+    .dw XT_2DUP
     .dw XT_LESS
     .dw XT_DOCONDBRANCH
     .dw PFA_MAX1

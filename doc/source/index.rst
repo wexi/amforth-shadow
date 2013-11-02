@@ -29,6 +29,10 @@ to take a deeper look into the system is the :ref:`Technical Guide`.
 The whole documentation is available as `PDF <amforth.pdf>`_
 and `EPUB <AmForth.epub>`_.
 
+.. raw:: html
+  :file: leon-video.html
+
+
 Under Construction
 ------------------
 

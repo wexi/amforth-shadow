@@ -15,8 +15,7 @@ PFA_FILL:
     .dw XT_DOQDO
     .dw PFA_FILL2
 PFA_FILL1:
-    .dw XT_OVER
-    .dw XT_OVER
+    .dw XT_2DUP
     .dw XT_CSTORE  ; ( -- c c-addr)
     .dw XT_1PLUS
     .dw XT_DOLOOP

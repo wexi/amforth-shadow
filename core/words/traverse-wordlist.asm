@@ -31,8 +31,7 @@ PFA_TRAVERSEWORDLIST1:
     .dw XT_DUP           ; ( -- xt nt nt )
     .dw XT_DOCONDBRANCH  ; ( -- nt ) is nfa = counted string
     .dw PFA_TRAVERSEWORDLIST2       ;
-    .dw XT_OVER
-    .dw XT_OVER
+    .dw XT_2DUP
     .dw XT_TO_R
     .dw XT_TO_R
     .dw XT_SWAP
@@ -47,8 +46,7 @@ PFA_TRAVERSEWORDLIST1:
     .dw XT_DOBRANCH      ; ( -- addr )
     .dw PFA_TRAVERSEWORDLIST1       ; ( -- addr )
 PFA_TRAVERSEWORDLIST2:
-    .dw XT_DROP
-    .dw XT_DROP
+    .dw XT_2DROP
     .dw XT_EXIT
 
 ; : traverse-wordlist ( i*x xt wid -- i*x' ) 

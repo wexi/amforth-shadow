@@ -8,6 +8,15 @@ VE_ZERO:
     .set VE_HEAD = VE_ZERO
 XT_ZERO:
     .dw PFA_ZERO
+;
+VE_ZDROP:
+    .dw $ff05
+    .db "0drop",0
+    .dw VE_HEAD
+    .set VE_HEAD = VE_ZDROP
+XT_ZDROP:
+    .dw PFA_ZERO1
+;
 PFA_ZERO:
     savetos
 PFA_ZERO1:

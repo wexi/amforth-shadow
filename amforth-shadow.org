@@ -119,7 +119,9 @@ The shadow is proud to have contributed the Word List Scope idea and implementat
 
 + CELL- :: [ASM] Cell size address subtraction.
 
-+ RDROP ( R: x -- ) :: [ASM] Drop top of run-time stack.
++ RDROP ( R: X -- ) :: [ASM] Drop top of run-time stack.
+
++ 0DROP ( X -- 0 ) :: [ASM] Replace top of stack with zero.
 
 + REVERSE ( X1 .. Xn n -- Xn .. X1 n ) :: [FORTH] LIFO made FIFO.
 

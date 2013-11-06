@@ -19,7 +19,7 @@
 \ PD.7 pin_low?          ( true if pinD pin #7 is low)
 \ 
 \ multi bit operation
-\ PORTD F portpin PD.F   ( define the lower nibble of port d )
+\ PORTD F bitmask: PD.F  ( define the lower nibble of port d )
 \ PD.F pin@              ( get the lower nibble bits )
 \ 5 PD.F pin!            ( put the lower nibble bits, do not change the others )
 

@@ -119,6 +119,10 @@ The shadow is proud to have contributed the Word List Scope idea and implementat
 
 + CELL- :: [ASM] Cell size address subtraction.
 
++ d@ :: [ASM] double precision integer fetch, low endian order (unlike 2@).
+
++ d! :: [ASM] double precision integer store, low endian order (unlike 2!).
+
 + RDROP ( R: X -- ) :: [ASM] Drop top of run-time stack.
 
 + 0DROP ( X -- 0 ) :: [ASM] Replace top of stack with zero.

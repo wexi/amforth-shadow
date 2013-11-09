@@ -128,6 +128,7 @@
 .include "words/do-defer.asm"
 
 .include "words/search-wordlist.asm"
+.include "words/traverse-wordlist.asm"
 .include "words/icompare.asm"
 
 .include "words/star.asm"

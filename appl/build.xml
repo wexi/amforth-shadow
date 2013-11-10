@@ -17,7 +17,7 @@
   <ant antfile="build.xml" dir="avr-butterfly" target="compile" inheritAll="false"/>
   <ant antfile="build.xml" dir="template" target="compile" inheritAll="false"/>
   <ant antfile="build.xml" dir="eval-pollin" target="compile" inheritAll="false"/>
-  <ant antfile="build.xml" dir="atxmega" target="compile" inheritAll="false"/>
+  <!-- ant antfile="build.xml" dir="atxmega" target="compile" inheritAll="false"/ -->
   <ant antfile="build.xml" dir="atmega2561" target="compile" inheritAll="false"/>
 </target>
 </project>

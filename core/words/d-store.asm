@@ -1,6 +1,6 @@
-; 2! ( d addr -- ) 
+; d! ( d a-addr -- ) 
 ; Memory
-; write double-precision to RAM 
+; write double-precision d to a-addr
 VE_DSTORE:
     .dw $ff02
     .db "d!"
@@ -8,7 +8,7 @@ VE_DSTORE:
     .set VE_HEAD = VE_DSTORE
 XT_DSTORE:
     .dw PFA_DSTORE
-PFA_DSTORE:			; lower bytes first
+PFA_DSTORE:
     movw zl, tosl
     loadtos
     std Z+3, tosh

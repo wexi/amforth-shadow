@@ -23,11 +23,20 @@ PFA_STOREE0:
     loadtos
     in_ temp2, SREG
     cli
+    rcall PFA_FETCHE2
+    in_  temp0, EEDR
+    cp temp0,tosl
+    breq PFA_STOREE3
     rcall PFA_STOREE1
+PFA_STOREE3:
     adiw zl,1
-
+    rcall PFA_FETCHE2
+    in_  temp0, EEDR
+    cp temp0,tosh
+    breq PFA_STOREE4
     mov tosl, tosh
     rcall PFA_STOREE1
+PFA_STOREE4:
     out_ SREG, temp2
     loadtos
     jmp_ DO_NEXT

@@ -85,26 +85,45 @@ Running the command ``ask`` gives the following session
   ok
  >
 
+
+
 Notes
 
-* ``s"`` compiles a string into flash. At runtime the
-    address of the string in flash is given. This is the reason why
-    the command ``input`` uses the ``itype`` to
-    display the prompt.
-* Places a double cell zero value onto the stack to be used at
+#. ``s"`` compiles a string into flash. The compiled string gets a 
+    runtime that leaves the address/length pair of the compiled 
+    string *and* skips its content for further program execution.
+#. Places a double cell zero value onto the stack to be used at
      ``>number``.
-* ``pad`` is a commonly used temporary storage pool. It
+#. ``pad`` is a commonly used temporary storage pool. It
     is not used by the system itself. Its location is relative to
     HERE, so every change to HERE will move PAD as well.
-* ``>number`` is a standard word that converts a string
+#. ``>number`` is a standard word that converts a string
     to a number. To get the actual age (assuming a reasonable value)
     the :command:`2drop` removes some returned data. Finally the double cell
     age is converted to single cell and stored at the variable
     ``age``.
-* ``getname`` leaves the actual length of the name string
+#. ``getname`` leaves the actual length of the name string
     on the stack. This length information is not stored elsewhere.
     ``.name`` removes this information so you cannot reconstruct
     this data.
 
+.. code-block:: forth
+
+   > : label: create s, , does> ;
+    ok
+   > 42 s" hello" label: example
+    ok
+   > example icount itype
+    hello ok
+   > example icount 2/ 1+ + @i .
+    42 ok
+   >
+
+``s,`` copies a string from RAM to flash, increasing the DP.
+The storage format follows the counted string schema: first cell is
+the length information, followed by the characters, 2 per flash
+cell. A zero byte is appended if necessary to fill the last flash
+cell. It is an internal factor of ``s"``.
 
 This recipe is based upon ideas from Hannu Vuolasaho and Michael Kalus.
+

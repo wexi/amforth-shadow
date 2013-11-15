@@ -30,8 +30,9 @@ With it the above code turns into
 
   43 buffer: my-array
 
-please note the different sizes! The :file:`variable`-implementation
-allocates one cell *more* than :file:`buffer`.
+please note the different sizes! The :file:`buffer:`-implementation
+allocates the exact number of bytes whereas the :file:`variable` version
+adds the given size parameter to the 1 cell it allocates anyways.
 
 The use of the array is quite simple:
 
@@ -96,3 +97,6 @@ If you place the data structure in a different memory (e.g. the EEPROM) adapt th
 code accordingly. ``buffer:`` needs to be replaced with a similiar allocation word and
 ``@``/``!`` with the proper memory access words. Remember, memory is not always 2 bytes per
 cell.
+
+
+.. seealso:: :ref:`Structures`

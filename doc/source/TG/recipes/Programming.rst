@@ -4,6 +4,7 @@ Programming and Debugging
 .. toctree::
    :maxdepth: 2
 
+   Assembler
    Build-Timestamp
    Ctrl-C
    Customize

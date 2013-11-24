@@ -9,7 +9,7 @@
 ; first is to include the macros from the amforth
 ; directory
 
-.equ MCUSR = MCUCSR
+;.equ MCUSR = MCUCSR
 
 .include "macros.asm"
 
@@ -51,7 +51,7 @@
 ; DRIVER SECTION
 ; 
 ; settings for 1wire interface, if desired
-.equ OW_PORT=PORTE
+.equ OW_PORT=PORTA
 .EQU OW_BIT=4
 .include "drivers/1wire.asm"
 

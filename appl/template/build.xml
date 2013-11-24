@@ -10,7 +10,7 @@
 	        <echo>Uploading Hexfiles for Template</echo>
 		<avrdude 
 		    type="dragon"
-		    mcu="m16"
+		    mcu="atmega128ep"
 		    flashfile="template.hex"
 		    eepromfile="template.eep.hex"
 		/>

@@ -13,3 +13,4 @@ Hardware Modules
    Timer
    TWI
    Usart
+   Watchdog

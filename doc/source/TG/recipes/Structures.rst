@@ -1,3 +1,5 @@
+.. _Structures:
+
 ==========
 Structures
 ==========
@@ -50,3 +52,5 @@ The example shows a few aspects that should be known:
 * structures keep definitions in flash, the data goes to RAM.
 
 The package works with amforth version 4.0 and newer.
+
+.. seealso:: :ref:`Arrays`

@@ -2,6 +2,7 @@
 .include "words/f_cpu.asm"
 .include "words/state.asm"
 .include "words/base.asm"
+.include "words/eesy.asm"
 
 .include "words/cells.asm"
 .include "words/cellplus.asm"

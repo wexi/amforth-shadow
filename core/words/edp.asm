@@ -9,6 +9,6 @@ VE_EDP:
 XT_EDP:
     .dw PFA_DOVALUE
 PFA_EDP:
-    .dw EE_EDP
-    .dw XT_FETCHE
-    .dw XT_STOREE
+    .dw RAM_EDP
+    .dw XT_FETCH
+    .dw XT_STORE

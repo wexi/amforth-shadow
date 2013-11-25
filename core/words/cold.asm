@@ -26,6 +26,27 @@ clr_int:
     cpi zl, low(intvec)
     brne clr_int
 	
+; reduce wear of EE based memory alloc pointers using RAM copies
+; use "eesy" to sync back EEPROM with RAM
+.dseg
+RAM_DP:   .byte 2		; must match 
+RAM_HERE: .byte 2		;  amforth-eeprom.inc
+RAM_EDP:  .byte 2		;  EE order
+RAM_XXX:
+.cseg
+    ldiw X, EE_DP
+    ldiw Z, RAM_DP
+    ldi temp0, low(RAM_XXX)
+RAMSYNC:
+    out_ EEARH, xh
+    out_ EEARL, xl
+    adiw xh:xl, 1
+    sbi_ EECR, EERE
+    in_ temp1, EEDR
+    st Z+, temp1
+    cpse zl, temp0
+    rjmp RAMSYNC
+	
 ; init first user data area
 ; allocate space for User Area
 .dseg

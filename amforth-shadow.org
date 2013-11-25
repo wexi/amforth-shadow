@@ -9,6 +9,12 @@
 This is a sandbox for AmForth development that is maintained by an experienced embedded programmer, yet a novice in Forth. It is hoped that the new ideas that are presented here would soon be adopted
 by [[http://amforth.sourceforge.net/][AmForth HQ]].
 
+* Reduce EEPROM based pointers wear out
+
+EE_DP, EE_HERE and EE_EDP now have RAM_DP, RAM_HERE and RAM_EDP copies.  
+Execute "eesy" to sync these EE pointers with their RAM copies. 
+This is done for you automatically by tools/amforth-shell.py when you leave the program.
+
 * Soft Interrupt Service
 
 One of AmForth features is the ability to write Interrupt Service Routines (ISR), aka Interrupt Handlers, in Forth. However, in the current implementation (SVN r1430) those ISRs should run with the

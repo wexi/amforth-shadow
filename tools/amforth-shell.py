@@ -39,6 +39,9 @@
 # uploaded to another system using a tool simpler than the shell. Leave
 # the shell by #exit to close log.frt properly.
 #
+# Invoke the shell with the argument --rtscts to enable serial port
+# RTS/CTS hardware handshake connection.
+# 
 # =====================================================================
 # DOCUMENTATION
 # =====================================================================
@@ -82,8 +85,12 @@
 # the only contents of a line or they will be ignored.  The directives
 # include:
 #
+#   #install <file>
+#       Upload the named <file> before proceeding further.
+# 
 #   #include <file>
-#       Upload the file named by <file> before proceeding further.
+#       Like #install but would skip if <file> was already uploaded
+#       during the shell session.
 #
 #   #cd <dir>
 #       Change the current local directory to the location specified.
@@ -129,11 +136,6 @@
 #       the next line is sent to the interpreter.  If this directive
 #       is encountered as the very last line of an upload file it will
 #       have no effect.
-#
-#   #include-once [<yes-or-no>]
-#       Controls whether to upload an already uploaded file.
-#       The default behavior is "no" unless the shell is launched
-#       with the --include-once option.
 #
 #   #error-on-output [<yes-or-no>]
 #       Controls whether an error is generated if unexpected output
@@ -272,7 +274,6 @@ class Behaviors(object):
         self.timeout = 15.0
         self.quote_char_words = ["[char]", "char"]
         self.start_string_words = ['s"', '."', 'abort"']
-        self.include_once = False
         self.error_on_output = True
         self.ignore_errors = False
         self.directive_uncommented = True
@@ -379,13 +380,13 @@ class AMForth(object):
 
     amforth_error_cre = re.compile(" \?\? -\d+ \d+ \r\n> $")
     upload_directives = [
-        "#cd", "#include", "#directive", "#include-once", "#ignore-error",
+        "#cd", "#install", "#include", "#directive", "#ignore-error",
         "#ignore-error-next", "#error-on-output", "#expect-output-next",
         "#string-start-word", "#quote-char-word",
         "#timeout", "#timeout-next", "#interact", "#exit"
         ]
     interact_directives = [
-        "#cd", "#edit", "#include", "#directive", "#include-once", "#ignore-error",
+        "#cd", "#edit", "#install", "#include", "#directive", "#ignore-error",
         "#error-on-output", "#string-start-word", "#quote-char-word",
         "#timeout", "#timeout-next", "#update-words", "#exit", 
         "#update-cpu", "#update-files"
@@ -487,12 +488,13 @@ class AMForth(object):
         # *** Wordset TOOLS-EXT-obsolescent
         "FORGET",
     ]
-    def __init__(self, serial_port="/dev/amforth", speed=38400):
+    def __init__(self, serial_port="/dev/amforth", rtscts=False, speed=38400):
         self.debug = False
         self.max_line_length = 80
         self.progress_callback = self.print_progress
         self.editor = None
         self._serial_port = serial_port
+        self._serial_rtscts = rtscts
         self._serial_speed = speed
         self._serialconn = None
         self._readline_initialized = False
@@ -547,6 +549,17 @@ class AMForth(object):
             self.serial_reconnect()
 
     @property
+    def serial_rtscts(self):
+        "RTS/CTS enable of serial connection to AMForth"
+        return self._serial_rtscts
+
+    @serial_rtscts.setter
+    def serial_rtscts(self, value):
+        if self._serial_rtscts != value:
+            self._serial_rtscts = value
+            self.serial_reconnect()
+
+    @property
     def serial_speed(self):
         "Speed of the serial connection to AMForth"
         return self._serial_speed
@@ -570,7 +583,7 @@ class AMForth(object):
                 if fn == "-":
                     self.interact()
                 else:
-                    self.upload_file(fn)
+                    self.upload_file(fn, install=True)
             if interact:
                 self.interact()
         except AMForthException:
@@ -602,13 +615,13 @@ additional definitions (e.g. register names)
         )
         parser.add_argument("--timeout", "-t", action="store",
             type=float, default=15.0,
-            help="Timeout for response in seconds (float value)")
+            help="Response timeout (seconds, float value)")
         parser.add_argument("--port", "-p", action="store",
-            default=self.serial_port,
-            help="Name of serial port on which AMForth is connected")
+            type=str, default=self.serial_port, help="Serial port name")
+        parser.add_argument("--rtscts", action="store_true",
+            default=self.serial_rtscts, help="Serial port RTS/CTS enable")
         parser.add_argument("--speed", "-s", action="store",
-            type=int, default=self.serial_speed,
-            help="Speed of serial port on which AMForth is connected")
+            type=int, default=self.serial_speed, help="Serial port speed")
         parser.add_argument("--log", type=argparse.FileType('w'),
                             help="Uploaded Forth log-file")
         parser.add_argument("--line-length", "-l", action="store",
@@ -622,8 +635,6 @@ additional definitions (e.g. register names)
         parser.add_argument("--editor", action="store",
             default = os.environ.get("EDITOR", None),
             help="Editor to use for #edit directive")
-        parser.add_argument("--include-once", action="store_true",
-            help="Skip #include if file already uploaded")
         parser.add_argument("--no-error-on-output", action="store_true",
             help="Indicate an error if upload causes output")
         parser.add_argument("--ignore-error", action="store_true",
@@ -635,18 +646,18 @@ additional definitions (e.g. register names)
         self.debug = arg.debug_serial
         self.max_line_length = arg.line_length
         self._serial_port = arg.port
+        self._serial_rtscts = arg.rtscts
         self._serial_speed = arg.speed
         self._log = arg.log
         self.editor = arg.editor
         behavior = self._config.current_behavior
-        behavior.include_once = arg.include_once
         behavior.error_on_output = not arg.no_error_on_output
         behavior.directive_config = arg.directive
         behavior.timeout = arg.timeout
         behavior.ignore_errors = arg.ignore_error
         return arg.files, (arg.interact or len(arg.files) == 0)
 
-    def serial_connect(self, port=None, speed=None):
+    def serial_connect(self, port=None, rtscts=None, speed=None):
         """Connect to AMForth on a serial port
 
         The port and speed argument are optional.  If not specified
@@ -660,6 +671,8 @@ additional definitions (e.g. register names)
         connection is made."""
         if port != None:
             self.serial_port = port
+        if rtscts != None:
+            self.serial_rtscts = rtscts
         if speed != None:
             self.serial_speed = speed
         if self._serialconn:
@@ -671,7 +684,9 @@ additional definitions (e.g. register names)
                                              serial.EIGHTBITS,
                                              serial.PARITY_NONE,
                                              serial.STOPBITS_ONE,
-                                             timeout, False, False, None, False)
+                                             timeout, False,
+                                             self.serial_rtscts,
+                                             None, False)
         except serial.SerialException, e:
             raise AMForthException("Serial port connect failure: %s" % str(e))
 
@@ -709,8 +724,8 @@ additional definitions (e.g. register names)
             # Restore the current timeout
             self._serialconn.timeout = self._config.current_behavior.timeout
 
-    def upload_file(self, filename):
-        if self._config.current_behavior.include_once and filename in self._uploaded:
+    def upload_file(self, filename, install=False):
+        if not install and filename in self._uploaded:
             return False
         else:
             self._uploaded.add(filename)
@@ -959,9 +974,9 @@ additional definitions (e.g. register names)
         return result
 
     def handle_common_directives(self, directive, directive_arg):
-        if directive == "#include":
+        if directive == "#include" or directive == "#install":
             fn = directive_arg.strip()
-            if self.upload_file(fn):
+            if self.upload_file(fn, directive == "#install"):
                 resume_fn = self._config.current_behavior.filename
                 if resume_fn:
                     self.progress_callback("File", None, resume_fn + " (resumed)")
@@ -991,10 +1006,6 @@ additional definitions (e.g. register names)
             behavior = copy.deepcopy(self._config.current_behavior)
             behavior.timeout = timeout
             self._config.next_line_behavior = behavior
-        elif directive == "#include-once":
-            v = self._yes_or_no_arg(directive_arg)
-            behavior = self._config.current_file_behavior
-            behavior.include_once = v
         elif directive == "#ignore-error":
             v = self._yes_or_no_arg(directive_arg)
             self._config.current_file_behavior.ignore_errors = v
@@ -1158,7 +1169,7 @@ additional definitions (e.g. register names)
                             print "No file to edit"
                         continue
                     self.handle_common_directives(directive, directive_arg)
-                    if directive == "#include":
+                    if directive == "#include" or directive == "#install":
                         self._update_words()
                     continue
                 if in_comment or not line:
@@ -1255,7 +1266,7 @@ additional definitions (e.g. register names)
             while line_words and line_words[-1] == "":
                 line_words = line_words[:-1]
             if line_words:
-                if line_words[-1] in ["#include", "#edit"]:
+                if line_words[-1] in ["#install", "#include", "#edit"]:
                     self._rl_matches = [f for f in self._filedirs.keys()
                                           if f.startswith(text)]
                 elif line_words[-1] == "#cd":

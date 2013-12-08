@@ -1,7 +1,7 @@
 ; Settings for the avr butterfly demo board
 .include "macros.asm"
 .include "device.asm"
-
+.equ AMFORTH_RO_SEG = NRWW_START_ADDR
 .equ TIBSIZE  = $64    ; 80 characters is one line...
 .equ APPUSERSIZE = 10  ; size of user area
 

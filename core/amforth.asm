@@ -12,7 +12,7 @@
 
 .set DPSTART = pc
 
-.org NRWW_START_ADDR
+.org AMFORTH_RO_SEG
 .include "amforth-interpreter.asm"
 .include "dict_appl_core.inc"
 

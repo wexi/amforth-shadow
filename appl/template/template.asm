@@ -9,13 +9,25 @@
 ; first is to include the macros from the amforth
 ; directory
 
-;.equ MCUSR = MCUCSR
-
 .include "macros.asm"
 
 ; include the amforth device definition file. These
 ; files include the *def.inc from atmel internally.
 .include "device.asm"
+
+.equ MCUSR = MCUCSR
+
+; The amforth code is split into two segments, one starting
+; at address 0 (the RWW area) and one starting in
+; the NRWW region. The latter part cannot be changed
+; at runtime so it contains most of the core system
+; that would never be changed. If unsure what it
+; means, leave it as it is. This address may be
+; adjusted to give room for other code fragments (e.g.
+; bootloaders). The amforth code will start here and may
+; occupy all space until flash-end.
+
+.equ AMFORTH_RO_SEG = NRWW_START_ADDR
 
 ; now define your own WANT options, if the settings from
 ; the files included above are not ok. Use the .set
@@ -51,7 +63,7 @@
 ; DRIVER SECTION
 ; 
 ; settings for 1wire interface, if desired
-.equ OW_PORT=PORTA
+.equ OW_PORT=PORTE
 .EQU OW_BIT=4
 .include "drivers/1wire.asm"
 

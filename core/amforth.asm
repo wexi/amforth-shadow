@@ -12,10 +12,7 @@
 
 .set DPSTART = pc
 
-.org NRWW_START_ADDR
-#ifdef BOOFA			;The BOOFA bootloader
-.org	pc+512			; is 512 words max!
-#endif
+.org AMFORTH_RO_SEG
 .include "amforth-interpreter.asm"
 .include "dict_appl_core.inc"
 

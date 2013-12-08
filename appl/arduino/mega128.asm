@@ -11,6 +11,8 @@
 ; files include the *def.inc from atmel internally.
 .include "device.asm"
 
+.equ AMFORTH_RO_SEG = NRWW_START_ADDR
+
 ; the dictionary search treats lowercase and uppercase
 ; letters the same. Set to 0 if you do not want it
 .set WANT_IGNORECASE = 1

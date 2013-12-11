@@ -38,8 +38,6 @@ PFA_DOTO:
     .dw XT_FETCHI
 PFA_TO1:
     .dw XT_DUP
-    .dw XT_FETCHI
-    .dw XT_SWAP
     .dw XT_1PLUS
     .dw XT_1PLUS
     .dw XT_FETCHI

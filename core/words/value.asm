@@ -24,8 +24,21 @@ PFA_VALUE:
     .dw PFA_EDP
     .dw XT_STOREE
     .dw XT_COMPILE
-    .dw XT_FETCHE
+    .dw XT_EVALUEFETCH
     .dw XT_COMPILE
-    .dw XT_STOREE
+    .dw XT_EVALUESTORE
     .dw XT_EXIT
 
+XT_EVALUEFETCH:
+    .dw DO_COLON
+PFA_EVALUEFETCH:
+    .dw XT_FETCHI
+    .dw XT_FETCHE
+    .dw XT_EXIT
+
+XT_EVALUESTORE:
+    .dw DO_COLON
+PFA_EVALUESTORE:
+    .dw XT_FETCHI
+    .dw XT_STOREE
+    .dw XT_EXIT

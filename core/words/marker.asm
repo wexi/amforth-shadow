@@ -10,5 +10,5 @@ XT_MARKER:
     .dw PFA_DOVALUE
 PFA_MARKER:
     .dw EE_MARKER
-    .dw XT_FETCHE
-    .dw XT_STOREE
+    .dw XT_EVALUEFETCH
+    .dw XT_EVALUESTORE

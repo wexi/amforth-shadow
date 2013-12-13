@@ -51,12 +51,15 @@ an implementation of a value that stores a single byte in RAM:
 
 .. code-block:: forth
 
+   \ two helper functions
+   : c@v @i c@ ;
+   : c!v @i c! ;
+
    : cvalue ( n "name" -- )
-     (create) reveal   \ create a new wordlist entry
-     postpone (value)  \ the runtime action
+     (value)           \ create a new wordlist entry
      here ,            \ the address for the methods
-     postpone c@       \ method for the read operation
-     postpone c!       \ method for the write (TO) operation
+     postpone c@v      \ method for the read operation
+     postpone c!v      \ method for the write (TO) operation
      here 1 allot c!   \ allocate the memory and initialize it
    ;
 

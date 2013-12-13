@@ -9,6 +9,12 @@ VE_DOVALUE:
 XT_DOVALUE:
     .dw PFA_DOVALUE
 PFA_DOVALUE:
+    .dw XT_DOCREATE
+    .dw XT_REVEAL
+    .dw XT_COMPILE
+    .dw PFA_DOVALUE1
+    .dw XT_EXIT
+PFA_DOVALUE1:
     call_ DO_DODOES
     .dw XT_DUP
     .dw XT_SWAP

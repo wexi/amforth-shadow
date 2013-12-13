@@ -7,7 +7,7 @@ VE_EDP:
     .dw VE_HEAD
     .set VE_HEAD = VE_EDP
 XT_EDP:
-    .dw PFA_DOVALUE
+    .dw PFA_DOVALUE1
 PFA_EDP:
     .dw EE_EDP
     .dw XT_EVALUEFETCH

@@ -7,7 +7,7 @@ VE_F_CPU:
     .dw VE_HEAD
     .set VE_HEAD = VE_F_CPU
 XT_F_CPU:
-    .dw PFA_DOVALUE
+    .dw PFA_DOVALUE1
 PFA_F_CPU:
     .dw EE_FCPU
     .dw XT_FETCH2E

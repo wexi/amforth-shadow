@@ -7,7 +7,7 @@ VE_HERE:
     .dw VE_HEAD
     .set VE_HEAD = VE_HERE
 XT_HERE:
-    .dw PFA_DOVALUE
+    .dw PFA_DOVALUE1
 PFA_HERE:
     .dw EE_HERE
     .dw XT_EVALUEFETCH

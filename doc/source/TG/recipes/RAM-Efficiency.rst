@@ -39,6 +39,7 @@ Use of such small variables is just like other ones:
   answer @ .    \ undetermined
   4242 answer ! \ destroys other data
 
+<<<<<<< HEAD
 .. seealso:: :ref:`Arrays`
 
 cvalue
@@ -91,3 +92,6 @@ As a bonus, all operations are save against overflows:
 
    :command:`cvalue` requires amforth version 5.1 since :command:`reveal`
    is not available in earlier versions.
+=======
+.. seealso:: :ref:`Arrays` and the cvalue section in :ref:`Values`
+>>>>>>> f425150... Documentation of the new flexible values.

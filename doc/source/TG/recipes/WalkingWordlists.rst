@@ -41,3 +41,18 @@ The implementation of the word :command:`show-wordlist` may illustrate this:
 
 The sequence `$ff and` masks the entry flags (e.g. immediate) and
 extracts the actual string length for use with the following :command:`itype`.
+
+Way easier is using the ``traverse-wordlist`` available since amforth version 5.2.
+With it, the above changes to
+
+.. code-block:: forth
+
+   \ print the name of a single wordlist entry
+   : show-word ( nt -- flag )
+       name>string itype space 
+       true \ see spec of traverse-wordlist
+
+   : show-wordlist ( wid -- )
+       ['] show-word swap traverse-wordlist 
+   ;
+

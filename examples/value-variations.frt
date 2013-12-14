@@ -41,20 +41,18 @@
 \ since parsing words are considered suboptimal by the
 \ gurus (they are state smart and less flexible)
 
-\ 3 is a magic number
-: @cache 3 + @i @ ;
-: !cache 3 + @i ! ;
+\ 2 is a magic number
+: @cache 2 + @i @ ;
+: !cache 2 + @i ! ;
 
-: flush-cache 1+ dup 3 + @i @ swap @i !e ;
-: warm-cache  1+ dup @i @e swap 3 + @i ! ;
+: flush-cache 1+ dup 2 + @i @ swap @i !e ;
+: warm-cache  1+ dup @i @e swap 2 + @i ! ;
 
 : cache-value 
     (value)
     dup edp dup , dup cell+ to edp !e
     postpone @cache
     postpone !cache
-    \ now extent the vtable for value
-    postpone flush-cache
     here 2 ( 1 cell ) allot dup , ! \ 3 address units, remember?
 ;
 

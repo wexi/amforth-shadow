@@ -3,6 +3,7 @@
 .include "words/state.asm"
 .include "words/base.asm"
 .include "words/eesy.asm"
+.include "words/syee.asm"
 
 .include "words/cells.asm"
 .include "words/cellplus.asm"

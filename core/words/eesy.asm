@@ -1,6 +1,6 @@
 ; ( -- ) 
 ; System
-; update the EE based memory alloc pointers from their RAM copies
+; Memory alloc pointers sync: RAM → EE
 VE_EESY:
     .dw $ff04
     .db "eesy"

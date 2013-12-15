@@ -39,7 +39,6 @@ EE_WLSCOPE:
 
 ; MARKER saves everything up to here. Nothing beyond gets saved
 EE_MARKER:
-    .dw EE_MARKER
 
 ; default user area
 EE_INITUSER:

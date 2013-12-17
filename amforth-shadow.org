@@ -9,11 +9,11 @@
 This is a sandbox for AmForth development that is maintained by an experienced embedded programmer, yet a novice in Forth. It is hoped that the new ideas that are presented here would soon be adopted
 by [[http://amforth.sourceforge.net/][AmForth HQ]].
 
-* Reduce EEPROM based pointers wear out
+* <<eesy>> Reduce EEPROM based pointers wear out
 
 EE_DP, EE_HERE and EE_EDP now have RAM_DP, RAM_HERE and RAM_EDP copies.  
-Execute "eesy" to sync these EE pointers with their RAM copies. 
-This is done for you automatically by tools/amforth-shell.py when you leave the program.
+IMPORTANT: Execute EESY ( -- ) to sync these EE pointers with their RAM copies. 
+This is done automatically by tools/amforth-shell.py before leaving the program.
 
 * Soft Interrupt Service
 
@@ -134,6 +134,8 @@ The shadow is proud to have contributed the Word List Scope idea and implementat
 + 0DROP ( X -- 0 ) :: [ASM] Replace top of stack with zero.
 
 + REVERSE ( X1 .. Xn n -- Xn .. X1 n ) :: [FORTH] LIFO made FIFO.
+
++ [[eesy][EESY]] ( -- ) :: [ASM] Sync memory allocation pointers.
 
 * BOOFA bootloader support
 

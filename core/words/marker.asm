@@ -1,4 +1,4 @@
-; ( -- e-addr ) 
+; ( -- e-addr2 e-addr1 ) 
 ; System
 ; Put EEPROM marker address
 VE_MARKER:
@@ -9,5 +9,7 @@ VE_MARKER:
 XT_MARKER:
     _pfa_
     savetos
-    ldiw tos, ee_marker
+    ldiw tos, EE_MARKER2
+    savetos
+    ldiw tos, EE_MARKER1
     jmp_ DO_NEXT

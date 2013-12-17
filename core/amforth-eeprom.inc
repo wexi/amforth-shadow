@@ -1,10 +1,14 @@
-    .dw -1           ; EEPROM Address 0 should not be used
+; To reduce EEPROM wear the following EE_ pointers have RAM_ copies:
+	
 EE_DP:
     .dw DPSTART      ; Dictionary Pointer
 EE_HERE:
     .dw HERESTART    ; Memory Allocation
 EE_EDP:
     .dw EDPSTART     ; EEProm Memory Allocation
+
+EE_MARKER1: ; -------- MARKER save bottom
+	
 EE_TURNKEY:
     .dw XT_APPLTURNKEY  ; TURNKEY
 EE_STOREI:
@@ -37,8 +41,7 @@ EE_RECOGNIZERLIST:
 EE_WLSCOPE:
     .dw XT_GET_CURRENT  ; default wordlist scope
 
-; MARKER saves everything up to here. Nothing beyond gets saved
-EE_MARKER:
+EE_MARKER2: ; ----------- MARKER save top
 
 ; default user area
 EE_INITUSER:

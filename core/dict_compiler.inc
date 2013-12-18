@@ -36,6 +36,7 @@
 .include "words/variable.asm"
 .include "words/constant.asm"
 .include "words/user.asm"
+.include "words/value.asm"
 
 .include "words/recurse.asm"
 .include "words/immediate.asm"

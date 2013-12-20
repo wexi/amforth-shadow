@@ -7,12 +7,12 @@ VE_ABS:
     .dw VE_HEAD
     .set VE_HEAD = VE_ABS
 XT_ABS:
-    .dw DO_COLON
+    .dw PFA_ABS
 PFA_ABS:
-    .dw XT_DUP
-    .dw XT_LESSZERO
-    .dw XT_DOCONDBRANCH
-    .dw PFA_ABS1
-    .dw XT_NEGATE
+    tst tosh
+    brpl PFA_ABS1
+    com tosl
+    com tosh
+    adiw tosl, 1
 PFA_ABS1:
-    .dw XT_EXIT
+    jmp_ do_next

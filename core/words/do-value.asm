@@ -7,7 +7,7 @@ VE_DOVALUE:
     .dw VE_HEAD
     .set VE_HEAD = VE_DOVALUE
 XT_DOVALUE:
-    .dw PFA_DOVALUE
+    .dw DO_COLON
 PFA_DOVALUE:
     .dw XT_DOCREATE
     .dw XT_REVEAL

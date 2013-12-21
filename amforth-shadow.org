@@ -11,9 +11,8 @@ by [[http://amforth.sourceforge.net/][AmForth HQ]].
 
 * <<eesy>> Reduce EEPROM based pointers wear out
 
-EE_DP, EE_HERE and EE_EDP now have RAM_DP, RAM_HERE and RAM_EDP copies.  
-IMPORTANT: Execute EESY ( -- ) to sync these EE pointers with their RAM copies. 
-This is done automatically by tools/amforth-shell.py before leaving the program.
+The memory allocation pointers, EE_DP, EE_HERE and EE_EDP now have RAM_DP, RAM_HERE and RAM_EDP copies.  IMPORTANT: Remember to execute EESY ( -- ) to sync the EE pointer values with their RAM copies.
+This is done automatically for you by tools/amforth-shell.py before leaving the program.
 
 * Soft Interrupt Service
 
@@ -115,7 +114,7 @@ Output characters are dropped when the host computer is down or not connected.
 
 The shadow is proud to have contributed the Word List Scope idea and implementation.
 
-* Useful new words
+* General purpose new words
 
 + @C :: [ASM] Like C@ but reads the byte as a signed 8 bit integer (i.e., extends sign).
 
@@ -135,11 +134,11 @@ The shadow is proud to have contributed the Word List Scope idea and implementat
 
 + REVERSE ( X1 .. Xn n -- Xn .. X1 n ) :: [FORTH] LIFO made FIFO.
 
-+ [[eesy][EESY]] ( -- ) :: [ASM] Sync memory allocation pointers.
-
 * BOOFA bootloader support
 
-Place ~#define BOOFA~ in your application's "template.asm" to reserve 512 words at the beginning of the NRWW section. BOOFA can be obtained from [[https://github.com/wexi/boofa][GitHub]].
+BOOFA is an AVRDUDE compatible Flash/EEPROM programmer. [[https://github.com/wexi/boofa][Visit BOOFA GitHub repository]]. To reserve space for BOOFA put in your template.asm the followig definition:
+
+~.equ AMFORTH_RO_SEG = NRWW_START_ADDR + 512 ;make room for BOOFA~
 
 * amforth-shell.py enhancements
 

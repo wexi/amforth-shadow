@@ -672,10 +672,11 @@ EEPROM
 The built-in EEPROM contains vital dictionary
 pointer and other persistent data. They need only a
 few EEPROM cells. The remaining space is available
-for user programs. The easiest way to use EEPROM is
-the use of forth VALUEs. There intended design
+for user programs. The easiest way to use the EEPROM 
+is a :command:`VALUE`. There intended design
 pattern (read often, write seldom) is like that for
-the typical EEPROM usage.
+the typical EEPROM usage. More information about
+values can be found in the recipe :ref:`Values`.
 
 Another use for EEPROM cells is to hold execution
 tokens. The default system uses this for the turnkey

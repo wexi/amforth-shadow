@@ -4,30 +4,63 @@
 Values
 ======
 
-The standard VALUE matches the EEPROM usage pattern: Write
-seldom, read often. To get the current content of a value, you
-only need to call its name. To change it, a seperate command ``TO``
-has to be used. 
+The standard VALUE gives access to memory content like a variable
+does. A value differs from a variable that by calling its name
+the data is on the stack *without* further read operation. A
+variable name leaves an address on the data stack that requires 
+a further read operation to get the data. 
 
-The implementation in amforth uses three pointers for every value.
-One cell for an address and two cells for execution tokens that
-are called when a read oder write operation is done. This generic
-approach allows not only single cell data in EEPROM but nearly
-arbitrary date everwhere. The following examples illustrate 
+Since a value does not publish the address where it keeps its data
+it is necessairy to use a separate command to change the data in a 
+value: :command:`TO`.
+
+.. code-block:: forth
+
+   > 42 value answer
+    ok
+   > answer .
+    42 ok
+   > 4711 to answer
+     ok
+   > answer .
+     4711
+   >
+
+This resembles the intended usage pattern for EEPROM: Write
+seldom, read often.
+
+The forth standard defines a few value types: :command:`2VALUE` for 
+double cell data, :command:`FVALUE` for floating point numbers and 
+the single cell sized :command:`VALUE` itself.  They all use the same
+:command:`TO` command to change their content. This requires 
+a non-trivial implementation to achieve it. Amforth uses a simple data 
+structure for each value in the dictionary (flash). The first element contains 
+the address of the actual data. This first field is followed by 2 execution 
+tokens (XT) for the read and write operations. This makes the runtime operations 
+fairly easy. The read operation (the 2nd element in the data structure) is 
+called with the address of the 1st element. It is expected that the read 
+operation leaves the data on the data stack. Similiar the write operation. 
+The :command:`TO` command simply executes the write execution token (the 
+3rd element).
+
+This generic approach allows not only single cell data in EEPROM but 
+any data everwhere. The following examples illustrate 
 this with an implementation of a value that stores a single
-byte in RAM and a cached version of the standard EEPROM value.
+byte in RAM and a cached version of the standard EEPROM value. They have
+in common that calling their names give the data and applying :command:`TO`
+to them stores new data.
 
 cvalue
 ------
 
-Cvalues store a single byte in RAM. The first flash cell in the 
-value data structure is the address of the RAM byte. The defining 
-word allocates it. Like any other RAM based data its content is 
-not preserved over resets and restarts.
+Cvalues store a single byte in RAM. The first element in the
+value data structure in the dictionary is the address of the RAM byte.
+The defining word allocates it. Like any other RAM based data its
+content is not preserved over resets and restarts.
 
 .. code-block:: forth
 
-   \ two helper functions
+   \ two helper functions, not called directly
    : c@v @i c@ ;
    : c!v @i c! ;
 
@@ -45,19 +78,20 @@ Using this new value is straight forward:
 
 .. code-block:: forth
 
-   > 17 cvalue answer
-   ok
-   > answer .
-   17 ok
-   > 42 to answer
+   > 42 cvalue answer
    ok
    > answer .
    42 ok
+   > 17 to answer
+   ok
+   > answer .
+   17 ok
    >
 
-After its definition the new size restricted value is used like any other value.
-To read it, simply call its name. To write to it, use the TO command.
-As a bonus, all operations are save against overflows:
+After its definition the new size restricted value is used like
+any other value. To read it, simply call its name. To write to it,
+use the TO command. As a bonus, all operations are save against
+overflows:
 
 .. code-block:: forth
 

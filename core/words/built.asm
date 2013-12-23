@@ -11,7 +11,7 @@ XT_BUILT:
 PFA_BUILT:
     .dw XT_DOSLITERAL
     .dw 11
-    .db __DATE__ ; generated from assembler
+    .db __DATE__,0 ; generated from assembler
     .dw XT_ITYPE
     .dw XT_SPACE
     .dw XT_DOSLITERAL

@@ -15,7 +15,7 @@
 ; files include the *def.inc from atmel internally.
 .include "device.asm"
 
-.equ MCUSR = MCUCSR
+;.equ MCUSR = MCUCSR
 
 ; The amforth code is split into two segments, one starting
 ; at address 0 (the RWW area) and one starting in
@@ -63,7 +63,7 @@
 ; DRIVER SECTION
 ; 
 ; settings for 1wire interface, if desired
-.equ OW_PORT=PORTE
+.equ OW_PORT=PORTA
 .EQU OW_BIT=4
 .include "drivers/1wire.asm"
 

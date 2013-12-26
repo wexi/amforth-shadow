@@ -4,10 +4,6 @@
 #+OPTIONS: email:t
 #+STARTUP: indent
 
-* TODO What next
-
-Study HQ's new VALUE implementation and merge if any better. Remember that our memory allocation pointers are RAM based.
-
 * Scope
 
 This is a sandbox for AmForth development that is maintained by an experienced embedded programmer, yet a novice in Forth. It is hoped that the new ideas that are presented here would soon be adopted

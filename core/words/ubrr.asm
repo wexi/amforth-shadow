@@ -7,8 +7,8 @@ VE_UBRR:
   .dw VE_HEAD
   .set VE_HEAD = VE_UBRR
 XT_UBRR:
-  .dw PFA_DOVALUE
+  .dw PFA_DOVALUE1
 PFA_UBRR:          ; ( -- )
   .dw EE_UBRRVAL
-  .dw XT_FETCHE
-  .dw XT_STOREE
+  .dw XT_EVALUEFETCH
+  .dw XT_EVALUESTORE

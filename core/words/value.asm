@@ -9,23 +9,46 @@ VE_VALUE:
 XT_VALUE:
     .dw DO_COLON
 PFA_VALUE:
-    .dw XT_DOCREATE
-    .dw XT_REVEAL
-
-    .dw XT_COMPILE
-    .dw PFA_DOVALUE
+    .dw XT_DOVALUE
     .dw XT_EDP
-    .dw XT_DUP
     .dw XT_COMMA
+    .dw XT_COMPILE
+    .dw XT_EVALUEFETCH
+    .dw XT_COMPILE
+    .dw XT_EVALUESTORE
+    .dw XT_EDP
     .dw XT_DUP
     .dw XT_1PLUS
     .dw XT_1PLUS
     .dw XT_DOTO
     .dw PFA_EDP
     .dw XT_STOREE
-    .dw XT_COMPILE
+    .dw XT_EXIT
+
+XT_EVALUEFETCH:
+    .dw DO_COLON
+PFA_EVALUEFETCH:
+    .dw XT_FETCHI
     .dw XT_FETCHE
-    .dw XT_COMPILE
+    .dw XT_EXIT
+
+XT_EVALUESTORE:
+    .dw DO_COLON
+PFA_EVALUESTORE:
+    .dw XT_FETCHI
     .dw XT_STOREE
     .dw XT_EXIT
 
+XT_RVALUEFETCH:
+    .dw DO_COLON
+PFA_RVALUEFETCH:
+    .dw XT_FETCHI
+    .dw XT_FETCH
+    .dw XT_EXIT
+
+XT_RVALUESTORE:
+    .dw DO_COLON
+PFA_RVALUESTORE:
+    .dw XT_FETCHI
+    .dw XT_STORE
+    .dw XT_EXIT

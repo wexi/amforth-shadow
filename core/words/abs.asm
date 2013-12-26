@@ -1,4 +1,4 @@
-; ( n -- u ) 
+; ( n1 -- u1 ) 
 ; Arithmetics
 ; get the absolute value
 VE_ABS:
@@ -7,11 +7,12 @@ VE_ABS:
     .dw VE_HEAD
     .set VE_HEAD = VE_ABS
 XT_ABS:
-    _pfa_
-    TST TOSH
-    BRPL PFA_ABS1
-    COM TOSL
-    COM TOSH
-    ADIW TOSH:TOSL, 1
+    .dw PFA_ABS
+PFA_ABS:
+    tst tosh
+    brpl PFA_ABS1
+    com tosl
+    com tosh
+    adiw tosl, 1
 PFA_ABS1:
-    JMP_ DO_NEXT
+    jmp_ do_next

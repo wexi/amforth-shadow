@@ -7,8 +7,8 @@ VE_EDP:
     .dw VE_HEAD
     .set VE_HEAD = VE_EDP
 XT_EDP:
-    .dw PFA_DOVALUE
+    .dw PFA_DOVALUE1
 PFA_EDP:
     .dw RAM_EDP
-    .dw XT_FETCH
-    .dw XT_STORE
+    .dw XT_RVALUEFETCH
+    .dw XT_RVALUESTORE

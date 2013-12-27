@@ -595,12 +595,13 @@ class AMForth(object):
             traceback.print_exc()
             return 1
         finally:
-            self.send_line("eesy")
+            self.send_line("eesy")        #RAM to EE sync
             response = self.read_response()
             if response[-3:] == " ok":
-	        print "\nMemory alloc pointers synced, goodbye."
+                print "\nMemory alloc pointers synced, goodbye."
             self.serial_disconnect()
             if self._log:
+                self._log.write("eesy\n")
                 self._log.close()
         return 0
 

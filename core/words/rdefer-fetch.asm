@@ -9,7 +9,6 @@
 XT_RDEFERFETCH:
     .dw DO_COLON
 PFA_RDEFERFETCH:
-    .dw XT_1PLUS ; >body
     .dw XT_FETCHI
     .dw XT_FETCH
     .dw XT_EXIT

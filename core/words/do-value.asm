@@ -17,7 +17,6 @@ PFA_DOVALUE:
 PFA_DOVALUE1:
     call_ DO_DODOES
     .dw XT_DUP
-    .dw XT_SWAP
     .dw XT_1PLUS
     .dw XT_FETCHI
     .dw XT_EXECUTE

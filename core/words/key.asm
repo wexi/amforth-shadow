@@ -7,7 +7,7 @@ VE_KEY:
     .dw VE_HEAD
     .set VE_HEAD = VE_KEY
 XT_KEY:
-    .dw PFA_DODEFER
+    .dw PFA_DODEFER1
 PFA_KEY:
     .dw USER_KEY
     .dw XT_UDEFERFETCH

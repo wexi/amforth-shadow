@@ -7,7 +7,7 @@ VE_STOREI:
     .dw VE_HEAD
     .set VE_HEAD = VE_STOREI
 XT_STOREI:
-    .dw PFA_DODEFER
+    .dw PFA_DODEFER1
 PFA_STOREI:
     .dw EE_STOREI
     .dw XT_EDEFERFETCH

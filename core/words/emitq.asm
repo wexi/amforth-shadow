@@ -7,7 +7,7 @@ VE_EMITQ:
     .dw VE_HEAD
     .set VE_HEAD = VE_EMITQ
 XT_EMITQ:
-    .dw PFA_DODEFER
+    .dw PFA_DODEFER1
 PFA_EMITQ:
     .dw USER_EMITQ
     .dw XT_UDEFERFETCH

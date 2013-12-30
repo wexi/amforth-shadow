@@ -9,11 +9,7 @@ VE_RDEFER:
 XT_RDEFER:
     .dw DO_COLON
 PFA_RDEFER:
-    .dw XT_DOCREATE
-    .dw XT_REVEAL
-
-    .dw XT_COMPILE
-    .dw PFA_DODEFER
+    .dw XT_DODEFER
 
     .dw XT_HERE
     .dw XT_COMMA

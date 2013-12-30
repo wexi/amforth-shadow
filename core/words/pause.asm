@@ -7,7 +7,7 @@ VE_PAUSE:
     .dw VE_HEAD
     .set VE_HEAD = VE_PAUSE
 XT_PAUSE:
-    .dw PFA_DODEFER
+    .dw PFA_DODEFER1
 PFA_PAUSE:
     .dw ram_pause
     .dw XT_RDEFERFETCH

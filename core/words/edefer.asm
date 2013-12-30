@@ -9,10 +9,7 @@ VE_EDEFER:
 XT_EDEFER:
     .dw DO_COLON
 PFA_EDEFER:
-    .dw XT_DOCREATE
-    .dw XT_REVEAL
-    .dw XT_COMPILE
-    .dw PFA_DODEFER
+    .dw XT_DODEFER
 
     .dw XT_EDP
     .dw XT_DUP

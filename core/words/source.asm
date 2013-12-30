@@ -7,7 +7,7 @@ VE_SOURCE:
     .dw VE_HEAD
     .set VE_HEAD = VE_SOURCE
 XT_SOURCE:
-    .dw PFA_DODEFER
+    .dw PFA_DODEFER1
 PFA_SOURCE:
     .dw USER_SOURCE
     .dw XT_UDEFERFETCH

@@ -259,8 +259,8 @@ PARSED-TYPE specifies what kind of text is parsed. It should be on of 'name',
 	(("immediate" "compile-only" "restrict")
 	 immediate (font-lock-keyword-face . 1))
 	(("does>") definition-starter (font-lock-keyword-face . 1))
-	((":noname" "comp:" "post:" "[:") definition-starter (font-lock-keyword-face . 1))
-	((";" ";code" ";abi-code" ";]") definition-ender (font-lock-keyword-face . 1))
+	((":noname" "comp:" "post:") definition-starter (font-lock-keyword-face . 1))
+	((";" ";code" ";abi-code") definition-ender (font-lock-keyword-face . 1))
 	(("include" "require" "needs" "use") 
 	 non-immediate (font-lock-keyword-face . 1) 
 	 "[\n\t ]" t string (font-lock-string-face . 1))
@@ -291,7 +291,7 @@ PARSED-TYPE specifies what kind of text is parsed. It should be on of 'name',
 	  
 	(("[if]" "[?do]" "[do]" "[for]" "[begin]" 
 	  "[endif]" "[then]" "[loop]" "[+loop]" "[next]" "[until]" "[repeat]"
-	  "[again]" "[while]" "[else]")
+	  "[again]" "[while]" "[else]" "[:" ";]")
 	 immediate (font-lock-keyword-face . 2))
 	(("[ifdef]" "[ifundef]") immediate (font-lock-keyword-face . 2)
 	 "[ \t\n]" t name (font-lock-function-name-face . 3))
@@ -483,7 +483,7 @@ INDENT1 and INDENT2 are indentation specifications of the form
 	(("else" "recover" "restore" "endtry-iferror" "[else]")
 	 (-2 . 2) (0 . 0))
 	(("does>" "compile>" "int>" ";code" ";abi-code") (-1 . 1) (0 . 0))
-	(("while" "[while]") (-2 . 4) (0 . 2))
+	(("while" "[while]") (0 . 2) (0 . 2))
 	(("repeat" "[repeat]") (-4 . 0) (0 . -4))))
 
 (defvar forth-local-indent-words nil 
@@ -558,7 +558,7 @@ End:\" construct).")
 			)) 
 		    mapped)))
     (let ((result (cons regexp sub-list)))
-      (byte-compile 'result)
+      ;(byte-compile 'result)
       result)))
 
 (defun forth-compile-words ()

@@ -71,6 +71,7 @@
 .include "words/lshift.asm"
 .include "words/rshift.asm"
 .include "words/plusstore.asm"
+.include "words/minusstore.asm"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 .include "words/rpfetch.asm"
 .include "words/rpstore.asm"

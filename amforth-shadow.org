@@ -122,6 +122,8 @@ The shadow is proud to have contributed the Word List Scope idea and implementat
 
 + U2/ :: [ASM] Unsigned divide by two.
 
++ -! ( n a-addr ) :: [ASM] Subtracts n from the cell in a-addr.
+
 + CELL- :: [ASM] Cell size address subtraction.
 
 + d@ d! :: [ASM] double precision fetch and store.

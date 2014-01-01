@@ -483,8 +483,8 @@ INDENT1 and INDENT2 are indentation specifications of the form
 	(("else" "recover" "restore" "endtry-iferror" "[else]")
 	 (-2 . 2) (0 . 0))
 	(("does>" "compile>" "int>" ";code" ";abi-code") (-1 . 1) (0 . 0))
-	(("while" "[while]") (0 . 2) (0 . 2))
-	(("repeat" "[repeat]") (-4 . 0) (0 . -4))))
+	(("while" "[while]" ) ( -2 . 2) (0 . 0))
+	(("repeat" "[repeat]") (-2 . 0) (-2 . 0))))
 
 (defvar forth-local-indent-words nil 
   "List of Forth words to prepend to `forth-indent-words', when a forth-mode

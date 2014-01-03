@@ -1,5 +1,5 @@
-\ Defines a word which resets the dictionary and removes itself
-\ when called. Better then forget but still has limitations.
+\ Defines a word which resets the dictionary and removes itself when called.
+\ EXPECT TROUBLE with Edefer values addressing removed code!
 
 \ Saved to flash and restored by the defined marker word
 \ are E² cells from MARKER1 to MARKER2. See (marker).

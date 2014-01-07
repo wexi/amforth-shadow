@@ -27,6 +27,7 @@
 .include "words/over.asm"
 .include "words/drop.asm"
 .include "words/rot.asm"
+.include "words/notrot.asm"
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;
 .include "words/r_from.asm"

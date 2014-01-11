@@ -13,9 +13,9 @@ PFA_VALUE:
     .dw XT_EDP
     .dw XT_COMMA
     .dw XT_COMPILE
-    .dw XT_EVALUEFETCH
+    .dw XT_EDEFERFETCH
     .dw XT_COMPILE
-    .dw XT_EVALUESTORE
+    .dw XT_EDEFERSTORE
     .dw XT_EDP
     .dw XT_DUP
     .dw XT_1PLUS

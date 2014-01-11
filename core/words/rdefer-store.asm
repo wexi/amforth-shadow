@@ -9,7 +9,6 @@
 XT_RDEFERSTORE:
     .dw DO_COLON
 PFA_RDEFERSTORE:
-    .dw XT_1PLUS
     .dw XT_FETCHI
     .dw XT_STORE
     .dw XT_EXIT

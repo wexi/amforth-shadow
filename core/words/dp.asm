@@ -10,5 +10,5 @@ XT_DP:
     .dw PFA_DOVALUE1
 PFA_DP:
     .dw RAM_DP
-    .dw XT_RVALUEFETCH
-    .dw XT_RVALUESTORE
+    .dw XT_RDEFERFETCH
+    .dw XT_RDEFERSTORE

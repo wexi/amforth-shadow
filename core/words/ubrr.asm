@@ -10,5 +10,5 @@ XT_UBRR:
   .dw PFA_DOVALUE1
 PFA_UBRR:          ; ( -- )
   .dw EE_UBRRVAL
-  .dw XT_EVALUEFETCH
-  .dw XT_EVALUESTORE
+  .dw XT_EDEFERFETCH
+  .dw XT_EDEFERSTORE

@@ -9,7 +9,6 @@
 XT_EDEFERSTORE:
     .dw DO_COLON
 PFA_EDEFERSTORE:
-    .dw XT_1PLUS
     .dw XT_FETCHI
     .dw XT_STOREE
     .dw XT_EXIT

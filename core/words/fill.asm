@@ -7,20 +7,22 @@ VE_FILL:
     .dw VE_HEAD
     .set VE_HEAD = VE_FILL
 XT_FILL:
-    .dw DO_COLON
+    .dw PFA_FILL
 PFA_FILL:
-    .dw XT_ROT
-    .dw XT_ROT
-    .dw XT_ZERO
-    .dw XT_DOQDO
-    .dw PFA_FILL2
+    mov temp0, tosl		;c
+    loadtos
+    movw temp2, tosl		;u
+    loadtos
+    movw zh:zl, tosh:tosl	;zh:zl is start address
+    add temp2, tosl
+    adc temp3, tosh		;temp2:temp3 is stop address
+    loadtos
+    rjmp PFA_FILL2
 PFA_FILL1:
-    .dw XT_2DUP
-    .dw XT_CSTORE  ; ( -- c c-addr)
-    .dw XT_1PLUS
-    .dw XT_DOLOOP
-    .dw PFA_FILL1
+    st z+, temp0
 PFA_FILL2:
-    .dw XT_DROP
-    .dw XT_DROP
-    .dw XT_EXIT
+    cpse zl, temp2
+    rjmp PFA_FILL1
+    cpse zh, temp3
+    rjmp PFA_FILL1
+    jmp_ DO_NEXT

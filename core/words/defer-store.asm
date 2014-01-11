@@ -9,10 +9,11 @@ VE_DEFERSTORE:
 XT_DEFERSTORE:
     .dw DO_COLON
 PFA_DEFERSTORE:
+    .dw XT_1PLUS
     .dw XT_DUP
     .dw XT_DOLITERAL
-    .dw 3
-    .dw XT_PLUS   ; >body 2 +
+    .dw 2
+    .dw XT_PLUS   ; 2 +
     .dw XT_FETCHI
     .dw XT_EXECUTE
     .dw XT_EXIT

@@ -1,4 +1,4 @@
-; ( n1 -- n2 ) 
+; ( u1 -- u2 ) 
 ; Arithmetics
 ; arithmetic shift left, filling with zero
 VE_2STAR:

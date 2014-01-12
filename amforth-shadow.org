@@ -120,7 +120,13 @@ The shadow is proud to have contributed the Word List Scope idea and implementat
 
 + CINVERT :: [ASM] Complements a single byte.
 
-+ U2/ :: [ASM] Unsigned divide by two.
++ U2/ :: [ASM] Unsigned division by 2.
+
++ U4/ :: [ASM] Unsigned division by 4.
+
++ 4/ :: [ASM] Signed division by 4.
+
++ 4* :: [ASM] Unsigned multiplication by 4.
 
 + -! ( n a-addr ) :: [ASM] Subtracts n from the cell in a-addr.
 

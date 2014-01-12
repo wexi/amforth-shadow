@@ -32,7 +32,6 @@ and `EPUB <AmForth.epub>`_.
 .. raw:: html
   :file: leon-video.html
 
-
 Under Construction
 ------------------
 
@@ -41,6 +40,13 @@ released but will be part of the next release.
 See the code section at Sourceforge to get the
 `most recent sources <http://sourceforge.net/p/amforth/code/HEAD/tree/trunk/>`__
 
+* core: internally merged code for defer's and value's. Small speed improvments 
+  for defer actions.
+
+23.12.2013: release 5.2
+.......................
+
+* Improved and extended :ref:`Values`
 * Forth 2012 `Traverse-Wordlist <http://www.forth200x.org/traverse-wordlist.html>`__
 * improved documentation
 * core: added :command:`d0=` and :command:`0=` as assembly primitives and

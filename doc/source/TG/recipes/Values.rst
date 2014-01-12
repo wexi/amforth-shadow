@@ -5,14 +5,10 @@ Values
 ======
 
 The standard VALUE gives access to memory content like a variable
-does. A value differs from a variable that by calling its name
-the data is on the stack *without* further read operation. A
-variable name leaves an address on the data stack that requires 
-a further read operation to get the data. 
-
-Since a value does not publish the address where it keeps its data
-it is necessairy to use a separate command to change the data in a 
-value: :command:`TO`.
+does. The difference between these two is that a value gives a actual
+data whereas a variable leaves the address of the data on the stack.
+The place, where a value stores the data is usually not known. There
+is only one way to change it: use of :command:`TO`.
 
 .. code-block:: forth
 
@@ -67,8 +63,8 @@ content is not preserved over resets and restarts.
    : cvalue ( n "name" -- )
      (value)           \ create a new wordlist entry
      here ,            \ the address of the RAM memory
-     postpone c@v      \ method for the read operation
-     postpone c!v      \ method for the write (TO) operation
+     ['] c@v ,         \ method for the read operation
+     ['] c!v ,         \ method for the write (TO) operation
      here c!           \ initialize the RAM content
      1 allot           \ formally allocate the RAM byte
    ;
@@ -123,8 +119,8 @@ to be warmed, this is not done automatically.
    : cache-value 
     (value)                           \ create the vocabulary entry
     dup edp dup , dup cell+ to edp !e \ allocate an EEPROM cell.
-    postpone @cache                   \ XT for the read method
-    postpone !cache                   \ XT for the write methon
+    ['] @cache ,                      \ XT for the read method
+    ['] !cache ,                      \ XT for the write methon
     here 2 ( 1 cell ) allot dup , !   \ allocate a RAM cell and initialize it
   ;
 

@@ -9,4 +9,4 @@ User's Manual
 
    linux
    windows
-
+   quick-windows

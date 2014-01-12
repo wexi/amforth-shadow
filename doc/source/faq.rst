@@ -20,7 +20,8 @@ First: You will have to build your own amforth first. To do this you really want
 copy of the :file:`appl/template` directory and edit the files in it to fit your environment:
 controller type, cpu frequency, serial port settings  etc. The files are well documented.
 Once the assembler produces two hex files and no errors (warnings should not come up either)
-you can proceed.
+you can proceed. If you are using the Atmel studio, make  sure that the project settings
+include the generation of the eep files. This settings may be disabled by default.
 
 Second you need a programmer to transfer the hex files you generated
 to the controller. The only programmers that can be used are those that can work

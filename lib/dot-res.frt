@@ -5,7 +5,7 @@
     decimal
     ver ."  running at " f_cpu 1000 um/mod . drop ." kHz " cr
     s" mcu-info" environment? if
-       2 + @i dp -
+       2 + @i 2/ dp -
 	." free FLASH cells        " u. cr
 	else 
 	  ." no flash size information available " cr 

@@ -34,5 +34,3 @@
 .include "words/2to_r.asm"
 .include "words/2r_from.asm"
 .include "dict_counted.inc"
-.include "words/built.asm"
-.include "words/git-info.asm"

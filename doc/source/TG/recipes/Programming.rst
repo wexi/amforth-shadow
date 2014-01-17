@@ -10,6 +10,7 @@ Programming and Debugging
    Customize
    Debugshell
    Dumps
+   Extended-VM
    Forget
    Port-From-C
    Profiler

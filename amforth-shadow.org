@@ -116,13 +116,13 @@ The shadow is proud to have contributed the Word List Scope idea and implementat
 
 * General purpose new words
 
-+ @C :: [ASM] Like C@ but reads the byte as a signed 8 bit integer (i.e., extends sign).
++ @c :: [ASM] Like C@ but reads the byte as a signed 8 bit integer (i.e., extends sign).
 
-+ CINVERT :: [ASM] Complements a single byte.
++ cinvert :: [ASM] Complements a single byte.
 
-+ U2/ :: [ASM] Unsigned division by 2.
++ u2/ :: [ASM] Unsigned division by 2.
 
-+ U4/ :: [ASM] Unsigned division by 4.
++ u4/ :: [ASM] Unsigned division by 4.
 
 + 4/ :: [ASM] Signed division by 4.
 
@@ -130,19 +130,21 @@ The shadow is proud to have contributed the Word List Scope idea and implementat
 
 + -! ( n a-addr ) :: [ASM] Subtracts n from the cell in a-addr.
 
-+ -rot ( n1 n2 n3 -- n3 n1 n2 ) :: [ASM] "not-rote"
++ -rot  ( n1 n2 n3 -- n3 n1 n2 ) :: [ASM] "not-rote"
 
-+ CELL- :: [ASM] Cell size address subtraction.
++ cell- :: [ASM] Cell size address subtraction.
 
 + d@ d! :: [ASM] double precision fetch and store.
 
 + 2@ 2! :: [ASM] two cell fetch and store.
 
-+ RDROP ( R: X -- ) :: [ASM] Drop top of run-time stack.
++ du<  (ud1 ud2 -- flag ) :: [ASM] is ud1 less than ud2 ?
 
-+ 0DROP ( X -- 0 ) :: [ASM] Replace top of stack with zero.
++ rdrop  ( R: X -- ) :: [ASM] Drop top of run-time stack.
 
-+ REVERSE ( X1 .. Xn n -- Xn .. X1 n ) :: [FORTH] LIFO made FIFO.
++ 0drop  ( X -- 0 ) :: [ASM] Replace top of stack with zero.
+
++ reverse ( X1 .. Xn n -- Xn .. X1 n ) :: [FORTH] LIFO made FIFO.
 
 * BOOFA bootloader support
 

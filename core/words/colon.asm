@@ -10,10 +10,6 @@ XT_COLON:
     .dw DO_COLON
 PFA_COLON:
     .dw XT_DOCREATE
-    .dw XT_DP
-    .dw XT_LATEST
-    .dw XT_STORE
-    .dw XT_COMPILE
-    .dw DO_COLON
-    .dw XT_RBRACKET
+    .dw XT_COLONNONAME
+    .dw XT_DROP
     .dw XT_EXIT

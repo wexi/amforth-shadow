@@ -140,7 +140,9 @@ The shadow is proud to have contributed the Word List Scope idea and implementat
 
 + du<  (ud1 ud2 -- flag ) :: [ASM] is ud1 less than ud2 ?
 
-+ rdrop  ( R: X -- ) :: [ASM] Drop top of run-time stack.
++ rdrop  ( R: X -- ) :: [ASM] Drop one cell from top of run-time stack.
+
++ 2rdrop  ( R: X1 X2 -- ) :: [ASM] Drop two cells from top of run-time stack.
 
 + 0drop  ( X -- 0 ) :: [ASM] Replace top of stack with zero.
 

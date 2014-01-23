@@ -2,6 +2,24 @@
 Implementation
 ==============
 
+Memory Allocation
+-----------------
+
+The ANS 94 standard defines three major data regions: name space,
+code space and data space. The Atmega system architecture
+uses three memory types too: Flash, RAM and EEPROM. These three
+memory types have their own address space independently from the
+others. Amforth does not unify these address spaces into one.
+
+Amforth uses the flash memory as the standard location for all standard
+data spaces: name, code and data. Contrary to the standard some 
+words that operate on the data space use RAM adresses instead.
+These words are HERE, @ (fetch), ! (store) and simimliar. In addition
+the so called transient regions are in RAM as well.
+
+Other words like , (comma) operate on the flash address and thus
+directly in the dictionary.
+
 Dictionary Management
 ---------------------
 
@@ -318,10 +336,7 @@ Standard Wordlists
 ANS94 Words
 -----------
 
-amforth is close to the ANS94 Forth standard. The main difference comes from
-the fact that the AVR ATmegas use a Harvard architecture (separate code and
-data address space) that amforth does not hide. amforth gives full and unmodified
-access to the whole address space.
+
 
 amforth implements most or all words from the ANS word
 sets CORE, CORE EXT, EXCEPTION and DOUBLE NUMBERS. A loadable

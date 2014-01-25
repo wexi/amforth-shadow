@@ -10,6 +10,6 @@ XT_R_FROM:
     .dw PFA_R_FROM
 PFA_R_FROM:
     savetos
-    pop tosl
+    pop tosl			;low endian
     pop tosh
     jmp_ DO_NEXT

@@ -10,8 +10,8 @@ XT_R_FETCH:
     .dw PFA_R_FETCH
 PFA_R_FETCH:
     savetos
-    pop tosl
-    pop tosh
-    push tosh
-    push tosl
+    in_ zl, spl
+    in_ zh, sph
+    ldd tosl, z+1		;low endian
+    ldd tosh, z+2
     jmp_ DO_NEXT

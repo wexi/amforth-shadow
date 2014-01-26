@@ -1,5 +1,12 @@
 
+\ add a number to a value.
+\ depends on carnal knowlegde
 : +to
     ( n "name" -- )
-    ' dup >r defer@ + r> defer! 
+    state @ if
+      postpone '
+    else
+      '
+    then 
+    dup >r defer@ + r> defer! 
 ;

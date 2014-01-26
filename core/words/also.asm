@@ -1,6 +1,6 @@
-; ( -- ) 
+; ( "name" -- ) 
 ; Search Order
-; Duplicate first entry in the current search order list
+; Add "named" wid to the search order head
 VE_ALSO:
     .dw $ff04
     .db "also"
@@ -10,7 +10,16 @@ XT_ALSO:
     .dw DO_COLON
 PFA_ALSO:
     .dw XT_GET_ORDER
+    .dw XT_PARSENAME
+    .dw XT_FINDNAME
+    .dw XT_DOCONDBRANCH
+    .dw PFA_ALSO1
+    .dw XT_EXECUTE
+    .dw XT_DOBRANCH
+    .dw PFA_ALSO2
+PFA_ALSO1:
     .dw XT_OVER
+PFA_ALSO2:
     .dw XT_SWAP
     .dw XT_1PLUS
     .dw XT_SET_ORDER

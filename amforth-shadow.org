@@ -148,6 +148,10 @@ The shadow is proud to have contributed the Word List Scope idea and implementat
 
 + reverse ( X1 .. Xn n -- Xn .. X1 n ) :: [FORTH] LIFO made FIFO.
 
+* Deviations
+
++ also :: {FORTH] If you wwrite "also wid" this wordlist is added to the search order.
+
 * BOOFA bootloader support
 
 BOOFA is an AVRDUDE compatible Flash/EEPROM programmer. [[https://github.com/wexi/boofa][Visit BOOFA GitHub repository]]. To reserve space for BOOFA put in your template.asm the followig definition:

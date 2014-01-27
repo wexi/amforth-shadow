@@ -14,13 +14,13 @@ PFA_ALSO:
     .dw XT_FINDNAME
     .dw XT_DOCONDBRANCH
     .dw PFA_ALSO1
-    .dw XT_EXECUTE
-    .dw XT_DOBRANCH
-    .dw PFA_ALSO2
-PFA_ALSO1:
-    .dw XT_OVER
-PFA_ALSO2:
+    .dw XT_EXECUTE		;expected to return a wid on TOS
     .dw XT_SWAP
     .dw XT_1PLUS
     .dw XT_SET_ORDER
     .dw XT_EXIT
+PFA_ALSO1:
+; -32: invalid name argument
+    .dw XT_DOLITERAL
+    .dw -32
+    .dw XT_THROW

@@ -116,6 +116,8 @@ The shadow is proud to have contributed the Word List Scope idea and implementat
 
 * General purpose new words
 
++ allwords :: [ASM] Lists all words on the search order. Used by amforth-shell.py.
+
 + @c :: [ASM] Like C@ but reads the byte as a signed 8 bit integer (i.e., extends sign).
 
 + cinvert :: [ASM] Complements a single byte.

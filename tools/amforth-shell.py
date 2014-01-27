@@ -16,8 +16,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-# Patcher remarks:
-# ================
+# AmForth Shadow remarks:
+# =======================
 # 
 # This uploader saves dictionary space and words clutter by substituting
 # uC register names and application constants with numbers. The
@@ -41,7 +41,12 @@
 #
 # Invoke the shell with the argument --rtscts to enable serial port
 # RTS/CTS hardware handshake connection.
-# 
+#
+# "eesy" is automatically sent to the application before leaving the program 
+# to synchronize the memory allocation pointers.
+#
+# "allwords" replaces "words" in #update-words implementation.
+#
 # =====================================================================
 # DOCUMENTATION
 # =====================================================================
@@ -1225,7 +1230,7 @@ additional definitions (e.g. register names)
         dp = int(dp[:-3])
         if self._amforth_dp != dp:
             self._amforth_dp = dp
-            self.send_line("words")
+            self.send_line("allwords")
             words = self.read_response()
             if words[-3:] != " ok":
                 return # Something went wrong, just silently ignore

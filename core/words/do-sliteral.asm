@@ -11,11 +11,7 @@ XT_DOSLITERAL:
 PFA_DOSLITERAL:
   .dw XT_R_FROM   ; ( -- addr )
   .dw XT_DUP      ; ( -- addr addr )
-  .dw XT_DUP
-  .dw XT_FETCHI   ; ( -- addr addr n )
-  .dw XT_SWAP
-  .dw XT_1PLUS
-  .dw XT_SWAP
+  .dw XT_ICOUNT
   .dw XT_ROT      ; ( -- addr' n addr )
   .dw XT_OVER     ; ( -- addr' n addr n)
   .dw XT_1PLUS

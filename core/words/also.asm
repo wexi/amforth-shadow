@@ -12,8 +12,9 @@ PFA_ALSO:
     .dw XT_GET_ORDER
     .dw XT_PARSENAME
     .dw XT_FINDNAME
+    .dw XT_LESSZERO
     .dw XT_DOCONDBRANCH
-    .dw PFA_ALSO1
+    .dw PFA_ALSO1		;only immediate word expected
     .dw XT_EXECUTE		;expected to return a wid on TOS
     .dw XT_SWAP
     .dw XT_1PLUS

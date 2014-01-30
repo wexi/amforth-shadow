@@ -1,4 +1,4 @@
-; To reduce EEPROM wear the following EE_ pointers have RAM_ copies:
+; To reduce EEPROM wear the following three EE pointers have RAM copies:
 	
 EE_DP:
     .dw DPSTART      ; Dictionary Pointer
@@ -7,8 +7,6 @@ EE_HERE:
 EE_EDP:
     .dw EDPSTART     ; EEProm Memory Allocation
 
-EE_MARKER1: ; -------- MARKER save bottom
-	
 EE_TURNKEY:
     .dw XT_APPLTURNKEY  ; TURNKEY
 EE_STOREI:
@@ -26,7 +24,7 @@ EE_ORDERLISTLEN:
     .dw 1
 EE_ORDERLIST: ; list of wordlist id, exactly numwordlist entries
     .dw EE_FORTHWORDLIST      ; get/set-order
-    .byte  (NUMWORDLISTS-1)*CELLSIZE ; two slots are already used
+    .byte  (NUMWORDLISTS-1)*CELLSIZE ; one entry already used
 EE_RECOGNIZERS:
 EE_RECOGNIZERLISTLEN:
     .dw 3
@@ -40,8 +38,6 @@ EE_RECOGNIZERLIST:
 
 EE_WLSCOPE:
     .dw XT_GET_CURRENT  ; default wordlist scope
-
-EE_MARKER2: ; ----------- MARKER save top
 
 ; default user area
 EE_INITUSER:

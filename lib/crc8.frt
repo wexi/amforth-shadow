@@ -11,11 +11,12 @@
 \ tables. Data is read from the pad.
 
 \ #error-on-output
+\ #include marker.frt
 
 decimal
 
 \ IMPORTANT:
-\ amforth-shell needs the following constants defined in appl_defs.frt
+\ amforth-shell needs the following constants defined in your appl_defs.frt
 \ msb-first poly: (1)11010101 = 0xD5
 \ lsb-first poly: 10101011(1) = 0xAB
 \ bit-order: true = msb-first, false = lsb-first

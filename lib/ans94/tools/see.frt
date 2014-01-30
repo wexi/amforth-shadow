@@ -2,6 +2,8 @@ hex
 \ decompiler
 
 \ marker --see--
+\ #include postpone.frt
+\ #include to-name.frt
 
 : .name ( nfa -- ) \ Namensfeld ausgeben
   icount $ff and dup 15 < if itype else drop drop ." :noname" then ;

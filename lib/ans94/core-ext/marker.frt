@@ -1,27 +1,30 @@
 \ Defines a word which resets the dictionary and removes itself when called.
 \ EXPECT TROUBLE with Edefer values addressing removed code!
 
-\ Saved to flash and restored by the defined marker word
-\ are E² cells from MARKER1 to MARKER2. See (marker).
+\ #include reverse.frt
+
+: (marker)  ( ip -- w ip+1 )  dup @i swap 1+  ;	  \ ip is f-addr
 
 : marker
-   dp here edp				\ RAM based pointers
-   get-current dup @e swap		\ ( last-word wid )
-   create
-   (marker)  do
-      dup i =  if			\ created marker replaced
-	 drop				\ by last-word instead
-      else
-	 i @e
-      then
-      ,
-   2 +loop
-   , , ,
+   dp here edp
+   get-current dup @e    ( dp here edp cur-wl-id cur-wl-ip )
+   create				\ restore cur-wl to forget this marker
+   get-order dup ,			\ save wl-len
+   0  ?do  dup @e , ,  loop		\ save wl-ip wl-id pairs
+   , ,					\ save cur-wl-ip cur-wl-id
+   , , ,				\ save create edp here dp
   does>
-   (marker)  do
-      dup @i i !e 1+
-   2 +loop
-   dup @i to edp 1+
-   dup @i to here 1+
+   (marker) swap dup >r 0     ( ip wl-len 0 ) ( R: wl-len )
+   ?do		              ( ip )
+      (marker) (marker) -rot  ( ... ip wl-ip wl-id ) 
+      dup -rot !e swap        ( ... wl-id ip )
+   loop
+   r> swap >r                 ( ... wl-id wl-len ) ( R: ip )
+   reverse set-order
+   r> (marker) (marker) -rot !e
+   (marker) swap to edp
+   (marker) swap to here
    @i to dp
 ;
+
+   

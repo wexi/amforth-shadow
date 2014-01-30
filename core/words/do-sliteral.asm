@@ -9,10 +9,9 @@
 XT_DOSLITERAL:
   .dw DO_COLON
 PFA_DOSLITERAL:
-  .dw XT_R_FROM   ; ( -- addr )
-  .dw XT_DUP      ; ( -- addr addr )
+  .dw XT_R_FETCH   ; ( -- addr )
   .dw XT_ICOUNT
-  .dw XT_ROT      ; ( -- addr' n addr )
+  .dw XT_R_FROM
   .dw XT_OVER     ; ( -- addr' n addr n)
   .dw XT_1PLUS
   .dw XT_2SLASH   ; ( -- addr' n addr k )

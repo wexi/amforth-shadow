@@ -4,10 +4,8 @@
 #+OPTIONS: email:t
 #+STARTUP: indent
 
-* Scope
-
-This is a sandbox for AmForth development that is maintained by an experienced embedded programmer, yet a novice in Forth. It is hoped that the new ideas that are presented here would soon be adopted
-by [[http://amforth.sourceforge.net/][AmForth HQ]].
+[[https://github.com/wexi/amforth-shadow][AmForth-Shadow]] is a sandbox for [[http://en.wikipedia.org/wiki/Atmel_AVR%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20][AVR8]] Forth development that is maintained by an experienced embedded programmer, yet a novice in Forth. It is hoped that the ideas that are presented here would be
+adopted by [[http://amforth.sourceforge.net/][AmForth HQ]]. The following summarizes the Shadow changes to HQ's code.
 
 * <<eesy>> Reduce EEPROM based pointers wear out
 
@@ -155,6 +153,43 @@ The shadow is proud to have contributed the Word List Scope idea and implementat
 + vocabulary <name> :: [ASM] creates a constant with a new wid (wordlist id) value.
 
 + also <vocabulary-name> :: [ASM] adds the vocabulary's wid to the search order head.
+
+* Shadowy cookbook
+
+Using Edefer to resolve forward references is wasteful since it adds one level of runtime indirection and needs additional EEPROM and FLASH space to implement. Here is a solution for the simple case
+of a single forward reference:
+
+#+BEGIN_EXAMPLE
+variable _forward			\ single level resolver
+
+\ forward reference xt call
+: forward&
+   -1 ,
+   dp 1- _forward ! 
+;  immediate
+
+\ foward reference xt constant 
+: &forward
+   postpone (literal) -1 ,
+   dp 1- _forward ! 
+;  immediate
+
+\ resolver
+: forward:
+   parse-name 2dup find-name  if  ( addr len xt ) \
+      _forward @                  ( addr len xt f-addr )
+      dup @i -1 <> abort" NOT ERASED"
+      !i 2drop
+   else
+      type space abort" NOT FOUND"
+   then
+;
+#+END_EXAMPLE
+
+* Shadowy thoughts
+
+If I just had the time I would have replaced AmForth dictionary names with 16bit hash values. The dictionary names when development is through can simply be "forgotten".  In additional to the obvious
+code space saving reverse engineering of code via "see" would become significantly harder.
 
 * BOOFA bootloader support
 

@@ -1,23 +1,19 @@
-; ( ee-addr -- itemn .. item0 n) 
+; ( ee-addr n -- itemn .. item0) 
 ; Tools
 ; Get an array from EEPROM
-VE_FETCH_EE_ARRAY:
-    .dw $ff04
-    .db "@e[]"
+VE_N_FETCH_E:
+    .dw $ff03
+    .db "n@e"
     .dw VE_HEAD
-    .set VE_HEAD = VE_FETCH_EE_ARRAY
-XT_FETCH_EE_ARRAY:
+    .set VE_HEAD = VE_N_FETCH_E
+XT_N_FETCH_E:
     .dw DO_COLON
-PFA_FETCH_EE_ARRAY:
-    .dw XT_DUP
-    .dw XT_FETCHE
-    .dw XT_TO_R    ; save the counter to r-stack
-    .dw XT_R_FETCH
+PFA_N_FETCH_E:
     .dw XT_ZERO
     .dw XT_SWAP    ; go from bigger to smaller addresses
     .dw XT_DOQDO
-    .dw PFA_FETCH_EE_ARRAY2
-PFA_FETCH_EE_ARRAY1:
+    .dw PFA_N_FETCH_E2
+PFA_N_FETCH_E1:
     ; ( ee-addr )
     .dw XT_I
     .dw XT_CELLS ; ( -- ee-addr i*2 )
@@ -27,9 +23,8 @@ PFA_FETCH_EE_ARRAY1:
     .dw XT_SWAP   ;( -- item_i ee-addr )
     .dw XT_TRUE  ; shortcut for -1
     .dw XT_DOPLUSLOOP
-    .dw PFA_FETCH_EE_ARRAY1
-PFA_FETCH_EE_ARRAY2:
+    .dw PFA_N_FETCH_E1
+PFA_N_FETCH_E2:
     .dw XT_2DROP
-    .dw XT_R_FROM ; get the counter from r-stack
     .dw XT_EXIT
 

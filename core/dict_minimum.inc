@@ -9,6 +9,8 @@
 .include "words/2dup.asm"
 .include "words/2drop.asm"
 
+.include "words/tuck.asm"
+
 .include "words/g_in.asm"
 .include "words/sharptib.asm"
 .include "words/pad.asm"

@@ -27,8 +27,7 @@ PFA_DOSCOMMA:
     .dw XT_COMMA
     .dw XT_DUP   ; ( --addr len len)
     .dw XT_2SLASH ; ( -- addr len len/2
-    .dw XT_SWAP   ; ( -- addr len/2 len
-    .dw XT_OVER   ; ( -- addr len/2 len len/2
+    .dw XT_TUCK   ; ( -- addr len/2 len len/2
     .dw XT_2STAR  ; ( -- addr len/2 len len'
     .dw XT_MINUS  ; ( -- addr len/2 rem
     .dw XT_TO_R

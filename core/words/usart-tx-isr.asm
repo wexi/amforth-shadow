@@ -21,8 +21,7 @@ PFA_TX_ISR:
   .dw XT_DOLITERAL
   .dw usart_tx_mask
   .dw XT_AND           ; ( -- c tx_in_new)
-  .dw XT_SWAP
-  .dw XT_OVER          ; ( -- tx_in_new c tx_in_new
+  .dw XT_TUCK          ; ( -- tx_in_new c tx_in_new
   .dw XT_DOLITERAL
   .dw usart_tx_data   ; ( -- c tx_in_new data)
   .dw XT_PLUS

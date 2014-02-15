@@ -10,8 +10,7 @@ XT_DDOTR:
     .dw DO_COLON
 PFA_DDOTR:
     .dw XT_TO_R
-    .dw XT_SWAP
-    .dw XT_OVER
+    .dw XT_TUCK
     .dw XT_DABS
     .dw XT_L_SHARP
     .dw XT_SHARP_S

@@ -16,6 +16,7 @@ PFA_N_FETCH_E:
 PFA_N_FETCH_E1:
     ; ( ee-addr )
     .dw XT_I
+    .dw XT_1MINUS
     .dw XT_CELLS ; ( -- ee-addr i*2 )
     .dw XT_OVER  ; ( -- ee-addr i*2 ee-addr )
     .dw XT_PLUS  ; ( -- ee-addr ee-addr+i

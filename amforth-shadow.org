@@ -154,7 +154,7 @@ The shadow is proud to have contributed the Word List Scope idea and implementat
 
 + also <vocabulary-name> :: [ASM] adds the vocabulary's wid to the search order head.
 
-* Shadowy cookbook
+* Shadow cookbook
 
 Using Edefer to resolve forward references is wasteful since it adds one level of runtime indirection and needs additional EEPROM and FLASH space to implement. Here is a solution for the simple case
 of a single forward reference:
@@ -186,10 +186,11 @@ variable _forward			\ single level resolver
 ;
 #+END_EXAMPLE
 
-* Shadowy thoughts
+* Shadow thoughts
 
-If I just had the time I would have replaced AmForth dictionary names with 16bit hash values. The dictionary names when development is through can simply be "forgotten".  In additional to the obvious
-code space saving reverse engineering of code via "see" would become significantly harder.
+Matthias Trute, AmForth creator, believes that its GPLv2 license means that users are entitled to receive the source of any code which the developer has chosen to include in the distribution, whether
+this code has an AmForth origin or not. While [[http://www.amazon.com/Intellectual-Property-Open-Source-Protecting/dp/0596517963][the Shadow questions this claim based on a reliable source]] he intends to abide by it and would solve pesky commercial situations through massive
+obfuscation of the sourceho code. Thus, expect further amforth-shell --log development.
 
 * BOOFA bootloader support
 

@@ -4,8 +4,14 @@
 #+OPTIONS: email:t
 #+STARTUP: indent
 
-[[https://github.com/wexi/amforth-shadow][AmForth-Shadow]] is a sandbox for [[http://en.wikipedia.org/wiki/Atmel_AVR%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20][AVR8]] Forth development that is maintained by an experienced embedded programmer, yet a novice in Forth. It is hoped that the ideas that are presented here would be
-adopted by [[http://amforth.sourceforge.net/][AmForth HQ]]. The following summarizes the Shadow changes to HQ's code.
+[[https://github.com/wexi/amforth-shadow][AmForth-Shadow]] is a sandbox for [[http://en.wikipedia.org/wiki/Atmel_AVR%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20][AVR8]] Forth development that is maintained by an experienced embedded systems programmer, yet a novice[fn:1] in Forth. It is hoped that the ideas that are presented here
+would be adopted by [[http://amforth.sourceforge.net/][AmForth]] headquarters (HQ). The following summarizes the Shadow changes to HQ's code.
+
+* Thoughts aka what to do next
+
+[[http://sourceforge.net/users/mtrute][Matthias Trute]], AmForth creator, believes that its GPLv2 license means that users are entitled to receive the source of any code which the developer has chosen to include in the distribution, whether
+this code has an AmForth origin or not. While [[http://www.amazon.com/Intellectual-Property-Open-Source-Protecting/dp/0596517963][the Shadow questions this claim based on a reliable source]] the Shadow intends to abide by it and recommends to solve pesky commercial situations through
+massive obfuscation of the source code. Thus, expect further amforth-shell [[log][--log]] development.
 
 * <<eesy>> Reduce EEPROM based pointers wear out
 
@@ -154,43 +160,48 @@ The shadow is proud to have contributed the Word List Scope idea and implementat
 
 + also <vocabulary-name> :: [ASM] adds the vocabulary's wid to the search order head.
 
-* Shadow cookbook
+* Cookbook
 
 Using Edefer to resolve forward references is wasteful since it adds one level of runtime indirection and needs additional EEPROM and FLASH space to implement. Here is a solution for the simple case
 of a single forward reference:
 
 #+BEGIN_EXAMPLE
-variable _forward			\ single level resolver
+\ Single level forward or :noname reference resolver.
+\ Use either forward& or &forward.
 
-\ forward reference xt call
+variable _forward			\ f-addr to patch
+
+\ create a placeholder for forward reference xt call
+\ use inside compiled word
 : forward&
    -1 ,
    dp 1- _forward ! 
 ;  immediate
 
-\ foward reference xt constant 
+\ create a placeholder for forward reference xt constant 
+\ use inside compiled word.
 : &forward
    postpone (literal) -1 ,
    dp 1- _forward ! 
 ;  immediate
 
-\ resolver
-: forward:
-   parse-name 2dup find-name  if  ( addr len xt ) \
-      _forward @                  ( addr len xt f-addr )
-      dup @i -1 <> abort" NOT ERASED"
-      !i 2drop
+\ resolve using stacked xt, good for :noname
+: :forward  ( xt -- )
+   _forward @                  ( xt f-addr )
+   dup @i -1 <> abort" NOT ERASED"
+   !i
+;
+
+\ resolve using defined name
+: forward:  ( "name" -- )
+   parse-name 2dup find-name  if  ( addr len xt ) 
+      :forward 
+      2drop
    else
       type space abort" NOT FOUND"
    then
 ;
 #+END_EXAMPLE
-
-* Shadow thoughts
-
-Matthias Trute, AmForth creator, believes that its GPLv2 license means that users are entitled to receive the source of any code which the developer has chosen to include in the distribution, whether
-this code has an AmForth origin or not. While [[http://www.amazon.com/Intellectual-Property-Open-Source-Protecting/dp/0596517963][the Shadow questions this claim based on a reliable source]] he intends to abide by it and would solve pesky commercial situations through massive
-obfuscation of the sourceho code. Thus, expect further amforth-shell --log development.
 
 * BOOFA bootloader support
 
@@ -202,12 +213,17 @@ BOOFA is an AVRDUDE compatible Flash/EEPROM programmer. [[https://github.com/wex
 
 + #include vs. #install :: #include would skip uploading if the file has already been uploaded. #install is unconditional.
 
-+ A distiller function :: The --log option was added to amforth-shell.py to collect the actual code that it sends to the AmForth system.
++ <<log>> A distiller function :: The --log option collects to a file the actual code that it sent to the AmForth system, comments free and after string substituion.
 
 + Hardware handshake :: The --rtscts option is for a more reliable serial connection if your AmForth supports.
 
 * Emacs support
 
 + Emacs amforth mode :: amoforth.el is a fork of gforth.el. It enforces OpenFirmware indentation rules. It would need much attention to reach full usefulness.
+
+* Footnotes
+
+[fn:1] Forth is an old language, no one with less than 20 years of programming counts :-)
+
 
 

@@ -4,3 +4,4 @@
 .include "words/sleep.asm"
 .include "words/spirw.asm"
 .include "words/2spirw.asm"
+.include "words/n-spi.asm"

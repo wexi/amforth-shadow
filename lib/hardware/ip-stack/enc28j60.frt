@@ -116,10 +116,14 @@ variable eth_buffer eth_max_framelen allot \ Framelength(buffer)
  $04 $1F set_mask ;
 
 \ liest n Bytes(spi) nach RAM an addr ( addr n -- )
-: enc_rec 0 ?do enc_read_byte over c! 1+ loop drop ; 
+\ : enc_rec 0 ?do enc_read_byte over c! 1+ loop drop ; 
+
+: enc_rec n@spi ; 
 
 \ schreibt n Bytes von addr RAM auf spi ( addr n -- )
-: enc_tx 0 ?do dup c@ enc_write_byte 1+ loop drop ; 
+\ : enc_tx 0 ?do dup c@ enc_write_byte 1+ loop drop ; 
+
+: enc_tx n!spi ; 
 
 \ ENC28J60 Clock Prescaler setzen ( -- )
 : enc_set_clk $033 set_bank $02 $15 >enreg ;

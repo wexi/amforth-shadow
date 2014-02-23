@@ -85,11 +85,11 @@
 # the only contents of a line or they will be ignored.  The directives
 # include:
 #
-#   #install <file>
+#   #include <file>
 #       Upload the named <file> before proceeding further.
 # 
-#   #include <file>
-#       Like #install but would skip if <file> was already uploaded
+#   #require <file>
+#       Like #include but would skip if <file> was already uploaded
 #       during the shell session.
 #
 #   #cd <dir>
@@ -380,13 +380,13 @@ class AMForth(object):
 
     amforth_error_cre = re.compile(" \?\? -\d+ \d+ \r\n> $")
     upload_directives = [
-        "#cd", "#install", "#include", "#directive", "#ignore-error",
+        "#cd", "#require", "#include", "#directive", "#ignore-error",
         "#ignore-error-next", "#error-on-output", "#expect-output-next",
         "#string-start-word", "#quote-char-word",
         "#timeout", "#timeout-next", "#interact", "#exit"
         ]
     interact_directives = [
-        "#cd", "#edit", "#install", "#include", "#directive", "#ignore-error",
+        "#cd", "#edit", "#require", "#include", "#directive", "#ignore-error",
         "#error-on-output", "#string-start-word", "#quote-char-word",
         "#timeout", "#timeout-next", "#update-words", "#exit", 
         "#update-cpu", "#update-files"
@@ -974,9 +974,9 @@ additional definitions (e.g. register names)
         return result
 
     def handle_common_directives(self, directive, directive_arg):
-        if directive == "#include" or directive == "#install":
+        if directive == "#include" or directive == "#require":
             fn = directive_arg.strip()
-            if self.upload_file(fn, directive == "#install"):
+            if self.upload_file(fn, directive == "#include"):
                 resume_fn = self._config.current_behavior.filename
                 if resume_fn:
                     self.progress_callback("File", None, resume_fn + " (resumed)")
@@ -1169,7 +1169,7 @@ additional definitions (e.g. register names)
                             print "No file to edit"
                         continue
                     self.handle_common_directives(directive, directive_arg)
-                    if directive == "#include" or directive == "#install":
+                    if directive == "#include" or directive == "#require":
                         self._update_words()
                     continue
                 if in_comment or not line:
@@ -1266,7 +1266,7 @@ additional definitions (e.g. register names)
             while line_words and line_words[-1] == "":
                 line_words = line_words[:-1]
             if line_words:
-                if line_words[-1] in ["#install", "#include", "#edit"]:
+                if line_words[-1] in ["#require", "#include", "#edit"]:
                     self._rl_matches = [f for f in self._filedirs.keys()
                                           if f.startswith(text)]
                 elif line_words[-1] == "#cd":

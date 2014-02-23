@@ -1,0 +1,511 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>The Shadow Knows</title>
+<!-- 2014-02-23 Sun 03:42 -->
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="generator" content="Org-mode" />
+<meta  name="author" content="Enoch" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { color: green; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  pre.src-sh:before    { content: 'sh'; }
+  pre.src-bash:before  { content: 'sh'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-R:before     { content: 'R'; }
+  pre.src-perl:before  { content: 'Perl'; }
+  pre.src-java:before  { content: 'Java'; }
+  pre.src-sql:before   { content: 'SQL'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.right  { text-align: center;  }
+  th.left   { text-align: center;   }
+  th.center { text-align: center; }
+  td.right  { text-align: right;  }
+  td.left   { text-align: left;   }
+  td.center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara:nth-child(2) { display: inline; }
+  .footpara { display: block; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  /*]]>*/-->
+</style>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">The Shadow Knows</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1. Thoughts (aka what to do next)</a></li>
+<li><a href="#sec-2">2. Reduce EEPROM based pointers wear out</a></li>
+<li><a href="#sec-3">3. Soft Interrupt Service</a>
+<ul>
+<li><a href="#sec-3-1">3.1. New words</a></li>
+<li><a href="#sec-3-2">3.2. Compatibility</a></li>
+<li><a href="#sec-3-3">3.3. Limitation</a></li>
+<li><a href="#sec-3-4">3.4. Implementation</a></li>
+</ul>
+</li>
+<li><a href="#sec-4">4. USART tx/rx isr with RTS/CTS/DTR support</a></li>
+<li><a href="#sec-5">5. WLSCOPE</a></li>
+<li><a href="#sec-6">6. General purpose new words</a></li>
+<li><a href="#sec-7">7. Deviations</a></li>
+<li><a href="#sec-8">8. Cookbook</a></li>
+<li><a href="#sec-9">9. BOOFA bootloader support</a></li>
+<li><a href="#sec-10">10. amforth-shell.py enhancements</a></li>
+<li><a href="#sec-11">11. Emacs support</a></li>
+</ul>
+</div>
+</div>
+<p>
+<a href="https://github.com/wexi/amforth-shadow">AmForth-Shadow</a> is a sandbox for <a href="http://en.wikipedia.org/wiki/Atmel_AVR%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20">AVR8</a> Forth development that is maintained by an experienced embedded systems programmer, yet a novice<sup><a id="fnr.1" class="footref" href="#fn.1">1</a></sup> in Forth. It is hoped that the ideas that are presented here
+would be adopted by <a href="http://amforth.sourceforge.net/">AmForth</a> headquarters (HQ). The following summarizes the Shadow changes to HQ's code.
+</p>
+
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> Thoughts (aka what to do next)</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+<a href="http://sourceforge.net/users/mtrute">Matthias Trute</a>, AmForth creator, believes that its GPLv2 license means that users are entitled to receive the source of any code which the developer has chosen to include in the distribution, whether
+this code has an AmForth origin or not. While <a href="http://www.amazon.com/Intellectual-Property-Open-Source-Protecting/dp/0596517963">the Shadow questions this claim based on a reliable source</a> the Shadow intends to abide by it and recommends to solve pesky commercial situations through
+massive obfuscation of the source code. Thus, expect further amforth-shell <a href="#log">&#x2013;log</a> development.
+</p>
+</div>
+</div>
+<div id="outline-container-sec-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> <a id="eesy"></a> Reduce EEPROM based pointers wear out</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+The memory allocation pointers, EE<sub>DP</sub>, EE<sub>HERE</sub> and EE<sub>EDP</sub> now have RAM<sub>DP</sub>, RAM<sub>HERE</sub> and RAM<sub>EDP</sub> copies.  IMPORTANT: Remember to execute EESY ( &#x2013; ) to sync the EE pointer values with their RAM copies.
+This is done automatically for you by tools/amforth-shell.py before leaving the program.
+</p>
+</div>
+</div>
+<div id="outline-container-sec-3" class="outline-2">
+<h2 id="sec-3"><span class="section-number-2">3</span> Soft Interrupt Service</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+One of AmForth features is the ability to write Interrupt Service Routines (ISR), aka Interrupt Handlers, in Forth. However, in the current implementation (SVN r1430) those ISRs should run with the
+hardware interrupt system disabled. This means that one has to keep ISRs short and defer long processing to the "main". The following changes to the kernel introduce an eight level soft interrupts
+queue, allowing the Forth code Second Level Interrupt Handlers (SLIH) to be interruptible and thus be as slow to execute as necessary. The new first level interrupt handling (FLIH) is suitable for
+type I interrupt sources, those acknowledged by execution of their interrupt vectors.
+</p>
+
+<p>
+CAN interrupts, in the supported at90can32/64/128 &micro;C's, are safely routed to the queue by CANGIE.ENIT auto disable. The Forth code should acknowledge the specific CAN interrupt cause before
+resetting ENIT.
+</p>
+</div>
+
+<div id="outline-container-sec-3-1" class="outline-3">
+<h3 id="sec-3-1"><span class="section-number-3">3.1</span> New words</h3>
+<div class="outline-text-3" id="text-3-1">
+<p>
+The following ("soft rear-end") words were added to the existing +int and -int ("hard front-end") which control SREG I-bit
+</p>
+
+<dl class="org-dl">
+<dt> int+ ( &#x2013; ) "soft interrupts on" </dt><dd>Enables soft interrupts. If <code>int+</code> is the ISR last instruction the ISR routine would return before the next queued interrupt is served.
+</dd>
+
+<dt> int- ( &#x2013; ) "soft interrupts off" </dt><dd>Disables soft interrupts. If this instruction is the ISR first the ISR will not be interrupted.
+</dd>
+
+<dt> int' ( &#x2013; addr ) "soft interrupts apostrophe" </dt><dd>Returns the address of a system variable where the lower byte, if non zero, indicates occurrence of a hard interrupt overflow. The overflow mark is
+the interrupting-device program address. Clear this mark by: <code>0 int' c!</code>. The higher byte, if non-zero, indicates having the soft interrupts inhibited.
+</dd>
+</dl>
+</div>
+</div>
+<div id="outline-container-sec-3-2" class="outline-3">
+<h3 id="sec-3-2"><span class="section-number-3">3.2</span> Compatibility</h3>
+<div class="outline-text-3" id="text-3-2">
+<p>
+As by default soft interrupts are enabled, existing code should not be impacted. ISRs should be regular Forth colon definitions!
+</p>
+</div>
+</div>
+<div id="outline-container-sec-3-3" class="outline-3">
+<h3 id="sec-3-3"><span class="section-number-3">3.3</span> Limitation</h3>
+<div class="outline-text-3" id="text-3-3">
+<p>
+If you are not using USART CTS, see <a href="#handshake">4</a>, it is recommended to turn interrupts off (<code>int-</code>) when compiling new code.
+</p>
+</div>
+</div>
+<div id="outline-container-sec-3-4" class="outline-3">
+<h3 id="sec-3-4"><span class="section-number-3">3.4</span> Implementation</h3>
+<div class="outline-text-3" id="text-3-4">
+<ol class="org-ol">
+<li>core/drivers/generic-isr.asm: FLIH with 8 level queue.
+</li>
+<li>core/amforth-interpreter.asm: SLIH launcher.
+</li>
+<li>core/words/swi??.asm: Soft interrupts control words.
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-4" class="outline-2">
+<h2 id="sec-4"><span class="section-number-2">4</span> <a id="handshake"></a> USART tx/rx isr with RTS/CTS/DTR support</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+Define the following macros in your application "template.asm" according to your project ports/pins use. AmForth is considered a DCE device &#x2013; RTS and DTR are input signals, CTS is output. Note that
+these controls are independent of each other &#x2013; you can implement any of them, none or all. Also note that RTS requires an edge sensitive interrupt input.
+</p>
+
+<pre class="example">
+.set WANT_ISR_RX = 1	;interrupt driven receive
+.set WANT_ISR_TX = 1	;interrupt driven transmit
+
+#define RXR_SIZE 32	;= 2⁵ receive queue size
+#define TXR_SIZE 64	;= 2⁶ transmit queue size
+</pre>
+
+<p>
+Overrides the default 16/16 character I/O buffer
+</p>
+
+<pre class="example">
+#define CTS_ENABLE	;input queue gate
+.macro CTS_INIT
+  sbi	DDRD, 7		;defaults to CTS_ON
+.endmacro
+.macro CTS_ON		;invite serial input
+  cbi	PORTD, 7
+.endmacro
+.macro CTS_OFF
+  sbi	PORTD, 7
+.endmacro
+.macro IS_CTS_OFF
+  sbis PORTD, 7	;skip if CTS is OFF
+.endmacro
+</pre>
+
+<p>
+The CTS mechanism enables AmForth to control its input characters rate. CTS turns OFF when the input buffer can accommodate just two more characters. <b>IMPORTANT</b>: The CTS also turns OFF before writing
+to the FLASH and to the E²PROM memories as these operations are executed with the interrupt system disabled. The input buffer has to become half empty before CTS turns ON again. Change the definitions
+in drivers/usart-isr-rx.asm if you need different ON/OFF levels.
+</p>
+
+<pre class="example">
+#define RTS_ENABLE	;output queue gate
+.macro RTS_INIT
+.set pc_ = pc
+.org INT6addr
+  jmp_ usart_rts_isr
+.org pc_
+  sbi_ EICRB, ISC61, temp0 ;interrupt on RTS OFF→ON
+  sbi	 EIMSK, INT6
+.endmacro
+.macro IS_RTS_OFF
+  sbis PINE, 6	;skip if RTS is OFF
+.endmacro
+</pre>
+
+<p>
+The RTS mechanism enables the host computer to control AmForth output characaters rate. 
+</p>
+
+<pre class="example">
+#define DTR_ENABLE
+.macro IS_DTR_OFF
+  sbic PINE, 7		;skip if DTR is OFF
+.endmacro
+</pre>
+
+<p>
+Output characters are dropped when the host computer is down or not connected.
+</p>
+</div>
+</div>
+<div id="outline-container-sec-5" class="outline-2">
+<h2 id="sec-5"><span class="section-number-2">5</span> WLSCOPE</h2>
+<div class="outline-text-2" id="text-5">
+<p>
+The shadow is proud to have contributed the Word List Scope idea and implementation.
+</p>
+</div>
+</div>
+<div id="outline-container-sec-6" class="outline-2">
+<h2 id="sec-6"><span class="section-number-2">6</span> General purpose new words</h2>
+<div class="outline-text-2" id="text-6">
+<dl class="org-dl">
+<dt> allwords </dt><dd>[ASM] Lists all words on the search order. Used by amforth-shell.py.
+</dd>
+
+<dt> @c </dt><dd>[ASM] Like C@ but reads the byte as a signed 8 bit integer (i.e., extends sign).
+</dd>
+
+<dt> cinvert </dt><dd>[ASM] Complements a single byte.
+</dd>
+
+<dt> u2/ </dt><dd>[ASM] Unsigned division by 2.
+</dd>
+
+<dt> u4/ </dt><dd>[ASM] Unsigned division by 4.
+</dd>
+
+<dt> 4/ </dt><dd>[ASM] Signed division by 4.
+</dd>
+
+<dt> 4* </dt><dd>[ASM] Unsigned multiplication by 4.
+</dd>
+
+<dt> -! ( n a-addr ) </dt><dd>[ASM] Subtracts n from the cell in a-addr.
+</dd>
+
+<dt> -rot  ( n1 n2 n3 &#x2013; n3 n1 n2 ) </dt><dd>[ASM] "not-rote".
+</dd>
+
+<dt> cell- </dt><dd>[ASM] Cell size address subtraction.
+</dd>
+
+<dt> du256/ ( ud &#x2013; ud/256 ) </dt><dd>double unsigned division by 256.  
+</dd>
+
+<dt> du&lt;  (ud1 ud2 &#x2013; flag ) </dt><dd>[ASM] is ud1 less than ud2 ?
+</dd>
+
+<dt> d@ d! </dt><dd>[ASM] double precision fetch and store.
+</dd>
+
+<dt> 2@ 2! </dt><dd>[ASM] two cell fetch and store.
+</dd>
+
+<dt> rdrop  ( R: X &#x2013; ) </dt><dd>[ASM] Drop one cell from top of run-time stack.
+</dd>
+
+<dt> 2rdrop  ( R: X1 X2 &#x2013; ) </dt><dd>[ASM] Drop two cells from top of run-time stack.
+</dd>
+
+<dt> 0drop  ( X &#x2013; 0 ) </dt><dd>[ASM] Replace top of stack with zero.
+</dd>
+
+<dt> reverse ( X1 .. Xn n &#x2013; Xn .. X1 n ) </dt><dd>[FORTH] LIFO made FIFO.
+</dd>
+</dl>
+</div>
+</div>
+<div id="outline-container-sec-7" class="outline-2">
+<h2 id="sec-7"><span class="section-number-2">7</span> Deviations</h2>
+<div class="outline-text-2" id="text-7">
+<dl class="org-dl">
+<dt> vocabulary &lt;name&gt; </dt><dd>[ASM] creates a constant with a new wid (wordlist id) value.
+</dd>
+
+<dt> also &lt;vocabulary-name&gt; </dt><dd>[ASM] adds the vocabulary's wid to the search order head.
+</dd>
+</dl>
+</div>
+</div>
+<div id="outline-container-sec-8" class="outline-2">
+<h2 id="sec-8"><span class="section-number-2">8</span> Cookbook</h2>
+<div class="outline-text-2" id="text-8">
+<p>
+Using Edefer to resolve forward references is wasteful since it adds one level of runtime indirection and needs additional EEPROM and FLASH space to implement. Here is a solution for the simple case
+of a single forward reference:
+</p>
+
+<pre class="example">
+\ Single level forward or :noname reference resolver.
+\ Use either forward&amp; or &amp;forward.
+
+variable _forward			\ f-addr to patch
+
+\ create a placeholder for forward reference xt call
+\ use inside compiled word
+: forward&amp;
+   -1 ,
+   dp 1- _forward ! 
+;  immediate
+
+\ create a placeholder for forward reference xt constant 
+\ use inside compiled word.
+: &amp;forward
+   postpone (literal) -1 ,
+   dp 1- _forward ! 
+;  immediate
+
+\ resolve using stacked xt, good for :noname
+: :forward  ( xt -- )
+   _forward @                  ( xt f-addr )
+   dup @i -1 &lt;&gt; abort" NOT ERASED"
+   !i
+;
+
+\ resolve using defined name
+: forward:  ( "name" -- )
+   parse-name 2dup find-name  if  ( addr len xt ) 
+      :forward 
+      2drop
+   else
+      type space abort" NOT FOUND"
+   then
+;
+</pre>
+</div>
+</div>
+<div id="outline-container-sec-9" class="outline-2">
+<h2 id="sec-9"><span class="section-number-2">9</span> BOOFA bootloader support</h2>
+<div class="outline-text-2" id="text-9">
+<p>
+BOOFA is an AVRDUDE compatible Flash/EEPROM programmer. <a href="https://github.com/wexi/boofa">Visit BOOFA GitHub repository</a>. To reserve space for BOOFA put in your template.asm the followig definition:
+</p>
+
+<p>
+<code>.equ AMFORTH_RO_SEG = NRWW_START_ADDR + 512 ;make room for BOOFA</code>
+</p>
+</div>
+</div>
+<div id="outline-container-sec-10" class="outline-2">
+<h2 id="sec-10"><span class="section-number-2">10</span> amforth-shell.py enhancements</h2>
+<div class="outline-text-2" id="text-10">
+<dl class="org-dl">
+<dt> #include vs. #install </dt><dd>#include would skip uploading if the file has already been uploaded. #install is unconditional.
+</dd>
+
+<dt> <a id="log"></a> A distiller function </dt><dd>The &#x2013;log option collects to a file the actual code that it sent to the AmForth system, comments free and after string substituion.
+</dd>
+
+<dt> Hardware handshake </dt><dd>The &#x2013;rtscts option is for a more reliable serial connection if your AmForth supports.
+</dd>
+</dl>
+</div>
+</div>
+<div id="outline-container-sec-11" class="outline-2">
+<h2 id="sec-11"><span class="section-number-2">11</span> Emacs support</h2>
+<div class="outline-text-2" id="text-11">
+<dl class="org-dl">
+<dt> Emacs amforth mode </dt><dd>amoforth.el is a fork of gforth.el. It enforces OpenFirmware indentation rules. It would need much attention to reach full usefulness.
+</dd>
+</dl>
+</div>
+</div>
+<div id="footnotes">
+<h2 class="footnotes">Footnotes: </h2>
+<div id="text-footnotes">
+
+<div class="footdef"><sup><a id="fn.1" class="footnum" href="#fnr.1">1</a></sup> <p class="footpara">
+Forth is an old language, no one with less than 20 years of programming counts :-)
+</p></div>
+
+
+</div>
+</div></div>
+<div id="postamble" class="status">
+<p class="author">Author: Enoch</p>
+<p class="email">Email: <a href="mailto:ixew@hotmail.com">ixew@hotmail.com</a></p>
+<p class="date">Created: 2014-02-23 Sun 03:42</p>
+<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.3.1 (<a href="http://orgmode.org">Org</a> mode 8.2.5e)</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

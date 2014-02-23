@@ -7,7 +7,7 @@
 [[https://github.com/wexi/amforth-shadow][AmForth-Shadow]] is a sandbox for [[http://en.wikipedia.org/wiki/Atmel_AVR%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20][AVR8]] Forth development that is maintained by an experienced embedded systems programmer, yet a novice[fn:1] in Forth. It is hoped that the ideas that are presented here
 would be adopted by [[http://amforth.sourceforge.net/][AmForth]] headquarters (HQ). The following summarizes the Shadow changes to HQ's code.
 
-* Thoughts aka what to do next
+* Thoughts (aka what to do next)
 
 [[http://sourceforge.net/users/mtrute][Matthias Trute]], AmForth creator, believes that its GPLv2 license means that users are entitled to receive the source of any code which the developer has chosen to include in the distribution, whether
 this code has an AmForth origin or not. While [[http://www.amazon.com/Intellectual-Property-Open-Source-Protecting/dp/0596517963][the Shadow questions this claim based on a reliable source]] the Shadow intends to abide by it and recommends to solve pesky commercial situations through
@@ -136,15 +136,17 @@ The shadow is proud to have contributed the Word List Scope idea and implementat
 
 + -! ( n a-addr ) :: [ASM] Subtracts n from the cell in a-addr.
 
-+ -rot  ( n1 n2 n3 -- n3 n1 n2 ) :: [ASM] "not-rote"
++ -rot  ( n1 n2 n3 -- n3 n1 n2 ) :: [ASM] "not-rote".
 
 + cell- :: [ASM] Cell size address subtraction.
+
++ du256/ ( ud -- ud/256 ) :: double unsigned division by 256.  
+
++ du<  (ud1 ud2 -- flag ) :: [ASM] is ud1 less than ud2 ?
 
 + d@ d! :: [ASM] double precision fetch and store.
 
 + 2@ 2! :: [ASM] two cell fetch and store.
-
-+ du<  (ud1 ud2 -- flag ) :: [ASM] is ud1 less than ud2 ?
 
 + rdrop  ( R: X -- ) :: [ASM] Drop one cell from top of run-time stack.
 

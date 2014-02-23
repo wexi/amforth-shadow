@@ -10,6 +10,8 @@ Hardware Modules
    Efficient-Bitmanipulation
    Interrupt-ISR
    Interrupt-Critical-Section
+   SPI
+   Telnet
    Timer
    TWI
    Usart

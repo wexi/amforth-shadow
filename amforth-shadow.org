@@ -4,8 +4,8 @@
 #+OPTIONS: email:t
 #+STARTUP: indent
 
-[[https://github.com/wexi/amforth-shadow][AmForth-Shadow]] is a sandbox for [[http://en.wikipedia.org/wiki/Atmel_AVR%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20][AVR8]] Forth development that is maintained by an experienced embedded systems programmer, yet a novice[fn:1] in Forth. It is hoped that the ideas that are presented here
-would be adopted by [[http://amforth.sourceforge.net/][AmForth]] headquarters (HQ). The following summarizes the Shadow changes to HQ's code.
+[[https://github.com/wexi/amforth-shadow][<<HQ>> AmForth-Shadow]] is a sandbox for [[http://en.wikipedia.org/wiki/Atmel_AVR%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20][AVR8]] Forth development that is maintained by an experienced embedded systems programmer, yet a novice[fn:1] in Forth. It is hoped that the ideas that are
+presented here would be adopted by [[http://amforth.sourceforge.net/][AmForth]] headquarters (HQ). The following summarizes the Shadow changes to HQ's code.
 
 * Thoughts (aka what to do next)
 
@@ -213,7 +213,8 @@ BOOFA is an AVRDUDE compatible Flash/EEPROM programmer. [[https://github.com/wex
 
 * amforth-shell.py enhancements
 
-+ #include vs. #install :: #include would skip uploading if the file has already been uploaded. #install is unconditional.
++ #include vs. #install :: #include would skip uploading if the file has already been uploaded. #install is unconditional. [[HQ]] now calls conditional file inclusion #require and unconditional inclusion
+     #include. This is influenced by gforth. The Shadow for now will not follow suit.
 
 + <<log>> A distiller function :: The --log option collects to a file the actual code that it sent to the AmForth system, comments free and after string substituion.
 

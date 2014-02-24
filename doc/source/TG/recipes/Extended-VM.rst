@@ -78,3 +78,34 @@ A register. The content of the A register is not changed.
    >  source dump
     7320 756F 6372 2065 7564 706D  ok
    >
+
+Portable Version
+-----------------
+
+.. code-block:: forth
+
+   \ helper words
+   : cell 1 cells ;
+
+   variable reg:a
+
+   : >a  reg:a  ! ;
+   : a>  reg:a  @ ;
+   : a@  a> @ ;
+   : a!  a> ! ;
+   : na@ a> + @ ;
+   : na! a> + ! ;
+
+   \ pre-increment fetch/store
+   : a@+ a@ cell reg:a +! ;
+   : a!+ a! cell reg:a +! ;
+   : a@- a@ cell negate reg:a +! ;
+   : a!- a! cell negate reg:a +! ;
+
+   \ post-increment fetch/store
+   : a@+ cell reg:a +! a@ ;
+   : a!+ cell reg:a +! a! ;
+   : a@- cell negate reg:a +! a@ ;
+   : a!- cell negate reg:a +! a! ;
+
+Amforth has a highly optimizied assembler implementation of these commands.

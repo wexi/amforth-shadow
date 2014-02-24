@@ -12,6 +12,7 @@ Programming and Debugging
    Dumps
    Extended-VM
    Forget
+   Forward
    Port-From-C
    Profiler
    RAM-Efficiency

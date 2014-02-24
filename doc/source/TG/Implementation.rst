@@ -11,11 +11,11 @@ uses three memory types too: Flash, RAM and EEPROM. These three
 memory types have their own address space independently from the
 others. Amforth does not unify these address spaces into one.
 
-Amforth uses the flash memory as the standard location for all standard
-data spaces: name, code and data. Contrary to the standard some 
-words that operate on the data space use RAM adresses instead.
-These words are HERE, @ (fetch), ! (store) and simimliar. In addition
-the so called transient regions are in RAM as well.
+Amforth uses the flash memory as the location for all standard data 
+spaces: name, code and data space. Contrary to the standard some 
+words that should operate on the data space use RAM adresses instead.  
+These words are HERE, @ (fetch), ! (store) and simimliar. Similiarly
+the so called transient regions are in RAM as well. 
 
 Other words like , (comma) operate on the flash address and thus
 directly in the dictionary.

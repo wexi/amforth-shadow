@@ -226,7 +226,7 @@ BOOFA is an AVRDUDE compatible Flash/EEPROM programmer. [[https://github.com/wex
 
 * Footnotes
 
-[fn:1] Forth is an old language, no one with less than 20 years of programming counts :-)
+[fn:1] Forth is an old language, no one with less than 20 years of Forth programming experience counts :-)
 
 
 

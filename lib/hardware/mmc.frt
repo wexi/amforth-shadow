@@ -7,6 +7,9 @@
 \ mmc_init, mmc_CID, mmc_CSD, mmc_read, mmc_mread, mmc_write,
 \ mmc_blk@, mmc_blk!, mmc_c@, mmc_c!, mmc_end?, mmc_end!
 
+\ needs +/-spi for pin configuration
+\ needs +/-mmc for slave select action
+
 hex
 
 variable mmc_#buf          \ position in buf
@@ -19,7 +22,7 @@ variable mmc_buf 1FE allot \ 512B RAM
     -spi2x
     spi.SPE spi.MSTR or 
     spi.f/128 or
-    spi.mode0 or dup u. SPCR c! ;
+    spi.mode0 or SPCR c! ;
 
   \ send dummy byte x-times
 : mmc_dummy ( x -- )

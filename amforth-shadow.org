@@ -164,14 +164,16 @@ The shadow is proud to have contributed the Word List Scope idea and implementat
 
 * Cookbook
 
-Using Edefer to resolve forward references is wasteful since it adds one level of runtime indirection and needs additional EEPROM and FLASH space to implement. Here is a solution for the simple case
-of a single forward reference:
+Using Edefer to resolve forward references is wasteful since it adds one level of runtime indirection and needs additional EEPROM and FLASH space to implement. Here's a simple solution:
 
 #+BEGIN_EXAMPLE
-\ Single level forward or :noname reference resolver.
-\ Use either forward& or &forward.
+\ One forward reference capable resolver, use either forward& or &forward.
+\ forward resolvers are for local use (placeholder's f-addr from _forward),
+\ backward resolvers are for global use (placeholder's f-addr from constant).
 
 variable _forward			\ f-addr to patch
+
+: forward@  _forward @  ;
 
 \ create a placeholder for forward reference xt call
 \ use inside compiled word
@@ -188,26 +190,46 @@ variable _forward			\ f-addr to patch
 ;  immediate
 
 \ resolve using stacked xt, good for :noname
-: :forward  ( xt -- )
-   _forward @                  ( xt f-addr )
+: :backward  ( xt f-addr -- )
    dup @i -1 <> abort" NOT ERASED"
    !i
 ;
 
 \ resolve using defined name
-: forward:  ( "name" -- )
-   parse-name 2dup find-name  if  ( addr len xt ) 
-      :forward 
-      2drop
+: backward:  ( f-addr "name" -- )
+   parse-name 2dup find-name  if  ( f-addr addr len xt )
+      nip nip swap                ( xt f-addr )
+      :backward
    else
       type space abort" NOT FOUND"
    then
+;
+
+\ resolve using stacked xt, good for :noname
+: :forward  ( xt -- )
+   forward@                       ( xt f-addr )
+   :backward
+;
+
+\ resolve using defined name
+: forward:  ( "name" -- )
+   forward@                       ( f-addr "name" -- )
+   backward:
+;
+
+: iexecute  ( test-xt default-xt -- )
+   over -1 =  if  nip  else  drop  then
+   execute
+;
+
+: jexecute  ( test-xt -- )
+   dup -1 =  if  drop  else  execute  then
 ;
 #+END_EXAMPLE
 
 * BOOFA bootloader support
 
-BOOFA is an AVRDUDE compatible Flash/EEPROM programmer. [[https://github.com/wexi/boofa][Visit BOOFA GitHub repository]]. To reserve space for BOOFA put in your template.asm the followig definition:
+BOOFA is an AVRDUDE compatible Flash/EEPROM programmer. [[https://github.com/wexi/boofa][Visit BOOFA GitHub repository]]. To reserve space for BOOFA put in your template.asm the following definition:
 
 ~.equ AMFORTH_RO_SEG = NRWW_START_ADDR + 512 ;make room for BOOFA~
 

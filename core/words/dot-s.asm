@@ -1,6 +1,6 @@
 ; ( -- ) 
 ; Tools
-; stack dump
+; stack dump in picture format
 VE_DOTS:
     .dw $ff02
     .db ".s"
@@ -9,18 +9,23 @@ VE_DOTS:
 XT_DOTS:
     .dw DO_COLON
 PFA_DOTS:
-    .dw XT_SP0
-    .dw XT_SP_FETCH
-    .dw XT_CELLPLUS
-    .dw XT_DOQDO
-    .dw PFA_DOTS2
-PFA_DOTS1:
-    .dw XT_I
-    .dw XT_FETCH 
-    .dw XT_UDOT
+    .dw XT_DEPTH
     .dw XT_DOLITERAL
-    .dw 2
-    .dw XT_DOPLUSLOOP
+    .dw '#'
+    .dw XT_EMIT
+    .dw XT_DUP
+    .dw XT_DOT
+PFA_DOTS1:
+    .dw XT_QDUP
+    .dw XT_DOCONDBRANCH
+    .dw PFA_DOTS2
+    .dw XT_DUP
+    .dw XT_PICK
+    .dw XT_DOT
+    .dw XT_1MINUS
+    .dw XT_DOBRANCH
     .dw PFA_DOTS1
 PFA_DOTS2:
     .dw XT_EXIT
+
+	

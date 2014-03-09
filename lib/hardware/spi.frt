@@ -1,17 +1,40 @@
 \ SPI routines
-\ V.1.0, Matthias Trute
-\ V.1.1, 15.07.2009, Lubos Pekny, choose asm version
 
-hex
+\ requires: 2rvalue (with further deps)
+\           bitnames
 
-\ PORTB 0 portpin: SPI_SS  
-\ PORTB 1 portpin: SPI_SCK
-\ PORTB 2 portpin: SPI_MOSI
-\ PORTB 3 portpin: SPI_MISO
+\ definitions from application, matching the
+\ SPI hardware pins
+\ PORTB 1 portpin: spi.clk
+\ PORTB 2 portpin: spi.mosi
+\ PORTB 3 portpin: spi.miso
 
-1 6 lshift constant spi.SPE    \ SPI enabled
-1 5 lshift constant spi.DORD   \ Data order, 0=MSB first
-1 4 lshift constant spi.MSTR   \ Master mode
+\ usage
+
+\ specific slave select pin
+\ PORTX PINY portpin: appl.ss_line
+\ appl.ss_line to spi.ss
+
+0. 2rvalue spi.ss
+
+\ update spi.ss to the actual setup
+\ +spi  -- turn on SPI module, sets up the pins as well
+\ spi.modeX spi.setmode  -- switch clock polarity/clock phase
+\ spi.f/X   spi.setspeed -- select spi clock rate relative to f_cpu
+\ +spi.2x                -- double speed
+\ -spi.2x                -- normal speed
+\ -spi                   -- turn off SPI
+\
+
+\ following definitions are the same for all atmegas
+
+SPSR 0 portpin: spi.2x
+
+SPCR 6 portpin: spi.enable
+SPCR 5 portpin: spi.dord
+SPCR 4 portpin: spi.master
+SPCR %00001100 bitmask: spi.mode
+SPCR %00000011 bitmask: spi.speed
 
 $0 constant spi.mode0  \ sample rising/--
 $4 constant spi.mode1  \ --/sample falling
@@ -23,28 +46,62 @@ $c constant spi.mode3  \ --/sample rising
 2 constant spi.f/64
 3 constant spi.f/128
 
+: +spi
+   \ Slave select *must* be *always* at a controlled level when SPI is activated.
+   \ Changing a pin into output mode change its level to low. that makes a SPI think
+   \ a communication has started which is not the case when this word is called.
+   spi.ss high       \ deselect slave
+   spi.ss pin_output \ possibly short low pulse
+   spi.ss high       \ 
 
-  \ set clk, SPCR.0,1, f/xxx
-: spi_clk ( c -- )
-    03 SPCR pin! ;  \ c pinmask port --
+   \ now its save to turn on the SPI module
+   spi.master high
+   spi.enable high
 
+   \ since spi.ss is HIGH, nobody will be confused
+   spi.clk pin_output
+   spi.mosi pin_output
+   \ miso is controlled by SPI module internally
+;
 
-  \ double speed mode
+: -spi 0 SPCR c! ;
+
+\ check SPI device datasheet for mode settings
+: spi.setmode ( spi-mode -- )
+  spi.mode pin!
+;
+
+\ speed relative to f_cpu, constants see above
+: spi.setspeed ( spi.speed -- )
+  spi.speed pin!
+;
+
+\ double speed mode
 : +spi2x 
-    1 SPSR c! ;
+    spi.2x high
+;
 
 
 : -spi2x
-    0 SPSR c! ;
+    spi.2x low
+;
 
-\ -sptx Stop transmit
-
-\ send a byte
+\ send a byte, ignore recieved byte
 : c!spi ( c -- )
     c!@spi drop
 ;
 
-  \ receive a byte
+  \ receive a byte, send a dummy one
 : c@spi ( -- c)
     0 c!@spi
+;
+
+\ send a cell, check data order for MSB/LSB
+\ untested so far
+: !@spi
+  dup >< ( -- low high )
+  spi.dord is_high? if swap then \ LSB first
+  c!@spi swap c!@spi
+  spi.dord is_low? if swap then  \ MSB was first
+  >< or \ upper nibble is set to 0 automatically
 ;

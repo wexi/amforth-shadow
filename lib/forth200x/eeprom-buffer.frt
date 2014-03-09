@@ -5,11 +5,11 @@
 \ it takes the number of bytes to allocate in RAM and parses
 \ SOURCE for the name to give to the buffer
 
-\ Ealloc is the EEPROM pendant for alloc from the core word set
+\ Eallot is the EEPROM pendant for allot from the core word set
 \ it allocates n bytes of EEPROM storage and return the starting
 \ address.
 
-: Ealloc  edp swap over + to edp ;
-: Ebuffer: edp value Ealloc ;
+: Eallot  edp + to edp ;
+: Ebuffer: edp constant Eallot ;
 
 \ for usage see http://amforth.sf.net/recipes/eeprom.html

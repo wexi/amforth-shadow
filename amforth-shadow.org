@@ -4,29 +4,29 @@
 #+OPTIONS: email:t
 #+STARTUP: indent
 
-[[https://github.com/wexi/amforth-shadow][<<HQ>> AmForth-Shadow]] is a sandbox for [[http://en.wikipedia.org/wiki/Atmel_AVR%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20][AVR8]] Forth development that is maintained by an experienced embedded systems programmer, yet a novice[fn:1] in Forth. It is hoped that the ideas that are
-presented here would be adopted by [[http://amforth.sourceforge.net/][AmForth]] headquarters (HQ). The following summarizes the Shadow changes to HQ's code.
+[[https://github.com/wexi/amforth-shadow][<<HQ>> AmForth-Shadow]] is a sandbox for [[http://en.wikipedia.org/wiki/Atmel_AVR%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20][AVR8]] Forth development that is maintained by an experienced embedded systems programmer, yet a novice[fn:1] in Forth. It is hoped
+that the ideas that are presented here would be adopted by [[http://amforth.sourceforge.net/][AmForth]] headquarters (HQ). The following summarizes the Shadow changes to HQ's code.
 
 * Thoughts (aka what to do next)
 
-[[http://sourceforge.net/users/mtrute][Matthias Trute]], AmForth creator, believes that its GPLv2 license means that users are entitled to receive the source of any code which the developer has chosen to include in the distribution, whether
-this code has an AmForth origin or not. While [[http://www.amazon.com/Intellectual-Property-Open-Source-Protecting/dp/0596517963][the Shadow questions this claim based on a reliable source]] the Shadow intends to abide by it and recommends to solve pesky commercial situations through
-massive obfuscation of the source code. Thus, expect further amforth-shell [[log][--log]] development.
+[[http://sourceforge.net/users/mtrute][Matthias Trute]], AmForth creator, believes that its GPLv2 license means that users are entitled to receive the source of any code which the developer has chosen to include
+in the distribution, whether this code has an AmForth origin or not. While [[http://www.amazon.com/Intellectual-Property-Open-Source-Protecting/dp/0596517963][the Shadow questions this claim based on a reliable source]] the Shadow recommends to abide by
+Matthias expectations and to solve pesky commercial situations through massive obfuscation of the source code. Thus, expect further amforth-shell [[log][--log]] development.
 
 * <<eesy>> Reduce EEPROM based pointers wear out
 
-The memory allocation pointers, EE_DP, EE_HERE and EE_EDP now have RAM_DP, RAM_HERE and RAM_EDP copies.  IMPORTANT: Remember to execute EESY ( -- ) to sync the EE pointer values with their RAM copies.
-This is done automatically for you by tools/amforth-shell.py before leaving the program.
+The memory allocation pointers, EE_DP, EE_HERE and EE_EDP now have RAM_DP, RAM_HERE and RAM_EDP copies.  IMPORTANT: Remember to execute EESY ( -- ) to sync the EE pointer
+values with their RAM copies.  This is done automatically for you by tools/amforth-shell.py before leaving the program.
 
 * Soft Interrupt Service
 
-One of AmForth features is the ability to write Interrupt Service Routines (ISR), aka Interrupt Handlers, in Forth. However, in the current implementation (SVN r1430) those ISRs should run with the
-hardware interrupt system disabled. This means that one has to keep ISRs short and defer long processing to the "main". The following changes to the kernel introduce an eight level soft interrupts
-queue, allowing the Forth code Second Level Interrupt Handlers (SLIH) to be interruptible and thus be as slow to execute as necessary. The new first level interrupt handling (FLIH) is suitable for
-type I interrupt sources, those acknowledged by execution of their interrupt vectors.
+One of AmForth features is the ability to write Interrupt Service Routines (ISR), aka Interrupt Handlers, in Forth. However, in the current implementation (SVN r1430) those
+ISRs should run with the hardware interrupt system disabled. This means that one has to keep ISRs short and defer long processing to the "main". The following changes to
+the kernel introduce an eight level soft interrupts queue, allowing the Forth code Second Level Interrupt Handlers (SLIH) to be interruptible and thus be as slow to execute
+as necessary. The new first level interrupt handling (FLIH) is suitable for type I interrupt sources, those acknowledged by execution of their interrupt vectors.
 
-CAN interrupts, in the supported at90can32/64/128 \micro{}C's, are safely routed to the queue by CANGIE.ENIT auto disable. The Forth code should acknowledge the specific CAN interrupt cause before
-resetting ENIT.
+CAN interrupts, in the supported at90can32/64/128 \micro{}C's, are safely routed to the queue by CANGIE.ENIT auto disable. The Forth code should acknowledge the specific
+CAN interrupt cause before resetting ENIT.
 
 ** New words
 
@@ -139,6 +139,8 @@ The shadow is proud to have contributed the Word List Scope idea and implementat
 + -rot  ( n1 n2 n3 -- n3 n1 n2 ) :: [ASM] "not-rote".
 
 + cell- :: [ASM] Cell size address subtraction.
+
++ du256* ( ud -- ud*256 ) :: double unsigned multiplication by 256.  
 
 + du256/ ( ud -- ud/256 ) :: double unsigned division by 256.  
 

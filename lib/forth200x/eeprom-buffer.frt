@@ -9,7 +9,7 @@
 \ it allocates n bytes of EEPROM storage and return the starting
 \ address.
 
-: Eallot  edp + to edp ;
-: Ebuffer: edp constant Eallot ;
+: Eallot  ehere + to ehere ;
+: Ebuffer: ehere constant Eallot ;
 
-\ for usage see http://amforth.sf.net/recipes/eeprom.html
+\ for usage see http://amforth.sourceforge.net/TG/recipes/EEPROM.html

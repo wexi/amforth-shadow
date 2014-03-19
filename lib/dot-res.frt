@@ -11,7 +11,7 @@
 	  ." no flash size information available " cr 
 	then
 	." free RAM bytes          " unused u. cr
-	." used EEPROM bytes       " edp u. cr
+	." used EEPROM bytes       " ehere u. cr
 	." used data stack cells   " depth u. cr
 	." used return stack cells " rp0 rp@ - 1- 1- 2/ u. cr
 	." free return stack cells " rp@ sp0 - 1+ 1+ 2/ u. cr

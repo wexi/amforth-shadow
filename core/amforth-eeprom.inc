@@ -3,8 +3,8 @@ EE_DP:
     .dw DPSTART      ; Dictionary Pointer
 EE_HERE:
     .dw HERESTART    ; Memory Allocation
-EE_EDP:
-    .dw EDPSTART     ; EEProm Memory Allocation
+EE_EHERE:
+    .dw EHERESTART     ; EEProm Memory Allocation
 EE_TURNKEY:
     .dw XT_APPLTURNKEY  ; TURNKEY
 EE_STOREI:
@@ -19,8 +19,9 @@ EE_CURRENT:
 EE_FORTHWORDLIST:
     .dw VE_HEAD      ; pre-defined (compiled in) wordlist
 EE_ORDERLISTLEN:
-    .dw 1
+    .dw 2
 EE_ORDERLIST: ; list of wordlist id, exactly numwordlist entries
+    .dw EE_FORTHWORDLIST      ; get/set-order
     .dw EE_FORTHWORDLIST      ; get/set-order
     .byte  (NUMWORDLISTS-1)*CELLSIZE ; two slots are already used
 EE_RECOGNIZERS:

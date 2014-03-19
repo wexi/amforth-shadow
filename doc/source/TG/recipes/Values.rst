@@ -118,7 +118,7 @@ to be warmed, this is not done automatically.
 
    : cache-value 
     (value)                           \ create the vocabulary entry
-    dup edp dup , dup cell+ to edp !e \ allocate an EEPROM cell.
+    dup ehere dup , dup cell+ to ehere !e \ allocate an EEPROM cell.
     ['] @cache ,                      \ XT for the read method
     ['] !cache ,                      \ XT for the write methon
     here 2 ( 1 cell ) allot dup , !   \ allocate a RAM cell and initialize it
@@ -131,7 +131,7 @@ execution.
 
 .. code-block:: forth
 
-   > edp \ keep the eeprom address for later direct access
+   > ehere \ keep the eeprom address for later direct access
     ok
    > 42 cache-value c-dp
     ok
@@ -177,6 +177,27 @@ of an address.
     then
   ; immediate
 
+Double Cell RAM Value
+---------------------
+
+A very compact implementation (a single short
+word) makes use of :ref:`Quotations`:
+
+.. code-block:: forth
+
+   \ a value in RAM with 2 cells data storage
+   \ requires quotations and 2@/2! from double wordset
+
+   : 2rvalue ( d -- )
+     (value)
+     here ,
+     [: @i 2@ ;] ,
+     [: @i 2! ;] ,
+     here 2! 4 allot
+   ;
+
+This value stores a double cell information in RAM. The read and write
+methods are embedded as quotations.
 
 .. note::
 

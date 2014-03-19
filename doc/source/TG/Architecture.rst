@@ -687,7 +687,7 @@ EEPROM use the Edefer definition word. The standard
 word IS is used to put a new XT into it.
 
 Low level space management is done through the the
-EDP variable. This is not a forth value but a EEPROM
+EHERE variable. This is not a forth value but a EEPROM
 based variable. To read the current value an
 :command:`@e` operation must be used, changes are written
 back with :command:`!e`. It contains the highest EEPROM address

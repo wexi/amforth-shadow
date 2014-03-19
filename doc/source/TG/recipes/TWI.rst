@@ -1,6 +1,16 @@
-=======
-TWI/I2C
-=======
+.. _TWI:
+
+==========================
+Two Wire Interface TWI/I2C
+==========================
+
+The Two Wire Interface connects peripheral devices with the 
+controller. It is compatible with the I2C bus so any I2C
+device can be connected to the TWI. The bus consits of 2 signal
+lines. Every device has an address. Multiple devices can be connected
+as long as they use different addresses. Most I2C devices use jumpers
+to select from a (usually short) list of possible devices, limiting
+the number of identical devices.
 
 SCL Clock Calculator
 --------------------

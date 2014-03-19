@@ -11,7 +11,7 @@ Forward declarations are used to create recursive calls.
    forward: foo
    : bar foo ;
 
-One solution for this task uses :ref:`Defer`.
+One solution for this task is :ref:`Defer`.
 
 .. code-block:: forth
 
@@ -22,28 +22,9 @@ One solution for this task uses :ref:`Defer`.
 They work usually fine. Furthermore they are based upon
 standard techniques.
 
-Another solution for forward declarations uses self modifying
-code and depends heavily on carnal knowlege about how amforth
-works.
-
-.. code-block:: forth
-
-   : forward:
-    dp create ,
-    does>
-    dup 1- swap @i here iplace here count ( copy to temporary ram)
-    find-name if \ unless some wordlist voodoo ...
-      swap over = abort" found only forward declaration."
-      dup r@ 1- !i execute
-    else
-      \ can only happen if search wordlist has been changed
-      true abort" unresolved forward declaration"
-    then
-   ;
-
-This word creates words that have when called a special runtime
-behaviour. They assume that they are only called within a colon
-definition. If these criteria are met, the following happens:
+Another solution for forward declarations uses a Just-In-Time (JIT)
+approach. With it a forward declaration resolves itself when called
+without further user (or programmer) interaction:
 
 .. code-block:: bash
    :linenos:
@@ -59,25 +40,23 @@ definition. If these criteria are met, the following happens:
 
 Line 1 declares foo to be defined later. This ``foo`` must not be called directly!
 The next line defines a word ``bar`` that uses foo. Note that ``foo`` is not yet
-a code definition. The word ``bar`` can be safely executed. When the program execution
-arrives ``foo``, the code following ``does>`` is executed. This code first gets
+a code definition. The word ``bar`` can be safely executed however. When the program 
+execution of ``bar`` arrives at ``foo``, the JIT module starts. This module first gets
 the name of the forwardly defined word (foo) and looks it up in the dictionary
-by calling ``find-name`` Since ``find-name`` needs a RAM based string, a
-temporary copy is placed at HERE. If ``find-name`` found the XT of ``foo`` it is
-checked whether it is the XT of the ``forward:`` declaration or another one.
-If it is the XT of the ``forward:`` declaration, execution is aborted with
-an error message.
+If ``find-name`` gets an XT for ``foo`` it is checked whether it is the XT of the 
+``forward:`` declaration or another one. If it is the XT of the ``forward:`` 
+declaration, execution is aborted with an error message.
 
-If another XT is found, two things happen: First the call to ``foo`` in the
-callee (bar) is changed from the original one (that goes to the forward
+If an XT is found, that fulfils the requirements, two things happen: First the call 
+to ``foo`` in the callee (bar) is changed from the original one (that goes to the forward
 declaration) to the new one that is found by ``find-name``. Plus the XT is
 executed itself. As a result, a repeated call to ``bar`` will not call the
-runtime checks again but hands over directly to the new foo (line 5 above).
+JIT runtime checks again but hands over directly to the new foo.
 
-``foo`` can be redefined. Any already resolved references will remain, still not
+``foo`` can be redefined again. Any already resolved references will remain, still not
 resolved references will resolve to the new definition:
 
-.. code-block:: bash
+.. code-block:: forth
 
    > forward: foo
    > : bar foo ;
@@ -95,6 +74,27 @@ resolved references will resolve to the new definition:
    > baz
      I'm number 2 ok
    > 
+
+The implementation uses internal data structure knowhow.
+The word ``forward:`` creates words that performs the above
+discussed runtime behaviour when called inside another
+definition. It is assumed that they are only called within a colon
+definition.
+
+.. code-block:: forth
+
+   : forward:
+    dp create ,
+    does>
+    dup 1- swap @i here iplace here count ( copy to temporary ram)
+    find-name if \ unless some wordlist voodoo ...
+      swap over = abort" found only forward declaration."
+      dup r@ 1- !i execute
+    else
+      \ can only happen if search wordlist has been changed
+      true abort" unresolved forward declaration"
+    then
+   ;
 
 Late Binding
 ============

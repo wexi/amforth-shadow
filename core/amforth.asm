@@ -27,5 +27,5 @@ HERESTART:
 .eseg
 .include "amforth-eeprom.inc"
 ; 1st free address in EEPROM.
-EDPSTART:
+EHERESTART:
 .cseg

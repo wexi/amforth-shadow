@@ -22,7 +22,7 @@
 .include "words/keyq.asm"
 
 .include "words/dp.asm"
-.include "words/edp.asm"
+.include "words/ehere.asm"
 .include "words/here.asm"
 .include "words/allot.asm"
 

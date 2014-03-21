@@ -938,8 +938,8 @@ help-wl set-current
  ." (c<name> -- ) " 
  ."  creates a defer vector which is kept in eeprom. " 
  ; 
-\ XT_EDP
-: edp 
+\ XT_EHERE
+: ehere 
  ." (-- e-addr ) " 
  ."  address of the first unused address in eeprom " 
  ; 

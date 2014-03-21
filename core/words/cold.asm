@@ -29,9 +29,9 @@ clr_int:
 ; reduce wear of EE based memory alloc pointers using RAM copies
 ; use "eesy" to sync back EEPROM with RAM
 .dseg
-RAM_DP:   .byte 2		; must match 
-RAM_HERE: .byte 2		;  amforth-eeprom.inc
-RAM_EDP:  .byte 2		;  EE order
+RAM_DP:    .byte 2		; must match 
+RAM_HERE:  .byte 2		;  amforth-eeprom.inc
+RAM_EHERE: .byte 2		;  EE order
 RAM_XXX:
 .cseg
     ldiw X, EE_DP

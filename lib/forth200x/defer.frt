@@ -2,10 +2,10 @@
 
 : Edefer ( -- )
     (defer)
-    edp ,
+    ehere ,
     ['] Edefer@ ,
     ['] Edefer! ,
-    edp dup cell+ to edp 
+    ehere dup cell+ to ehere 
     \ place a noop as default action
     ['] noop swap !e
 ;

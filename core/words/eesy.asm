@@ -24,10 +24,10 @@ PFA_EESY:
     .dw XT_STOREE
 	
     .dw XT_DOLITERAL
-    .dw RAM_EDP
+    .dw RAM_EHERE
     .dw XT_FETCH
     .dw XT_DOLITERAL
-    .dw EE_EDP
+    .dw EE_EHERE
     .dw XT_STOREE
 	
     .dw XT_EXIT

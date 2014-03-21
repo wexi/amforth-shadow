@@ -6,13 +6,13 @@
 : (marker)  ( ip -- w ip+1 )  dup @i swap 1+  ;	  \ ip is f-addr
 
 : marker
-   dp here edp
-   get-current dup @e    ( dp here edp cur-wl-id cur-wl-ip )
+   dp here ehere
+   get-current dup @e    ( dp here ehere cur-wl-id cur-wl-ip )
    create				\ restore cur-wl to forget this marker
    get-order dup ,			\ save wl-len
    0  ?do  dup @e , ,  loop		\ save wl-ip wl-id pairs
    , ,					\ save cur-wl-ip cur-wl-id
-   , , ,				\ save create edp here dp
+   , , ,				\ save create ehere here dp
   does>
    (marker) swap dup >r 0     ( ip wl-len 0 ) ( R: wl-len )
    ?do		              ( ip )
@@ -22,7 +22,7 @@
    r> swap >r                 ( ... wl-id wl-len ) ( R: ip )
    reverse set-order
    r> (marker) (marker) -rot !e
-   (marker) swap to edp
+   (marker) swap to ehere
    (marker) swap to here
    @i to dp
 ;

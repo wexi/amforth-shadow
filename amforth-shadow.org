@@ -4,19 +4,19 @@
 #+OPTIONS: email:t
 #+STARTUP: indent
 
-[[https://github.com/wexi/amforth-shadow][<<HQ>> AmForth-Shadow]] is a sandbox for [[http://en.wikipedia.org/wiki/Atmel_AVR%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20][AVR8]] Forth development that is maintained by an experienced embedded systems programmer, yet a novice[fn:1] in Forth. It is hoped
-that the ideas that are presented here would be adopted by [[http://amforth.sourceforge.net/][AmForth]] headquarters (HQ). The following summarizes the Shadow changes to HQ's code.
+[[https://github.com/wexi/amforth-shadow][<<HQ>> AmForth-Shadow]] is a sandbox for [[http://en.wikipedia.org/wiki/Atmel_AVR%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20][AVR8]] Forth development that is maintained by an experienced embedded systems programmer, yet a novice[fn:1] in Forth. It is hoped that the ideas that are
+presented here would be adopted by [[http://amforth.sourceforge.net/][AmForth]] headquarters (HQ). The following summarizes the Shadow changes to HQ's code.
 
 * Thoughts (aka what to do next)
 
-[[http://sourceforge.net/users/mtrute][Matthias Trute]], AmForth creator, believes that its GPLv2 license means that users are entitled to receive the source of any code which the developer has chosen to include
-in the distribution, whether this code has an AmForth origin or not. While [[http://www.amazon.com/Intellectual-Property-Open-Source-Protecting/dp/0596517963][the Shadow questions this claim based on a reliable source]] the Shadow recommends to abide by
-Matthias expectations and to solve pesky commercial situations through massive obfuscation of the source code. Thus, expect further amforth-shell [[log][--log]] development.
+[[http://sourceforge.net/users/mtrute][Matthias Trute]], AmForth creator, believes that its GPLv2 license means that users are entitled to receive the source of any code which the developer has chosen to include in the distribution, whether
+this code has an AmForth origin or not. While [[http://www.amazon.com/Intellectual-Property-Open-Source-Protecting/dp/0596517963][the Shadow questions this claim based on a reliable source]] the Shadow recommends to abide by Matthias expectations and to solve pesky commercial
+situations through massive obfuscation of the source code. Thus, expect further amforth-shell [[log][--log]] development.
 
 * <<eesy>> Reduce EEPROM based pointers wear out
 
-The memory allocation pointers, EE_DP, EE_HERE and EE_EDP now have RAM_DP, RAM_HERE and RAM_EDP copies.  IMPORTANT: Remember to execute EESY ( -- ) to sync the EE pointer
-values with their RAM copies.  This is done automatically for you by tools/amforth-shell.py before leaving the program.
+The memory allocation pointers, EE_DP, EE_HERE and EE_EHERE now have RAM_DP, RAM_HERE and RAM_EHERE copies.  IMPORTANT: Remember to execute EESY ( -- ) to sync the EE pointer values with their RAM
+copies.  This is done automatically for you by tools/amforth-shell.py before leaving the program.
 
 * Soft Interrupt Service
 

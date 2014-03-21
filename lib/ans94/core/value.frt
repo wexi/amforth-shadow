@@ -4,10 +4,10 @@
 
 : Evalue ( n -- )
     (value)
-    edp ,
+    ehere ,
     ['] Edefer@ ,
     ['] Edefer! ,
-    edp dup cell+ to edp !e
+    ehere dup cell+ to ehere !e
 ;
 
 : Uvalue ( n offs -- )

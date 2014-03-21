@@ -40,6 +40,8 @@ released but will be part of the next release.
 See the code section at Sourceforge to get the
 `most recent sources <http://sourceforge.net/p/amforth/code/HEAD/tree/trunk/>`__
 
+* core: renamed ``edp`` to ``ehere``. ``here`` points to data space, ``ehere`` points to eeprom data space.
+* doc: `Japanese Getting Started <http://amforth-installation-ja.readthedocs.org/ja/latest/index.html>`__
 * lib: many new :ref:`SPI` code examples: MMC/SD-Card from Lubos (So Sorry for 
   beeing late) and TCP/IP (:ref:`Telnet`). Many Thanks to Jens. Speed optimized
   words for SPI in amforth core.

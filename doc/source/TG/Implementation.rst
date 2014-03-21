@@ -70,8 +70,8 @@ initialize its content with 0:
 .. code-block:: forth
 
    : wordlist ( -- wid )
-       edp 0 over !e
-       dup cell+ to edp ;
+       ehere 0 over !e
+       dup cell+ to ehere ;
 
 This ``wid`` is used to create new entries. The basic procedure to do it
 is :command:`create`:

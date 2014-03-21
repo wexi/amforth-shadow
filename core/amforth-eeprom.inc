@@ -4,9 +4,8 @@ EE_DP:
     .dw DPSTART      ; Dictionary Pointer
 EE_HERE:
     .dw HERESTART    ; Memory Allocation
-EE_EDP:
-    .dw EDPSTART     ; EEProm Memory Allocation
-
+EE_EHERE:
+    .dw EHERESTART     ; EEProm Memory Allocation
 EE_TURNKEY:
     .dw XT_APPLTURNKEY  ; TURNKEY
 EE_STOREI:

@@ -2,56 +2,57 @@
 Arduino Hello World
 ===================
 
-The example for the blinking LED works on every arduino with a LED
-attached to Digital-13. It is tested on a arduino mega.
+The example demonstrates a blinking LED. Most arduino's have one
+attached to the port Digital-13. 
 
-What does the code do? It lets the LED blink and
-gives some hints for using and enjoying amforth.
+To quickly test the hardware start a terminal (e.g. screen /dev/ttyACM0 38400) 
+and enter the following commands:
 
-First: A few constants:
+.. code-block:: forth
+
+   > $80 $24 c!
+   > $80 $25 c!
+   > $00 $25 c!
+
+The LED turned on until the last command is executed. The character
+:command:`>` is the command prompt, if you see it, you can enter 
+any commands. You'll never enter that character yourselves. A 
+command line can be up to 80 characters long.
+
+The commands above are pretty obscure. To make them easier to
+understand we define labels for some numbers, so called 
+constants:
 
 .. code-block:: forth
 
   > $25 constant PORTB
   > $24 constant DDRB
 
-The sign :command:`>` is the command prompt, if you see it, you can
-enter any commands. You'll never enter that character yourselves.
-A command line can be up to 80 characters
-long, if you need a longer one, you'll need to change the
-sources and reflash the system.
-
 The arduino uses its own numbering schema for pins, but
 for now we use the atmega one: digial-13 is the same as
-bit 7 of PORT-B. Port B has 8 pins and three registers, we need
-only two of them: The Data Direction Register (DDR) and the PORT
-(Output) Register. The third register is used for reading
-from the port (PIN).
+bit 7 of port B. Port B has 8 pins and three registers to
+configure them. we need two of them: The Data Direction 
+Register (DDR) and the PORT (Output) Register. The third 
+register is used for reading from the port (PIN).
 
-To quickly test the hardware enter the following commands:
-
-.. code-block:: forth
-
-  > $80 DDRB c! $80 PORTB c! <enter>
-
-The led turns on. With:
+The above commands can now be written as
 
 .. code-block:: forth
 
-  > 0 PORTB c!
+  > $80 DDRB c! 
+  > $80 PORTB c!
+  > $00 PORTB c!
 
-the led turns off. You can repeat these commands and watch the LED.
+Technically the same but easier to read.
 
-The next step is to define some commands and use them. And add some
-more features that make life easier.
+Next we do not want to enter all commands interactively. Forth
+has the reputation of an extendible command set. 
 
-Forth usually uses many small words which do exactly one thing.
-When entering forth commands take care that every word is
-separated by at least one space. In forth almost every character
-can be used as part of a command name.
+Good forth coding style means to have many small words which do exactly 
+one thing. Most forth commands are built with only a handful other commands.
 
-The first command in this example sets up the Data Direction Register
-to make the LED Port an output pin. In arduino sketch it would be:
+The first command in this example sets up the Data Direction Register DDR
+to configire the LED Port as an output pin. In arduino sketch it would be:
 
 .. code-block:: c
 
@@ -63,13 +64,20 @@ The same in Forth is:
 
 .. code-block:: forth
 
-  : led-init  $80 DDRB c! ;
+   > : led-init  $80 DDRB c! ;
+    ok
+   >
 
-By entering the command line the interpreter will learn a new command:
-:command:`led-init`. This command can be called immediately after the
-command prompt says OK. And it can be used in further command definitions.
+With this command line the interpreter learns a new command:
+:command:`led-init`. This command can be called immediately.
 
-It writes the 8-bit number 128 (hex 80) to the register DDRB (hex 24)
+.. code-block:: forth
+
+   > led-init
+    ok
+   >
+
+It writes the number 128 (hex 80) to the register DDRB (hex 24)
 as defined above. This makes the 7th bit of PORTB an Output pin.
 
 Calling our newly defined word does not change anything
@@ -99,50 +107,81 @@ You can now use the newly defined commands to turn the led on and off:
 .. code-block:: console
 
   > led-on led-off led-on led-off
+   ok
+  >
 
-(since there is no timing involved yet, you may not even see the led glow)
+Since there is no timing yet, you may not even see the led flash, amforth is
+pretty fast.
 
-Our next word will simplify this, saves many keystrokes, and gives the
-real blink experience:
+Our next word will simplify this and gives the real blink experience:
 
 .. code-block:: forth
 
   : led-blink led-on 500 ms led-off 500 ms ;
 
-Calling this command will turn the led on, waits half a second, turn it
-off again and waits again half a second before returning to the command
+Calling this command will turn on the led, waits for half a second, turn it
+off again and waits another half a second before returning to the command
 prompt.
 
-With a command line like:
+With this command you can blink the led a few times
 
 .. code-block:: console
 
   > led-blink led-blink led-blink
+   ok
+  >
 
-The led will blink for a few seconds.
+The led will blink for a 3 seconds before the ok and returning to
+the command prompt.
 
-To make it blink "forever", the next word is helpful
+To make it blink "forever", we define another command word:
 
 .. code-block:: forth
 
-  : blink-forever
-    ." press any key to stop "
-    begin
-       led-blink
-       key?
-    until
-    key drop \ we do not want to keep this key stroke
-  ;
+   : blink-forever
+     ." press any key to stop "
+     begin
+        led-blink
+        key?
+     until
+     key drop 
+   ;
 
-This word prints some text ("press any key to stop") and starts a loop.
-This loop lets the led blink one and checks for a keystroke. If no key
+Since this is our first command which needs more than 1 line, the 
+interpreter acts more complex. It changes the command prompt until 
+the end of the command definition is reached (the command ``;``)
+The ouput in the terminal window looks like
+
+.. code-block:: console
+
+   > : blink-forever
+    ok." press any key to stop"
+    okbegin
+    ok led-blink
+    ok key?
+    okuntil
+    okkey drop
+    ok;
+    ok
+   > 
+
+This word first prints some text ("press any key to stop") and starts a loop.
+This loop lets the led blink once and checks for a keystroke. If no key
 is pressed, the loops is repeated. If a key is pressed, the loop is
-terminated. The last two commands are housekeeping: read the key pressed
+terminated. The last two commands are housekeeping: get the key pressed
 and forget it. Otherwise the key pressed would be the first character
 of the next command line.
 
 The advantage of defining many words is that you can test them immediately.
-Thus any further code can rely on words already being tested and that
+Thus any further code can rely on words already being tested. That
 makes debugging a lot easier. The drawback of that many words? You need
-some more code space for the names of the commands. There is no speed
-penalty.
+to remember their names.
+
+Where to go next
+................
+
+This example is very basic. Next steps may involve library code
+like :ref:`Digital Ports`. Related to it are the :ref:`Upload` for 
+files with forth code.
+
+More Arduino related stuff is in :ref:`Arduino Analog`. 

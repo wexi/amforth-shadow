@@ -1,3 +1,5 @@
+.. _Arduino Analog:
+
 ==============
 Arduino Analog
 ==============

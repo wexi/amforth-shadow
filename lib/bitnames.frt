@@ -1,5 +1,3 @@
-\ V 1.3 02.11.2007
-
 \ Code: Matthias Trute
 \ Text: M.Kalus
 
@@ -25,15 +23,16 @@
 
 hex
 
-: bitmask: create ( C: "ccc" portadr n -- ) ( R: -- pinmask portadr )
-    , ,
+: bitmask: create ( C: "ccc" portadr bmask -- ) ( R: -- pinmask portadr )
+     , ,
   does> 
     dup @i swap 1+ @i
 ;
 
 : portpin: ( C: "ccc" portadr n -- ) ( R: -- pinmask portadr )
-    1 swap lshift \ make it a bitmask
-    bitmask:
+    1 over 7 and lshift >r \ bit position
+    3 rshift +             \ byte address
+    r> bitmask:            \ portaddr may have changed
 ;
 
 

@@ -399,6 +399,8 @@ words the deferred word
 :command:`PAUSE` is called whenever possible. This word is
 initialized to do nothing (:command:`NOOP`).
 
+.. _ExceptionTable:
+
 Exceptions
 ----------
 
@@ -411,11 +413,10 @@ catched, :command:`QUIT` will print a message with this
 number and and re-start itself. Positive values silently
 restart :command:`QUIT`.
 
-The next table lists the exceptions, amforth may throw
-itself.
+The next table lists the exceptions, amforth uses itself.
 
 +-----------+---------------------+---------------+
-| Exception |         Meaning     | Used in       |
+| Exception |         Meaning     | Thrown in     |
 +-----------+---------------------+---------------+
 |    -1     |  silent abort       | ABORT         |
 +-----------+---------------------+---------------+
@@ -428,7 +429,8 @@ itself.
 +-----------+---------------------+---------------+
 |   -16     |  Invalid word       | (create)      |
 +-----------+---------------------+---------------+
-|   -50     |  search order       | previous      |
+|   -50     |  search order       | PREVIOUS      |
+|           |  exhausted          |               |
 +-----------+---------------------+---------------+
 
 User Area

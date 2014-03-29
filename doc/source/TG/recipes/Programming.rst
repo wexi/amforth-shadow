@@ -6,15 +6,18 @@ Programming and Debugging
 
    Assembler
    Build-Timestamp
+   Coroutines
    Ctrl-C
    Customize
    Debugshell
    Dumps
+   Exceptions
    Extended-VM
    Forget
    Forward
    Port-From-C
    Profiler
+   Quotations
    RAM-Efficiency
    Tracer
    Upgrade-Amforth

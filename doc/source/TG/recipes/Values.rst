@@ -177,6 +177,8 @@ of an address.
     then
   ; immediate
 
+.. _Double Cell RAM Value:
+
 Double Cell RAM Value
 ---------------------
 

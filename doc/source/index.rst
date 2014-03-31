@@ -40,16 +40,16 @@ released but will be part of the next release.
 See the code section at Sourceforge to get the
 `most recent sources <http://sourceforge.net/p/amforth/code/HEAD/tree/trunk/>`__
 
-* core: renamed ``edp`` to ``ehere``. ``here`` points to data space, ``ehere`` points to eeprom data space.
+* core: renamed ``edp`` to ``ehere``. ``here`` points to data space, ``ehere`` 
+  points to eeprom data space.
 * doc: `Japanese Getting Started <http://amforth-installation-ja.readthedocs.org/ja/latest/index.html>`__
-* lib: many new :ref:`SPI` code examples: MMC/SD-Card from Lubos (So Sorry for 
-  beeing late) and TCP/IP (:ref:`Telnet`). Many Thanks to Jens. Speed optimized
+* community: MMC/SD-Card from Lubos (So Sorry for beeing late) and 
+  TCP/IP (:ref:`Telnet`). Many Thanks to Jens. Speed optimized
   words for SPI in amforth core.
-* doc: new recipe for :ref:`Forward`
-* core: internally merged code for defer's and value's. Small speed improvments 
+* doc: new recipes: :ref:`Forward`, :ref:`Extended-VM`, :ref:`Quotations`, :ref:`Exceptions`,
+  :ref:`Coroutines`,  updated recipes: :ref:`SPI`, :ref:`Ardiuno Helloworld`
+* core: merged code for defer's and value's. Small speed improvments 
   for defer actions.
-* doc: :ref:`Extended-VM`: more registers in the Forth VM with interesting
-  features.
 
 23.12.2013: release 5.2
 .......................

@@ -23,7 +23,7 @@ Software
 --------
 
 The software is currently only available in the 
-`Repository <http://sourceforge.net/p/amforth/code/HEAD/tree/trunk/>`__
+`Community Repository <http://sourceforge.net/p/amforth/community/HEAD/tree/tcp-ip/>`__
 
 Every network needs some settings. As of now, they are hard
 coded into the code, so you need to change the source code for
@@ -64,29 +64,33 @@ Port 23 is opened. In this stage, a network ping should work
    |Send Ping Reply ! 
    |Send Ping Reply ! 
 
+.. code-block:: bash
+
    remote shell:
-   |$ ping 192.168.10.80
-   |PING 192.168.10.80 (192.168.10.80) 56(84) bytes of data.
-   |64 bytes from 192.168.10.80: icmp_seq=1 ttl=64 time=1037 ms
-   |64 bytes from 192.168.10.80: icmp_seq=2 ttl=64 time=75.1 ms
-   |64 bytes from 192.168.10.80: icmp_seq=3 ttl=64 time=19.0 ms
-   |64 bytes from 192.168.10.80: icmp_seq=4 ttl=64 time=19.0 ms
-   |64 bytes from 192.168.10.80: icmp_seq=5 ttl=64 time=19.0 ms
+   |$ ping 192.168.2.79
+   |PING 192.168.2.79 (192.168.2.79) 56(84) bytes of data.
+   |64 bytes from 192.168.2.79: icmp_seq=1 ttl=64 time=1037 ms
+   |64 bytes from 192.168.2.79: icmp_seq=2 ttl=64 time=75.1 ms
+   |64 bytes from 192.168.2.79: icmp_seq=3 ttl=64 time=19.0 ms
+   |64 bytes from 192.168.2.79: icmp_seq=4 ttl=64 time=19.0 ms
+   |64 bytes from 192.168.2.79: icmp_seq=5 ttl=64 time=19.0 ms
 
 To get a telnet session, the amforth command interpreter has
 to switch its IO
 
-.. code-block:: bash
+.. code-block:: console
 
    serial terminal:
    |> +telnet 
    | ok
    |> +tnredir
 
+.. code-block:: bash
+
    remote shell:
-   $ telnet 192.168.10.80
-   |Trying 192.168.10.80...
-   |Connected to 192.168.10.80.
+   $ telnet 192.168.2.79
+   |Trying 192.168.2.79...
+   |Connected to 192.168.2.79.
    |Escape character is '^]'.
    |Start Telnet Server:
    | ok
@@ -108,6 +112,8 @@ to switch its IO
    | ok
    |> -tnredir
    |-tnredir
+
+.. code-block:: console
 
    serial terminal:
    |Stop Telnet Server !  ok

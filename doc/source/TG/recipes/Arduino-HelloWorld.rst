@@ -1,9 +1,13 @@
+.. _Ardiuno Helloworld:
+
 ===================
 Arduino Hello World
 ===================
 
 The example demonstrates a blinking LED. Most arduino's have one
-attached to the port Digital-13. 
+attached to the port Digital-13. For this recipe, the amforth system
+is already loaded onto the ardiuno. Instructions to do it are in the
+:ref:`User Guide`.
 
 To quickly test the hardware start a terminal (e.g. screen /dev/ttyACM0 38400) 
 and enter the following commands:

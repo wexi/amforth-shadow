@@ -38,8 +38,9 @@ the remaining SPI setup can take place
 
 .. code-block:: forth
  
-   \ requires bitnames.frt loaded
-   > PORTB 0 portpin: spi.ss \ check hardware
+   \ requires bitnames, quotations and spi loaded
+   > PORTB 0 portpin: dev.ss \ define hardware
+   > dev.ss to spi.ss        \ assign ss pin to lib
    > spi.ss is_output        \ short LOW pulse
    > spi.ss high             \ de-select slave
    > +spi                    \ turn on SPI module
@@ -94,8 +95,12 @@ mode used on PC's but is simpler to program.
    \ board definitions
    #include netio.frt
 
-   \ SD Card specific
+   \ SPI library
+   #require quotations.frt
+   #require 2rvalue.frt
    #include spi.frt
+
+   \ SD Card specific
    #include mmc.frt
 
 The include order of the file is important. The board specfic definitions
@@ -106,28 +111,14 @@ used elsewhere but should match the hardware.
 
 .. code-block:: forth
 
-   PORTB 0 portpin: /ss    \ output
-   PORTB 2 portpin: _mosi  \ output
-   PORTB 3 portpin: _miso  \ input
-   PORTB 1 portpin: _clk   \ output
-
-   : +spi ( -- )
-     /ss pin_output
-     _mosi pin_output
-     _miso pin_input
-     _clk  pin_output
-   ;
-   : -spi
-     _mosi low _mosi pin_input
-     _miso low _miso pin_input
-     _clk  low _clk  pin_input
-   ;
+   PORTB 0 portpin: sdcard
+   sdcard to spi.ss
 
    : +mmc
-     /ss low
+     sdcard low
    ;
    : -mmc
-     /ss high
+     sdcard high
    ;
 
 After successfully loading these files, the command ``mmc_init`` initializes

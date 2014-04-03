@@ -10,7 +10,6 @@ XT_SLASH:
     .dw DO_COLON
 PFA_SLASH:
     .dw XT_SLASHMOD
-    .dw XT_SWAP
-    .dw XT_DROP
+    .dw XT_NIP
     .dw XT_EXIT
 

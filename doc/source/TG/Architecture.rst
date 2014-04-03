@@ -199,104 +199,163 @@ There is one default input source: The terminal input buffer. This buffer gets f
 :command:`SOURCE` points to the Terminal Input Buffer itself.
 Another input source are plain strings, used by :command:`EVALUATE`.
 
+.. _Recognizers:
+
 Recognizer
 ..........
 
-The text interpreter does only split the source into single, whitespace
-separated words. For each word, a list of specialized actions is used
-to analyse and operate on the particular word.
+Recognizer are a part of the text (command) interpreter.
+They are responsible for analyzing a single word. The
+result consists of two elements: The actual data (if any)
+and an object like identifier with certain methods.
 
-
-.. _Recognizer-current:
-
-.. digraph:: CurrentRecognizer
+.. digraph:: Recognizer
    :inline:
 
-   "Start" -> "Next Word"
-   "Next Word" -> "First Recognizer" [label="Yes"]
-   "Next Word" -> "End" [label="No"];
-   "First Recognizer" -> "Do Recognizer"
-   "Do Recognizer" -> "Done?"
-   "Done?" -> "More Recognizer?" [label="No"];
-   "More Recognizer?" -> "Do Recognizer" [label="Yes"];
-   "More Recognizer?" -> "End" [label="No"];
-   "Done?" -> "Next Word" [label="Yes"];
+   "Interpret" -> "Get Next Word"
+   "Get Next Word" -> "Do Recognizer" [label="Got one"]
+   "Get Next Word" -> "End" [label="No More Words"];
+   "Do Recognizer" -> "Check State"
+   "Check State" -> "Compile" [label="Compile"];
+   "Check State" -> "Execute" [label="Interpret"];
+   "Compile" -> "Get Next Word"
+   "Execute" -> "Get Next Word"
 
-A recognizer gets the string information of the current word.
-If the word can be processed, the recognizer is responsible to do so. A word from
-the dictionary has to be either executed or compiled, a number as well. A recognizer
-must not change the word buffer content. Finally the recognizer returns a flag to
-the interpreter which signals success or not. This flag is consumed, any other stack
-change is kept.
+The forth text interpreter gets the input source and
+splits it into whitespace delimited words. Each word
+is fed into a list of actions which parse it. If the
+parsing is successful (e.g. a number or a word from
+the dictionary) the recognizer leaves the data and
+an method table to deal with it. Depending on the
+value of state one of the methods is executed to
+finally work with the data. The first method is called
+in interpreter state. It is usually a noop, since
+the recognizer has done all the work already.
 
-Three recognizers are defined: Dictionary lookup :command:`rec-find`,
-integer number conversion :command:`rec-intnum` and a not-found dummy
-:command:`rec-notfound`. The first two take care of the interpreter state and either
-leave more than the flag (e.g. the number entered) or compile the information
-to the dictionary.
+The compile method is responsible to perform the compile
+time semantics. That usually means to write it into
+the dictioanary or to execute immediate words.
 
-The not-found recognizer prints the word and throws an exception -13 which can be catched.
+A third method is used by ``postpone`` to compile the
+compilation semantics.
 
-The list of the recognizers is kept in the EEPROM, the maximum size of the
-entries is a compile time setting (currently 6 slot are available).
+API
+~~~
 
-
-Example
-~~~~~~~
-
-A recognizer gets the address/len pair of a word in RAM and leaves at least the flag
-for the interpreter. If any data is to be left on the stack (e.g. numeric values) it
-has to be beneath the flag.
-
-The small example illustrates the integration of the floating point library for amforth.
-It is based upon a conversion word :command:`>float` which takes a string and tries to
-convert it into a float. The word fliteral compiles a floating point number into the
-dictionary.
+Every recognizer has a method table for the runtime methods
+and a word to parse a word. It has the stack diagram:
 
 .. code-block:: forth
 
-    : rec-float  \\ addr len -- (f|) -1 | 0
-    >float
-    if state @ if postpone fliteral then -1 else 0
-    then ;
+   : rec-word ( addr len -- i*x r:table ) ... ;
 
-The recognizer first tries to convert the string to a number. If that fails, the flag
-from the :command:`>float` is essentially duplicated and the recognizer is left. If the conversion
-succeeded, the floating point number is on the data stack. The recognizer now checks
-whether the number needs to be compiled or not. In any case the success flag is
-returned.
+The calling parameters are the address and the length of a
+word in RAM. The recognizer must not change it. The result (i*x)
+is the data and the method table to deal with it.
 
-New Recognizer
+There is a standard method table that does not require
+additional data (i*x is empty) and which is used to communicate
+the "not-recognized" information: ``r:fail``. Its method
+table entries throw the exception -13 if called.
+
+Other method tables are ``r:intnum`` to deal with single cell numeric
+data, ``r:intdnum`` to work with double cell numerics and ``r:find``
+to execute, compile and postpone execution tokens from the dictionary.
+
+Default (Fail)
 ~~~~~~~~~~~~~~
 
-In its current state, a recognizer not only parses
-and identified the word, but has to take care of the
-interpreter state and various other things (e.g. being
-postponed or not). This makes a single recognizer more
-complex and duplicates some code blocks (state smartness).
-To improve this situation, are more complex picture may
-be used in future versions:
+This is a special system level recognizer. It is
+really called, but its method table (r:fail) is
+used. Its methods throw exception when called to
+get back to the command prompt if catched inside
+the ``quit`` loop.
 
-.. _Recognizer-new:
+.. code-block:: forth
 
-.. digraph:: FutureRecognizer
-   :inline:
+   : fail type -13 throw ;
 
-   "Start" -> "Next Word"
-   "Next Word" -> "First Recognizer" [label="Yes"]
-   "Next Word" -> "End" [label="No"];
-   "First Recognizer" -> "Do Recognizer"
-   "Do Recognizer" -> "Identified?"
-   "Identified?" -> "More Recognizer?" [label="No"];
-   "More Recognizer?" -> "Do Recognizer" [label="Yes"];
-   "More Recognizer?" -> "Error and End" [label="No"];
-   "Identified?" -> "Execute or Compile" [label="Yes"];
-   "Execute or Compile" -> "Next Word"
+   create r:fail 
+     ' fail , 
+     ' fail ,
+     ' fail ,
 
-With this structure the text interpreter is the only one that
-takes care of the state and acts on the execution tokens accordingly.
-The final goal is to get a system, that can be used in other forth's
-as well.
+   \ this definition is never used actually
+   : rec-fail ( addr len -- r:table)
+     drop drop 
+   ;
+
+NUMBER
+~~~~~~
+
+The number recognizer identifies numeric data in both
+single and double precision. Depending on the actual
+data width, two different methods tables are returned.
+
+The postpone action follows the standard definitions with
+not allowing to postpone numbers. Instead the number is
+printed and an exception is thrown.
+
+.. code-block:: forth
+
+   create r:intnum
+     ' noop ,
+     ' literal ,
+     :noname . -48 throw ; ,
+
+   create r:intdnum
+     ' noop ,
+     ' 2literal ,
+     :noname d. -48 throw ; ,
+
+   : rec:intnum
+     number if
+      1 = if r:intnum exit then
+      r:intdnum exit
+     then
+     r:fail
+   ;
+
+
+FIND
+~~~~
+
+This recognizer tries to find the word in the dictionary. If
+sucessful, the execution token and the flags are returned. The
+method table contains words to execute and correctly deal with
+immediate words for compiling and postponing.
+
+.. code-block:: forth
+
+   create r:find
+   :noname drop execute ; ,
+   :noname 0< if , exit then execute ; ,
+   :noname 0< if  postpone [compile] then , ; ,
+
+   : rec:find
+     find-name ?dup if
+       r:find exit
+     then r:fail ;
+  
+
+INTERPRET
+~~~~~~~~~
+
+The interpreter is responsible to split the source into words
+and to call the recognizers. It also maintains the state.
+
+.. code-block:: forth
+
+   : interpret
+     begin
+       parse-name dup 0= if drop drop exit then
+       do-recognizer ( addr len -- i*x r:table )
+       state @ if 1+ then \ get compile time action
+       @i execute ?stack
+     again
+   ;
+
+do-recognizers always returns a valid method table.
 
 Stacks
 ------
@@ -784,15 +843,6 @@ within :command:`con` the top-of-stack element (42) is compiled into
 the newly defined word. The :command:`does>` changes the
 runtime of the newly defined word :command:`answer` to the code
 that follows :command:`does>`.
-
-:command:`does>` is an immediate word. That means, it is not compiled
-into the new word (con) but executed. This compile time action creates
-a small data structure similar to the wordlist entry for a noname: word.
-The address of this data structure is an execution token. This execution
-token replaces the standard XT that :command:`create` has already
-written for words that are defined using :command:`con`. This
-leads inevitably to a flash erase cycle.
-:`does>`.
 
 :command:`does>` is an immediate word. That means, it is not compiled
 into the new word (con) but executed. This compile time action creates

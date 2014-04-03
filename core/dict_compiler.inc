@@ -36,7 +36,6 @@
 .include "words/variable.asm"
 .include "words/constant.asm"
 .include "words/user.asm"
-.include "words/value.asm"
 
 .include "words/recurse.asm"
 .include "words/immediate.asm"
@@ -67,3 +66,6 @@
 
 .include "words/compare.asm"
 .include "words/nfa2lfa.asm"
+
+.include "words/marker.asm"
+.include "words/postpone.asm"

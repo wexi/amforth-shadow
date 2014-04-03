@@ -792,3 +792,12 @@ The address of this data structure is an execution token. This execution
 token replaces the standard XT that :command:`create` has already
 written for words that are defined using :command:`con`. This
 leads inevitably to a flash erase cycle.
+:`does>`.
+
+:command:`does>` is an immediate word. That means, it is not compiled
+into the new word (con) but executed. This compile time action creates
+a small data structure similar to the wordlist entry for a noname: word.
+The address of this data structure is an execution token. This execution
+token replaces the standard XT that :command:`create` has already
+written for words that are defined using :command:`con`. This
+leads inevitably to a flash erase cycle.

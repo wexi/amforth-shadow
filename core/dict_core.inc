@@ -26,7 +26,7 @@
 .include "words/over.asm"
 .include "words/drop.asm"
 .include "words/rot.asm"
-
+.include "words/nip.asm"
 ;;;;;;;;;;;;;;;;;;;;;;;;;
 .include "words/r_from.asm"
 .include "words/to_r.asm"
@@ -44,10 +44,6 @@
 .include "words/uless.asm"
 .include "words/ugreater.asm"
 .include "words/greaterzero.asm"
-.include "words/d-greater.asm"
-.include "words/d-greaterzero.asm"
-.include "words/d-less.asm"
-.include "words/d-lesszero.asm"
 .include "words/log2.asm"
 .include "words/minus.asm"
 .include "words/plus.asm"

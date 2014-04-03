@@ -26,11 +26,11 @@ EE_ORDERLIST: ; list of wordlist id, exactly numwordlist entries
     .byte  (NUMWORDLISTS-1)*CELLSIZE ; two slots are already used
 EE_RECOGNIZERS:
 EE_RECOGNIZERLISTLEN:
-    .dw 3
+    .dw 2
 EE_RECOGNIZERLIST:
     .dw XT_REC_FIND
-    .dw XT_REC_INTNUMBER
-    .dw XT_REC_NOTFOUND
+    .dw XT_REC_INTNUM
+    .dw -1
     .dw -1
     .dw -1
     .dw -1

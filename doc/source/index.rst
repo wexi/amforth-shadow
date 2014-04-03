@@ -40,16 +40,17 @@ released but will be part of the next release.
 See the code section at Sourceforge to get the
 `most recent sources <http://sourceforge.net/p/amforth/code/HEAD/tree/trunk/>`__
 
+* core: 2nd generation of :ref:`Recognizers`.
 * core: renamed ``edp`` to ``ehere``. ``here`` points to data space, ``ehere`` 
   points to eeprom data space.
-* doc: `Japanese Getting Started <http://amforth-installation-ja.readthedocs.org/ja/latest/index.html>`__
+* core: merged code for defer's and value's. Speed improvements
+  for defer actions.
 * community: MMC/SD-Card from Lubos (So Sorry for beeing late) and 
   TCP/IP (:ref:`Telnet`). Many Thanks to Jens. Speed optimized
   words for SPI in amforth core.
+* doc: `Japanese Getting Started <http://amforth-installation-ja.readthedocs.org/ja/latest/index.html>`__
 * doc: new recipes: :ref:`Forward`, :ref:`Extended-VM`, :ref:`Quotations`, :ref:`Exceptions`,
   :ref:`Coroutines`,  updated recipes: :ref:`SPI`, :ref:`Ardiuno Helloworld`
-* core: merged code for defer's and value's. Small speed improvments 
-  for defer actions.
 
 23.12.2013: release 5.2
 .......................

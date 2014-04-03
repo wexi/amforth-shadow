@@ -25,15 +25,14 @@ They do not depend on other files.
 Basic Usage
 -----------
 
-Both registers A and B are completely equal. They are not used inside
+Both registers A and B act the same way. They are not used inside
 any standard AmForth code and are not thread local. Since they use
 CPU registers, they work faster than variables or other memory based
 data.
 
 To store data into a register, the command ``>a`` is used. Getting back
-the data is done with ``a>``. This is unlike the similiar  looking ``>r``
-and ``r>`` which put the data to the memory, the return stack pointer
-points to.
+the data is done with ``a>``. Unline the similiar  looking ``>r``, 
+repeated calls to ``>a`` overwrite the register contents. 
 
 .. code-block:: forth
 
@@ -48,11 +47,10 @@ points to.
 Pointer Voodoo
 --------------
 
-The registers can work as address registers as well. 
-The command ``a@`` reads the RAM location, the A register points to. By
-using ``a@+`` the data is read and the register is incremented by 1 cell
-(2 bytes). Similiar the ``a@-``: the data is read and the register is
-decremented by 1 cell.
+The registers can work as address registers. The command ``a@`` reads the RAM 
+location, the A register points to. By using ``a@+`` the data is read and the 
+register is incremented by 1 cell (2 bytes). Similiar the ``a@-``: the data 
+is read and the register is decremented by 1 cell.
 
 .. code-block:: forth
 
@@ -82,10 +80,13 @@ A register. The content of the A register is not changed.
 Portable Version
 -----------------
 
+The registers are an extension of the underlying forth VM. There
+is no official reference implementation available. To experiment
+with them, the following code may be useful. 
+
 .. code-block:: forth
 
-   \ helper words
-   : cell 1 cells ;
+   1 cells constant cell
 
    variable reg:a
 
@@ -95,17 +96,18 @@ Portable Version
    : a!  a> ! ;
    : na@ a> + @ ;
    : na! a> + ! ;
-
-   \ pre-increment fetch/store
-   : a@+ a@ cell reg:a +! ;
-   : a!+ a! cell reg:a +! ;
-   : a@- a@ cell negate reg:a +! ;
-   : a!- a! cell negate reg:a +! ;
-
+ 
    \ post-increment fetch/store
    : a@+ cell reg:a +! a@ ;
    : a!+ cell reg:a +! a! ;
    : a@- cell negate reg:a +! a@ ;
    : a!- cell negate reg:a +! a! ;
+
+   \ alternativly
+   \ pre-increment fetch/store
+   : a@+ a@ cell reg:a +! ;
+   : a!+ a! cell reg:a +! ;
+   : a@- a@ cell negate reg:a +! ;
+   : a!- a! cell negate reg:a +! ;
 
 Amforth has a highly optimizied assembler implementation of these commands.

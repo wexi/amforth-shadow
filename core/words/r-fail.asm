@@ -9,18 +9,19 @@ VE_R_FAIL:
 XT_R_FAIL:
     .dw PFA_DOCONSTANT
 PFA_R_FAIL:
-    .dw XT_FAIL  ; interpret
-    .dw XT_FAIL  ; compile
-    .dw XT_FAIL  ; postpone
+    .dw XT_FAILS  ; interpret
+    .dw XT_FAILS  ; compile
+    .dw XT_FAILS  ; postpone
 
-VE_FAIL:
-    .dw $ff04
-    .db "fail"
+; fail action for a string
+VE_FAILS:
+    .dw $ff06
+    .db "fail:s"
     .dw VE_HEAD
-    .set VE_HEAD = VE_FAIL
-XT_FAIL:
+    .set VE_HEAD = VE_FAILS
+XT_FAILS:
     .dw DO_COLON
-PFA_FAIL:
+PFA_FAILS:
     .dw XT_TYPE
     .dw XT_DOLITERAL
     .dw -13

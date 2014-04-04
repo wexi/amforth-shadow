@@ -8,7 +8,7 @@ XT_R_INTNUM:
 PFA_R_INTNUM:
     .dw XT_NOOP    ; interpret
     .dw XT_LITERAL ; compile
-    .dw XT_PFAIL ; postpone
+    .dw XT_FAILNUM ; postpone
 
 VE_R_INTDNUM:
     .dw $ff09
@@ -20,12 +20,31 @@ XT_R_INTDNUM:
 PFA_R_INTDNUM:
     .dw XT_NOOP     ; interpret
     .dw XT_2LITERAL ; compile
-    .dw XT_PFAIL ; postpone
+    .dw XT_FAILDNUM ; postpone
 
-XT_PFAIL:
+VE_FAILNUM:
+    .dw $ff06
+    .db "fail:i"
+    .dw VE_HEAD
+    .set VE_HEAD = VE_FAILNUM
+XT_FAILNUM:
     .dw DO_COLON
-PFA_PFAIL:
+PFA_FAILNUM:
     .dw XT_DOT
+    .dw XT_DOLITERAL
+    .dw -48
+    .dw XT_THROW
+    .dw XT_EXIT
+
+VE_FAILDNUM:
+    .dw $ff06
+    .db "fail:d"
+    .dw VE_HEAD
+    .set VE_HEAD = VE_FAILDNUM
+XT_FAILDNUM:
+    .dw DO_COLON
+PFA_FAILDNUM:
+    .dw XT_DDOT
     .dw XT_DOLITERAL
     .dw -48
     .dw XT_THROW

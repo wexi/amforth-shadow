@@ -61,8 +61,8 @@
 .include "words/store-ee-array.asm"
 .include "words/get-current.asm"
 .include "words/get-order.asm"
-;.include "words/set-recognizer.asm"
-;.include "words/get-recognizer.asm"
+.include "words/set-recognizer.asm"
+.include "words/get-recognizer.asm"
 
 .include "words/compare.asm"
 .include "words/nfa2lfa.asm"

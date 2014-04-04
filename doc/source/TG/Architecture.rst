@@ -207,7 +207,7 @@ Recognizer
 Recognizer are a part of the text (command) interpreter.
 They are responsible for analyzing a single word. The
 result consists of two elements: The actual data (if any)
-and an object like identifier with certain methods.
+and an object like identifier connected with certain methods.
 
 .. digraph:: Recognizer
    :inline:
@@ -221,68 +221,139 @@ and an object like identifier with certain methods.
    "Compile" -> "Get Next Word"
    "Execute" -> "Get Next Word"
 
-The forth text interpreter gets the input source and
-splits it into whitespace delimited words. Each word
+The Forth text interpreter reads from the input source 
+and splits it into whitespace delimited words. Each word
 is fed into a list of actions which parse it. If the
-parsing is successful (e.g. a number or a word from
+parsing is successful (e.g. it is a number or a word from
 the dictionary) the recognizer leaves the data and
 an method table to deal with it. Depending on the
-value of state one of the methods is executed to
-finally work with the data. The first method is called
+interpreter state one of the methods is executed to
+finally process the data. The first method is called
 in interpreter state. It is usually a noop, since
 the recognizer has done all the work already.
 
-The compile method is responsible to perform the compile
+The 2nd method is responsible to perform the compile
 time semantics. That usually means to write it into
 the dictioanary or to execute immediate words.
 
-A third method is used by ``postpone`` to compile the
-compilation semantics.
+The third method is used by ``postpone`` to compile the
+compilation semantics. It honors the immediate flags as well.
+
+A recognizer consists of a few words that work together.
+To ease maintenance, a naming convention is used: The
+recognizer itself is named with the prefix ``rec-``. The
+method table name gets the prefix ``r:`` followed by
+the same name as the recognizer.
+
+Recognizer List
+~~~~~~~~~~~~~~~
+
+The interpreter uses a list of recognizers. They are managed
+with the words ``get-recognizers`` and ``set-recognizers``.
+
+.. code-block:: forth
+
+   \ place a recognizer as the last active one
+
+   : place-rec ( xt -- )
+      get-recognizer 
+      1-  n>r    \ move away all but the last one
+      swap       \ place the new recognizer
+      nr> 1+ 1+  \ get all others back and increase the count
+      set-recognizer  \ save and activate
+   ;
+
+   ' rec-foo place-rec
+
+The entries in the list are called in order until the first 
+one returns a different result but ``r:fail``. If the list
+is exhausted and no one succeeds, the ``r:fail`` is delivered
+nevertheless and leads to the error reactions.
+
+INTERPRET
+~~~~~~~~~
+
+The interpreter is responsible to split the source into words
+and to call the recognizers. It also maintains the state.
+
+.. code-block:: forth
+
+   : interpret
+     begin
+       parse-name ?dup if drop exit then
+       do-recognizer ( addr len -- i*x r:table )
+       state @ if 1+ then \ get compile time action
+       @i execute ?stack
+     again
+   ;
+
+``do-recognizer`` always returns a valid method table. If no
+recognizer succeeds, the ``r:fail`` is returned with the addr/len
+of the unknown-to-handle word.
+
+
 
 API
 ~~~
 
-Every recognizer has a method table for the runtime methods
-and a word to parse a word. It has the stack diagram:
+Every recognizer has a method table for methods to handle the
+data inside the forth interpreter and a word to parse a word.
 
 .. code-block:: forth
 
-   : rec-word ( addr len -- i*x r:table ) ... ;
+   create r:foo
+     :noname ... ; , \ interpret action
+     :noname ... ; , \ compile action
+     :noname ... ; , \ postpone action
 
-The calling parameters are the address and the length of a
-word in RAM. The recognizer must not change it. The result (i*x)
-is the data and the method table to deal with it.
+   : rec-foo ( addr len -- i*x r:foo ) ... ;
+
+The word ``rec-foo`` is the actual recognizer. It analyzes the
+string it gets. There are two results possible: Either the word
+is recognized and the address of the method table is returned
+Or a failure information is generated which is actually a predefined
+method table named ``r:fail``.
+
+The calling parameters to ``rec-foo`` are the address and the length 
+of a word in RAM. The recognizer must not change it. The result 
+(i*x) is the parsed and converted data and the method table to 
+deal with it.
 
 There is a standard method table that does not require
 additional data (i*x is empty) and which is used to communicate
 the "not-recognized" information: ``r:fail``. Its method
 table entries throw the exception -13 if called.
 
-Other method tables are ``r:intnum`` to deal with single cell numeric
-data, ``r:intdnum`` to work with double cell numerics and ``r:find``
-to execute, compile and postpone execution tokens from the dictionary.
+Other pre-defined method tables are ``r:intnum`` to deal with single 
+cell numeric data, ``r:intdnum`` to work with double cell numerics and 
+``r:find`` to execute, compile and postpone execution tokens from the 
+dictionary.
+
+The words in the method tables get the output of the recognizer as input 
+on the data stack. They are excpected to consume them during their work.
 
 Default (Fail)
 ~~~~~~~~~~~~~~
 
 This is a special system level recognizer. It is
-really called, but its method table (r:fail) is
-used. Its methods throw exception when called to
-get back to the command prompt if catched inside
-the ``quit`` loop.
+never called, but its method table (r:fail) is
+used as both a error flag and for the final error actions. Its methods 
+get the addr/len of a single word. They consume it by printing the 
+string and throwing an exception when called. The effect is to get 
+back to the command prompt if catched inside the ``quit`` loop.
 
 .. code-block:: forth
 
-   : fail type -13 throw ;
+   : fail:s type -13 throw ;
 
    create r:fail 
-     ' fail , 
-     ' fail ,
-     ' fail ,
+     ' fail:s , 
+     ' fail:s ,
+     ' fail:s ,
 
    \ this definition is never used actually
-   : rec-fail ( addr len -- r:table)
-     drop drop 
+   : rec-fail ( addr len -- r:fail)
+     r:fail
    ;
 
 NUMBER
@@ -335,27 +406,11 @@ immediate words for compiling and postponing.
    : rec:find
      find-name ?dup if
        r:find exit
-     then r:fail ;
+     then 
+     r:fail 
+   ;
   
 
-INTERPRET
-~~~~~~~~~
-
-The interpreter is responsible to split the source into words
-and to call the recognizers. It also maintains the state.
-
-.. code-block:: forth
-
-   : interpret
-     begin
-       parse-name dup 0= if drop drop exit then
-       do-recognizer ( addr len -- i*x r:table )
-       state @ if 1+ then \ get compile time action
-       @i execute ?stack
-     again
-   ;
-
-do-recognizers always returns a valid method table.
 
 Stacks
 ------

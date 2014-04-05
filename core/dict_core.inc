@@ -16,7 +16,6 @@
 .include "words/store.asm"
 .include "words/cstore.asm"
 .include "words/cfetch.asm"
-.include "words/fetchc.asm"
 .include "words/fetch-u.asm"
 .include "words/store-u.asm"
 

@@ -241,7 +241,7 @@ compilation semantics. It honors the immediate flags as well.
 
 A recognizer consists of a few words that work together.
 To ease maintenance, a naming convention is used: The
-recognizer itself is named with the prefix ``rec-``. The
+recognizer itself is named with the prefix ``rec:``. The
 method table name gets the prefix ``r:`` followed by
 the same name as the recognizer.
 
@@ -249,26 +249,33 @@ Recognizer List
 ~~~~~~~~~~~~~~~
 
 The interpreter uses a list of recognizers. They are managed
-with the words ``get-recognizers`` and ``set-recognizers``.
+with the words ``get-recognizer`` and ``set-recognizer``.
 
 .. code-block:: forth
 
-   \ place a recognizer as the last active one
+   \ place a recognizer as the last one
 
    : place-rec ( xt -- )
-      get-recognizer 
-      1-  n>r    \ move away all but the last one
-      swap       \ place the new recognizer
-      nr> 1+ 1+  \ get all others back and increase the count
-      set-recognizer  \ save and activate
+      get-recognizer 1+ set-recognizer
    ;
 
-   ' rec-foo place-rec
+   ' rec:foo place-rec
 
 The entries in the list are called in order until the first 
 one returns a different result but ``r:fail``. If the list
 is exhausted and no one succeeds, the ``r:fail`` is delivered
 nevertheless and leads to the error reactions.
+
+The standard recognizer list is defined as follows
+
+.. code-block:: forth
+
+   : default-recs
+     ['] rec:intnum ['] rec:find  
+     2 set-recognizer
+   ;
+
+The standard word ``marker`` resets the recognizer list as well.
 
 INTERPRET
 ~~~~~~~~~
@@ -300,21 +307,22 @@ Every recognizer has a method table for methods to handle the
 data inside the forth interpreter and a word to parse a word.
 
 .. code-block:: forth
+   
+   \ order is important!
+   :noname ... ;  \ postpone action
+   :noname ... ;  \ compile action
+   :noname ... ;  \ interpret action
+   recognizer: r:foo
 
-   create r:foo
-     :noname ... ; , \ interpret action
-     :noname ... ; , \ compile action
-     :noname ... ; , \ postpone action
+   : rec:foo ( addr len -- i*x r:foo | r:fail ) ... ;
 
-   : rec-foo ( addr len -- i*x r:foo ) ... ;
-
-The word ``rec-foo`` is the actual recognizer. It analyzes the
+The word ``rec:foo`` is the actual recognizer. It analyzes the
 string it gets. There are two results possible: Either the word
 is recognized and the address of the method table is returned
-Or a failure information is generated which is actually a predefined
+or a failure information is generated which is actually a predefined
 method table named ``r:fail``.
 
-The calling parameters to ``rec-foo`` are the address and the length 
+The calling parameters to ``rec:foo`` are the address and the length 
 of a word in RAM. The recognizer must not change it. The result 
 (i*x) is the parsed and converted data and the method table to 
 deal with it.
@@ -336,24 +344,22 @@ Default (Fail)
 ~~~~~~~~~~~~~~
 
 This is a special system level recognizer. It is
-never called, but its method table (r:fail) is
-used as both a error flag and for the final error actions. Its methods 
-get the addr/len of a single word. They consume it by printing the 
-string and throwing an exception when called. The effect is to get 
-back to the command prompt if catched inside the ``quit`` loop.
+never called, its method table (r:fail) is used 
+as both a error flag and for the final error 
+actions. Its methods get the addr/len of a single 
+word. They consume it by printing the string and 
+throwing an exception when called. The effect is 
+to get back to the command prompt if catched 
+inside the ``quit`` loop.
 
 .. code-block:: forth
 
-   : fail:s type -13 throw ;
-
-   create r:fail 
-     ' fail:s , 
-     ' fail:s ,
-     ' fail:s ,
+   :noname type -13 throw ; dup dup
+   recognizer: r:fail
 
    \ this definition is never used actually
-   : rec-fail ( addr len -- r:fail)
-     r:fail
+   : rec:fail ( addr len -- r:fail)
+     2drop r:fail
    ;
 
 NUMBER
@@ -369,17 +375,17 @@ printed and an exception is thrown.
 
 .. code-block:: forth
 
-   create r:intnum
-     ' noop ,
-     ' literal ,
-     :noname . -48 throw ; ,
+   :noname . -48 throw ;
+   ' literal
+   ' noop
+   recognizer: r:intnum
 
-   create r:intdnum
-     ' noop ,
-     ' 2literal ,
-     :noname d. -48 throw ; ,
+   :noname d. -48 throw ;
+   ' 2literal
+   ' noop
+   recognizer: r:intdnum
 
-   : rec:intnum
+   : rec:intnum ( addr len -- n r:intnum | d r:intdnum | r:fail )
      number if
       1 = if r:intnum exit then
       r:intdnum exit
@@ -398,20 +404,18 @@ immediate words for compiling and postponing.
 
 .. code-block:: forth
 
-   create r:find
-   :noname drop execute ; ,
-   :noname 0< if , exit then execute ; ,
    :noname 0< if  postpone [compile] then , ; ,
+   :noname 0< if , exit then execute ; ,
+   :noname drop execute ; ,
+   recognizer: r:find
 
-   : rec:find
+   : rec:find ( addr len -- XT flags r:find | r:fail )
      find-name ?dup if
        r:find exit
      then 
      r:fail 
    ;
   
-
-
 Stacks
 ------
 

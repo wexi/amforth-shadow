@@ -28,6 +28,7 @@
 .include "words/drop.asm"
 .include "words/rot.asm"
 .include "words/notrot.asm"
+.include "words/nip.asm"
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;
 .include "words/r_from.asm"
@@ -36,21 +37,22 @@
 .include "words/rdrop.asm"
 
 ;;;;;;;;;;;;;;;;;;;;;;;;
-.include "words/notequal.asm"
-.include "words/equal.asm"
-.include "words/equalzero.asm"
 .include "words/less.asm"
+.include "words/equal.asm"
 .include "words/greater.asm"
+
+.include "words/notequal.asm"
+.include "words/equalzero.asm"
 .include "words/lesszero.asm"
+.include "words/greaterzero.asm"
 .include "words/zero.asm"
 .include "words/true.asm"
+.include "words/d-greaterzero.asm"
+.include "words/d-lesszero.asm"
 .include "words/uless.asm"
 .include "words/ugreater.asm"
-.include "words/greaterzero.asm"
-.include "words/d-greater.asm"
-.include "words/d-greaterzero.asm"
-.include "words/d-less.asm"
-.include "words/d-lesszero.asm"
+
+
 .include "words/log2.asm"
 .include "words/minus.asm"
 .include "words/plus.asm"

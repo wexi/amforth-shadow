@@ -10,7 +10,6 @@ XT_STARSLASH:
     .dw DO_COLON
 PFA_STARSLASH:
     .dw XT_STARSLASHMOD
-    .dw XT_SWAP
-    .dw XT_DROP
+    .dw XT_NIP
     .dw XT_EXIT
     

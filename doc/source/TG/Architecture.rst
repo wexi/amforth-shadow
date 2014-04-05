@@ -199,104 +199,218 @@ There is one default input source: The terminal input buffer. This buffer gets f
 :command:`SOURCE` points to the Terminal Input Buffer itself.
 Another input source are plain strings, used by :command:`EVALUATE`.
 
+.. _Recognizers:
+
 Recognizer
 ..........
 
-The text interpreter does only split the source into single, whitespace
-separated words. For each word, a list of specialized actions is used
-to analyse and operate on the particular word.
+Recognizer are a part of the text (command) interpreter.
+They are responsible for analyzing a single word. The
+result consists of two elements: The actual data (if any)
+and an object like identifier connected with certain methods.
 
-
-.. _Recognizer-current:
-
-.. digraph:: CurrentRecognizer
+.. digraph:: Recognizer
    :inline:
 
-   "Start" -> "Next Word"
-   "Next Word" -> "First Recognizer" [label="Yes"]
-   "Next Word" -> "End" [label="No"];
-   "First Recognizer" -> "Do Recognizer"
-   "Do Recognizer" -> "Done?"
-   "Done?" -> "More Recognizer?" [label="No"];
-   "More Recognizer?" -> "Do Recognizer" [label="Yes"];
-   "More Recognizer?" -> "End" [label="No"];
-   "Done?" -> "Next Word" [label="Yes"];
+   "Interpret" -> "Get Next Word"
+   "Get Next Word" -> "Do Recognizer" [label="Got one"]
+   "Get Next Word" -> "End" [label="No More Words"];
+   "Do Recognizer" -> "Check State"
+   "Check State" -> "Compile" [label="Compile"];
+   "Check State" -> "Execute" [label="Interpret"];
+   "Compile" -> "Get Next Word"
+   "Execute" -> "Get Next Word"
 
-A recognizer gets the string information of the current word.
-If the word can be processed, the recognizer is responsible to do so. A word from
-the dictionary has to be either executed or compiled, a number as well. A recognizer
-must not change the word buffer content. Finally the recognizer returns a flag to
-the interpreter which signals success or not. This flag is consumed, any other stack
-change is kept.
+The Forth text interpreter reads from the input source 
+and splits it into whitespace delimited words. Each word
+is fed into a list of actions which parse it. If the
+parsing is successful (e.g. it is a number or a word from
+the dictionary) the recognizer leaves the data and
+an method table to deal with it. Depending on the
+interpreter state one of the methods is executed to
+finally process the data. The first method is called
+in interpreter state. It is usually a noop, since
+the recognizer has done all the work already.
 
-Three recognizers are defined: Dictionary lookup :command:`rec-find`,
-integer number conversion :command:`rec-intnum` and a not-found dummy
-:command:`rec-notfound`. The first two take care of the interpreter state and either
-leave more than the flag (e.g. the number entered) or compile the information
-to the dictionary.
+The 2nd method is responsible to perform the compile
+time semantics. That usually means to write it into
+the dictioanary or to execute immediate words.
 
-The not-found recognizer prints the word and throws an exception -13 which can be catched.
+The third method is used by ``postpone`` to compile the
+compilation semantics. It honors the immediate flags as well.
 
-The list of the recognizers is kept in the EEPROM, the maximum size of the
-entries is a compile time setting (currently 6 slot are available).
+A recognizer consists of a few words that work together.
+To ease maintenance, a naming convention is used: The
+recognizer itself is named with the prefix ``rec-``. The
+method table name gets the prefix ``r:`` followed by
+the same name as the recognizer.
 
+Recognizer List
+~~~~~~~~~~~~~~~
 
-Example
-~~~~~~~
-
-A recognizer gets the address/len pair of a word in RAM and leaves at least the flag
-for the interpreter. If any data is to be left on the stack (e.g. numeric values) it
-has to be beneath the flag.
-
-The small example illustrates the integration of the floating point library for amforth.
-It is based upon a conversion word :command:`>float` which takes a string and tries to
-convert it into a float. The word fliteral compiles a floating point number into the
-dictionary.
+The interpreter uses a list of recognizers. They are managed
+with the words ``get-recognizers`` and ``set-recognizers``.
 
 .. code-block:: forth
 
-    : rec-float  \\ addr len -- (f|) -1 | 0
-    >float
-    if state @ if postpone fliteral then -1 else 0
-    then ;
+   \ place a recognizer as the last active one
 
-The recognizer first tries to convert the string to a number. If that fails, the flag
-from the :command:`>float` is essentially duplicated and the recognizer is left. If the conversion
-succeeded, the floating point number is on the data stack. The recognizer now checks
-whether the number needs to be compiled or not. In any case the success flag is
-returned.
+   : place-rec ( xt -- )
+      get-recognizer 
+      1-  n>r    \ move away all but the last one
+      swap       \ place the new recognizer
+      nr> 1+ 1+  \ get all others back and increase the count
+      set-recognizer  \ save and activate
+   ;
 
-New Recognizer
+   ' rec-foo place-rec
+
+The entries in the list are called in order until the first 
+one returns a different result but ``r:fail``. If the list
+is exhausted and no one succeeds, the ``r:fail`` is delivered
+nevertheless and leads to the error reactions.
+
+INTERPRET
+~~~~~~~~~
+
+The interpreter is responsible to split the source into words
+and to call the recognizers. It also maintains the state.
+
+.. code-block:: forth
+
+   : interpret
+     begin
+       parse-name ?dup if drop exit then
+       do-recognizer ( addr len -- i*x r:table )
+       state @ if 1+ then \ get compile time action
+       @i execute ?stack
+     again
+   ;
+
+``do-recognizer`` always returns a valid method table. If no
+recognizer succeeds, the ``r:fail`` is returned with the addr/len
+of the unknown-to-handle word.
+
+
+
+API
+~~~
+
+Every recognizer has a method table for methods to handle the
+data inside the forth interpreter and a word to parse a word.
+
+.. code-block:: forth
+
+   create r:foo
+     :noname ... ; , \ interpret action
+     :noname ... ; , \ compile action
+     :noname ... ; , \ postpone action
+
+   : rec-foo ( addr len -- i*x r:foo ) ... ;
+
+The word ``rec-foo`` is the actual recognizer. It analyzes the
+string it gets. There are two results possible: Either the word
+is recognized and the address of the method table is returned
+Or a failure information is generated which is actually a predefined
+method table named ``r:fail``.
+
+The calling parameters to ``rec-foo`` are the address and the length 
+of a word in RAM. The recognizer must not change it. The result 
+(i*x) is the parsed and converted data and the method table to 
+deal with it.
+
+There is a standard method table that does not require
+additional data (i*x is empty) and which is used to communicate
+the "not-recognized" information: ``r:fail``. Its method
+table entries throw the exception -13 if called.
+
+Other pre-defined method tables are ``r:intnum`` to deal with single 
+cell numeric data, ``r:intdnum`` to work with double cell numerics and 
+``r:find`` to execute, compile and postpone execution tokens from the 
+dictionary.
+
+The words in the method tables get the output of the recognizer as input 
+on the data stack. They are excpected to consume them during their work.
+
+Default (Fail)
 ~~~~~~~~~~~~~~
 
-In its current state, a recognizer not only parses
-and identified the word, but has to take care of the
-interpreter state and various other things (e.g. being
-postponed or not). This makes a single recognizer more
-complex and duplicates some code blocks (state smartness).
-To improve this situation, are more complex picture may
-be used in future versions:
+This is a special system level recognizer. It is
+never called, but its method table (r:fail) is
+used as both a error flag and for the final error actions. Its methods 
+get the addr/len of a single word. They consume it by printing the 
+string and throwing an exception when called. The effect is to get 
+back to the command prompt if catched inside the ``quit`` loop.
 
-.. _Recognizer-new:
+.. code-block:: forth
 
-.. digraph:: FutureRecognizer
-   :inline:
+   : fail:s type -13 throw ;
 
-   "Start" -> "Next Word"
-   "Next Word" -> "First Recognizer" [label="Yes"]
-   "Next Word" -> "End" [label="No"];
-   "First Recognizer" -> "Do Recognizer"
-   "Do Recognizer" -> "Identified?"
-   "Identified?" -> "More Recognizer?" [label="No"];
-   "More Recognizer?" -> "Do Recognizer" [label="Yes"];
-   "More Recognizer?" -> "Error and End" [label="No"];
-   "Identified?" -> "Execute or Compile" [label="Yes"];
-   "Execute or Compile" -> "Next Word"
+   create r:fail 
+     ' fail:s , 
+     ' fail:s ,
+     ' fail:s ,
 
-With this structure the text interpreter is the only one that
-takes care of the state and acts on the execution tokens accordingly.
-The final goal is to get a system, that can be used in other forth's
-as well.
+   \ this definition is never used actually
+   : rec-fail ( addr len -- r:fail)
+     r:fail
+   ;
+
+NUMBER
+~~~~~~
+
+The number recognizer identifies numeric data in both
+single and double precision. Depending on the actual
+data width, two different methods tables are returned.
+
+The postpone action follows the standard definitions with
+not allowing to postpone numbers. Instead the number is
+printed and an exception is thrown.
+
+.. code-block:: forth
+
+   create r:intnum
+     ' noop ,
+     ' literal ,
+     :noname . -48 throw ; ,
+
+   create r:intdnum
+     ' noop ,
+     ' 2literal ,
+     :noname d. -48 throw ; ,
+
+   : rec:intnum
+     number if
+      1 = if r:intnum exit then
+      r:intdnum exit
+     then
+     r:fail
+   ;
+
+
+FIND
+~~~~
+
+This recognizer tries to find the word in the dictionary. If
+sucessful, the execution token and the flags are returned. The
+method table contains words to execute and correctly deal with
+immediate words for compiling and postponing.
+
+.. code-block:: forth
+
+   create r:find
+   :noname drop execute ; ,
+   :noname 0< if , exit then execute ; ,
+   :noname 0< if  postpone [compile] then , ; ,
+
+   : rec:find
+     find-name ?dup if
+       r:find exit
+     then 
+     r:fail 
+   ;
+  
+
 
 Stacks
 ------

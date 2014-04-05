@@ -109,9 +109,9 @@
 .include "words/rp0.asm"
 .include "words/depth.asm"
 .include "words/interpret.asm"
-.include "words/rec-intnumber.asm"
-.include "words/rec-find.asm"
-.include "words/rec-notfound.asm"
+.include "words/r-intnumber.asm"
+.include "words/r-find.asm"
+.include "words/r-fail.asm"
 
 .include "words/qstack.asm"
 .include "words/ver.asm"

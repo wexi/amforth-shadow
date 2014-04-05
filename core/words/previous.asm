@@ -10,8 +10,7 @@ XT_PREVIOUS:
     .dw DO_COLON	
 PFA_PREVIOUS:
     .dw XT_GET_ORDER
-    .dw XT_SWAP
-    .dw XT_DROP
+    .dw XT_NIP
     .dw XT_1MINUS
     .dw XT_DUP
     .dw XT_EQUALZERO

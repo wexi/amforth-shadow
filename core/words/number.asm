@@ -19,8 +19,25 @@ PFA_NUMBER:
     .dw XT_R_FROM
     .dw XT_OR
     .dw XT_TO_R
+    ; check whether something is left
+    .dw XT_DUP
+    .dw XT_EQUALZERO
+    .dw XT_DOCONDBRANCH
+    .dw PFA_NUMBER0
+      ; nothing is left. It cannot be a number at all
+      .dw XT_DROP
+      .dw XT_DROP 
+      .dw XT_R_FROm
+      .dw XT_DROP
+      .dw XT_R_FROm
+      .dw XT_BASE
+      .dw XT_STORE
+      .dw XT_ZERO
+      .dw XT_EXIT
+PFA_NUMBER0:
     .dw XT_TO_R
     .dw XT_TO_R
+
     .dw XT_ZERO       ; starting value
     .dw XT_ZERO
     .dw XT_R_FROM
@@ -95,41 +112,15 @@ XT_PRAEFIX:
 PFA_PRAEFIX:        ; ( adr1 len1 -- adr2 len2 ) 
     .dw XT_OVER 
     .dw XT_CFETCH 
-    .dw XT_DOLITERAL
-    .dw $29 
-    .dw XT_GREATER 
-    .dw XT_DOCONDBRANCH
-    .dw PFA_PRAEFIX0 
-    .dw XT_EXIT 
-PFA_PRAEFIX0:
-    .dw XT_OVER 
-    .dw XT_CFETCH 
-    .dw XT_SETBASE
-    .dw XT_DOLITERAL
-    .dw $1 
-    .dw XT_SLASHSTRING 
-    .dw XT_EXIT 
-
-; (c -- ) Numeric IO
-; R( -- )
-; set the BASE value depending on the character
-;VE_SETBASE:
-;    .dw $FF07 
-;    .db "setbase",0
-;    .dw VE_HEAD
-;    .set VE_HEAD = VE_SETBASE
-XT_SETBASE:
-    .dw DO_COLON 
-PFA_SETBASE:        ; ( c -- ) 
     .dw XT_DUP 
     .dw XT_DOLITERAL
     .dw '$' 
     .dw XT_EQUAL 
     .dw XT_DOCONDBRANCH
-    .dw PFA_SETBASE0 
-    .dw XT_DROP 
-    .dw XT_HEX 
-    .dw XT_EXIT 
+    .dw PFA_SETBASE0
+    .dw XT_HEX
+    .dw XT_DOBRANCH
+    .dw PFA_SETBASE_FOUND
 PFA_SETBASE0:
     .dw XT_DUP 
     .dw XT_DOLITERAL
@@ -137,9 +128,9 @@ PFA_SETBASE0:
     .dw XT_EQUAL 
     .dw XT_DOCONDBRANCH
     .dw PFA_SETBASE1 
-    .dw XT_DROP 
     .dw XT_BIN
-    .dw XT_EXIT 
+    .dw XT_DOBRANCH
+    .dw PFA_SETBASE_FOUND
 PFA_SETBASE1:
     .dw XT_DUP 
     .dw XT_DOLITERAL
@@ -147,18 +138,25 @@ PFA_SETBASE1:
     .dw XT_EQUAL 
     .dw XT_DOCONDBRANCH
     .dw PFA_SETBASE2 
-    .dw XT_DROP
     .dw XT_DECIMAL 
-    .dw XT_EXIT 
-PFA_SETBASE2:        ; ( error) 
+    .dw XT_DOBRANCH
+    .dw PFA_SETBASE_FOUND
+PFA_SETBASE2:
+    .dw XT_DUP
     .dw XT_DOLITERAL
     .dw '#'
     .dw XT_EQUAL 
     .dw XT_DOCONDBRANCH
     .dw PFA_SETBASE3 
     .dw XT_DECIMAL 
-    .dw XT_EXIT 
+PFA_SETBASE_FOUND:
+    .dw XT_DROP
+    .dw XT_DOLITERAL
+    .dw 1
+    .dw XT_SLASHSTRING
+    .dw XT_EXIT
 PFA_SETBASE3:
+    .dw XT_DROP
     .dw XT_EXIT 
 
 ; (c -- ) Numeric IO

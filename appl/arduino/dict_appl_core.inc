@@ -1,36 +1,6 @@
 .include "dict_core.inc"
-
 .include "words/store-e.asm"
 .include "words/fetch-e.asm"
-
 .include "words/store-i.asm"
 .include "words/store-i_nrww.asm"
 .include "words/fetch-i.asm"
-.include "dict_interrupt.inc"
-.include "dict_wl.inc"
-.include "dict_mcu.inc"
-.include "words/1ms.asm"
-.include "words/ms.asm"
-
-.include "words/fill.asm"
-.include "words/d-2star.asm"
-.include "words/d-plus.asm"
-.include "words/d-minus.asm"
-.include "words/d-invert.asm"
-.include "words/udot.asm"
-.include "words/dot-s.asm"
-
-.include "words/dotstring.asm"
-.include "words/squote.asm"
-
-.include "words/edefer.asm"
-.include "words/rdefer.asm"
-.include "words/is.asm"
-
-.include "words/applturnkey.asm"
-.include "words/show-wordlist.asm"
-.include "words/words.asm"
-.include "words/udotr.asm"
-.include "words/2to_r.asm"
-.include "words/2r_from.asm"
-.include "dict_counted.inc"

@@ -88,3 +88,10 @@
 .include "words/up.asm"
 .include "words/s_to_d.asm"
 .include "words/not.asm"
+
+.include "words/1ms.asm"
+.include "words/2literal.asm"
+.include "words/2to_r.asm"
+.include "words/2r_from.asm"
+
+.include "dict_core_mcu.inc"

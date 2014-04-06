@@ -1,5 +1,4 @@
 .include "dict_core.inc"
-
 .include "words/store-e.asm"
 .include "words/fetch-e.asm"
 .include "words/store-i.asm"

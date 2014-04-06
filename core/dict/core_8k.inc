@@ -1,3 +1,39 @@
+
+.include "words/n_to_r.asm"
+.include "words/n_r_from.asm"
+
+.include "words/d-2star.asm"
+.include "words/d-2slash.asm"
+.include "words/d-plus.asm"
+.include "words/d-minus.asm"
+.include "words/d-invert.asm"
+.include "words/d-equal.asm"
+.include "words/udot.asm"
+.include "words/udotr.asm"
+.include "words/dot-s.asm"
+
+.include "words/show-wordlist.asm"
+.include "words/words.asm"
+.include "dict_interrupt.inc"
+
+.include "words/pick.asm"
+.include "words/sleep.asm"
+.include "words/is.asm"
+
+.include "words/dotstring.asm"
+.include "words/squote.asm"
+
+.include "words/fill.asm"
+
+.include "words/environment.asm"
+.include "words/env-wordlists.asm"
+.include "words/env-slashpad.asm"
+.include "words/env-slashhold.asm"
+.include "words/env-forthname.asm"
+.include "words/env-forthversion.asm"
+.include "words/env-cpu.asm"
+.include "words/env-mcuinfo.asm"
+.include "words/env-usersize.asm"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 .include "words/f_cpu.asm"
 .include "words/state.asm"
@@ -23,14 +59,6 @@
 .include "words/ehere.asm"
 .include "words/here.asm"
 .include "words/allot.asm"
-
-.include "words/docreate.asm"
-.include "words/backslash.asm"
-.include "words/lparenthesis.asm"
-
-.include "words/compile.asm"
-.include "words/comma.asm"
-.include "words/brackettick.asm"
 
 .include "words/bin.asm"
 .include "words/decimal.asm"

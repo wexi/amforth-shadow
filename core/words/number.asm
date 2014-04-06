@@ -25,11 +25,10 @@ PFA_NUMBER:
     .dw XT_DOCONDBRANCH
     .dw PFA_NUMBER0
       ; nothing is left. It cannot be a number at all
+      .dw XT_2DROP
+      .dw XT_R_FROM
       .dw XT_DROP
-      .dw XT_DROP 
-      .dw XT_R_FROm
-      .dw XT_DROP
-      .dw XT_R_FROm
+      .dw XT_R_FROM
       .dw XT_BASE
       .dw XT_STORE
       .dw XT_ZERO
@@ -37,7 +36,6 @@ PFA_NUMBER:
 PFA_NUMBER0:
     .dw XT_TO_R
     .dw XT_TO_R
-
     .dw XT_ZERO       ; starting value
     .dw XT_ZERO
     .dw XT_R_FROM

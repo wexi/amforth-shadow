@@ -8,5 +8,4 @@
 .include "words/built.asm"
 
 .include "words/reg-a.asm"
-.include "dict_wl.inc"
 

@@ -3,7 +3,7 @@
 ; Remove the 2 top elements
 VE_2DROP:
     .dw $ff05
-    .db "2drop"
+    .db "2drop",0
     .dw VE_HEAD
     .set VE_HEAD = VE_2DROP
 XT_2DROP:

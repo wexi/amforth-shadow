@@ -3,7 +3,7 @@
 ; does the real defer! for ram defers
 VE_RDEFERSTORE:
     .dw $ff07
-    .db "Rdefer!"
+    .db "Rdefer!",0
     .dw VE_HEAD
     .set VE_HEAD = VE_RDEFERSTORE
 XT_RDEFERSTORE:

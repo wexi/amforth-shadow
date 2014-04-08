@@ -3,7 +3,7 @@
 ; does the real defer! for eeprom defers
 VE_EDEFERSTORE:
     .dw $ff07
-    .db "Edefer!"
+    .db "Edefer!",0
     .dw VE_HEAD
     .set VE_HEAD = VE_EDEFERSTORE
 XT_EDEFERSTORE:

@@ -1,3 +1,6 @@
+; ( -- addr )
+; Interpreter
+; Method table for single cell integers
 VE_R_INTNUM:
     .dw $ff08
     .db "r:intnum"
@@ -10,9 +13,12 @@ PFA_R_INTNUM:
     .dw XT_LITERAL ; compile
     .dw XT_FAILNUM ; postpone
 
+; ( -- addr )
+; Interpreter
+; Method table for double cell integers
 VE_R_INTDNUM:
     .dw $ff09
-    .db "r:intdnum"
+    .db "r:intdnum",0
     .dw VE_HEAD
     .set VE_HEAD = VE_R_INTDNUM
 XT_R_INTDNUM:
@@ -22,6 +28,9 @@ PFA_R_INTDNUM:
     .dw XT_2LITERAL ; compile
     .dw XT_FAILDNUM ; postpone
 
+; ( -- addr )
+; Interpreter
+; Method to print a number and throw exception 
 VE_FAILNUM:
     .dw $ff06
     .db "fail:i"
@@ -36,6 +45,9 @@ PFA_FAILNUM:
     .dw XT_THROW
     .dw XT_EXIT
 
+; ( -- addr )
+; Interpreter
+; Method to print a double cell number and throw exception 
 VE_FAILDNUM:
     .dw $ff06
     .db "fail:d"

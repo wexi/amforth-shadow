@@ -3,7 +3,7 @@
 ; does the real defer@ for user based defers
 VE_UDEFERFETCH:
     .dw $ff07
-    .db "Udefer@"
+    .db "Udefer@",0
     .dw VE_HEAD
     .set VE_HEAD = VE_UDEFERFETCH
 XT_UDEFERFETCH:

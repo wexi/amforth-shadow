@@ -3,7 +3,7 @@
 ; Get an array from EEPROM
 VE_N_FETCH_E:
     .dw $ff03
-    .db "n@e"
+    .db "n@e",0
     .dw VE_HEAD
     .set VE_HEAD = VE_N_FETCH_E
 XT_N_FETCH_E:

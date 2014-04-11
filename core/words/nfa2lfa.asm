@@ -9,10 +9,7 @@ VE_NFA2LFA:
 XT_NFA2LFA:
     .dw DO_COLON
 PFA_NFA2LFA:
-    .dw XT_ICOUNT 
-    .dw XT_DOLITERAL
-    .dw $00ff
-    .dw XT_AND
+    .dw XT_NAME2STRING
     .dw XT_1PLUS
     .dw XT_2SLASH
     .dw XT_PLUS

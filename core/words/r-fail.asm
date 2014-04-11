@@ -1,6 +1,6 @@
-
-; there is no parser for this recognizer
-; this is the default and failsave part
+; ( -- addr )
+; Interpreter
+; there is no parser for this recognizer, this is the default and failsafe part
 VE_R_FAIL:
     .dw $ff06
     .db "r:fail"

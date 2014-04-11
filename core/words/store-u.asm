@@ -1,6 +1,6 @@
-; ( n addr -- ) 
+; ( n offset -- ) 
 ; Memory
-; write n to RAM memory at addr, low byte first
+; write n to USER area at offset
 VE_STOREU:
     .dw $ff02
     .db "!u"

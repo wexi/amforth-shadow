@@ -19,6 +19,9 @@ PFA_REC_FIND_NOTFOUND:
     .dw XT_R_FAIL
     .dw XT_EXIT
 
+; ( addr len -- f )
+; Interpreter
+; Methode table for find recognizer
 VE_R_FIND:
     .dw $ff06
     .db "r:find"

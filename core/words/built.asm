@@ -1,5 +1,5 @@
-; ( -- ) System
-; R( -- )
+; ( -- ) 
+; System
 ; prints the date and time the hex file was generated
 VE_BUILT:
     .dw $ff05

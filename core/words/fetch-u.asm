@@ -1,6 +1,6 @@
-; ( a-addr -- n ) 
+; ( offset -- n ) 
 ; Memory
-; read 1 cell from RAM address
+; read 1 cell from USER area
 VE_FETCHU:
     .dw $ff02
     .db "@u"

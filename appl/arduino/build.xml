@@ -9,12 +9,22 @@
 	<target name="uno" depends="uno.hex" description="Arduino UNO Board www.arduino.cc">
 	        <echo>Uploading Hexfiles to Arduino UNO</echo>
 		<avrdude 
-		    type="stk200"
+		    type="avrisp2"
 		    mcu="m328p"
 		    flashfile="uno.hex"
 		    eepromfile="uno.eep.hex"
 		/>
 	</target>
+        <target name="uno.fuses" description="Set fuses for UNO">
+	<echo>Writing fuses</echo>
+	<avrdude-3fuses
+		    type="avrisp2"
+		    mcu="m328p"
+		    efuse="0x05"
+		    hfuse="0xd9"
+		    lfuse="0xff"
+	/>
+    </target>
 
 	<target name="leonardo.hex" description="Hexfiles for Arduino Leonardo (Atmega 32U4) www.arduino.cc">
 		<avrasm2 projectname="leonardo" mcu="atmega32u4"/>
@@ -41,20 +51,6 @@
 		    mcu="m1280"
 		    flashfile="mega128.hex"
 		    eepromfile="mega128.eep.hex"
-		/>
-	</target>
-
-	<target name="sanguino.hex" description="Hexfiles for Sanguino Board (Atmega644p) sanguino.cc">
-		<avrasm2 projectname="sanguino" mcu="atmega644p"/>
-	</target>
-
-	<target name="sanguino" depends="sanguino.hex" description="Sangiono Board sanguino.cc">
-	        <echo>Uploading Hexfiles to Arduino Mega</echo>
-		<avrdude 
-		    type="avrisp2"
-		    mcu="m644p"
-		    flashfile="sanguino.hex"
-		    eepromfile="sanguino.eep.hex"
 		/>
 	</target>
 
@@ -86,6 +82,5 @@
 		/>
 	</target>
 
-    <target name="compile" depends="sanguino.hex, mega128.hex, duemilanove.hex, leonardo.hex">
-    </target>
+    <target name="compile" depends="uno.hex, mega128.hex, duemilanove.hex, leonardo.hex"/>
 </project>

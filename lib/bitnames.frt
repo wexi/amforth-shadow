@@ -21,8 +21,6 @@
 \ PD.F pin@              ( get the lower nibble bits )
 \ 5 PD.F pin!            ( put the lower nibble bits, do not change the others )
 
-hex
-
 : bitmask: create ( C: "ccc" portadr bmask -- ) ( R: -- pinmask portadr )
      , ,
   does> 
@@ -64,7 +62,7 @@ hex
 \ pulse the pin
 : pulse ( pinmask portaddr time -- )
     >r
-    over over high 
+    2dup high 
     r> 0 ?do 1ms loop 
     low 
 ;
@@ -79,14 +77,14 @@ hex
 
 : wait_low ( pinmask portaddr -- )
     begin 
-      over over is_low?
-    until drop drop
+      2dup is_low?
+    until 2drop
 ;
 
-: wait_high ( pinmask portaddr -- )
+: wait_high_all ( pinmask portaddr -- )
     begin 
-      over over is_high?
-    until drop drop
+      2dup is_high?
+    until 2drop
 ;
  
 \ write the pins masked as output
@@ -135,7 +133,7 @@ hex
 
 \ toggle the pin
 : toggle ( pinmask portaddr -- )
-  over over pin_high? if
+  2dup pin_high? if
     low
   else
     high
@@ -144,11 +142,11 @@ hex
 
 \ disable the pull up resistor
 : pin_pullup_off ( pinmask portaddr -- )
-  over over pin_input low
+  2dup pin_input low
 ;
 
 
 \ enable the pull up resistor
 : pin_pullup_on ( pinmask portaddr -- )
-  over over pin_input high
+  2dup pin_input high
 ;

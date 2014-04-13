@@ -1,6 +1,6 @@
 ;;; amforth.el --- major mode for editing AmForth sources
 
-;; Copyright (C) 1995,1996,1997,1998,2000,2001,2003,2004,2007,2008,2010,2011,2012 Free Software Foundation, Inc.
+;; Copyright (C) 1995,1996,1997,1998,2000,2001,2003,2004,2007,2008,2010,2011,2012,2013 Free Software Foundation, Inc.
 
 ;; ----------------------------------------------------------------------
 
@@ -557,9 +557,7 @@ End:\" construct).")
 			sub 
 			)) 
 		    mapped)))
-    (let ((result (cons regexp sub-list)))
-      ;(byte-compile 'result)
-      result)))
+    (cons regexp sub-list)))
 
 (defun forth-compile-words ()
   "Compile the the words from `forth-words' and `forth-indent-words' into

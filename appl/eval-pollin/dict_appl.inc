@@ -6,6 +6,6 @@
 .include "words/n-spi.asm"
 .include "words/applturnkey.asm"
 .include "words/built.asm"
+.include "words/git-info.asm"
 
-.include "words/reg-a.asm"
-
+.include "dict_compiler2.inc"

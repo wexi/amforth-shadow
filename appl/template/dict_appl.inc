@@ -7,12 +7,21 @@
 
 ; if you defined your own wordlist in dict_appl_core,
 ; you'll have to configure and add the remaining words
-; here as well. In this case do *not* use dict_mcu.inc
+; here as well. In this case do *not* use 'dict_mcu.inc''
 ; here. 
 
 .include "dict_mcu.inc"
 
-; turnkey is always needed and application spedcific
+; The file dict_compiler2.inc contains a number of
+; non-essential words with compiler functionality.
+; It is recoomended but not strictly necessairy
+; to include it. It is already included by default
+; on atmegas with 8k boot loader sections, but it is
+; safe to include this file twice.
+
+.include "dict_compiler2.inc"
+
+; turnkey is always needed and application specific
 .include "words/applturnkey.asm"
 
 ; print the date and time the amforth hex files are created

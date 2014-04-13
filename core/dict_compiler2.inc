@@ -2,6 +2,8 @@
 ; included almost independently from each other
 ; on a include-per-use basis
 ;
+.if DICT_COMPILER2 == 0
+.set DICT_COMPILER2 = 1
 
 .include "words/set-current.asm"
 .include "words/previous.asm"
@@ -20,3 +22,4 @@
 .include "words/end-code.asm"
 .include "words/marker.asm"
 .include "words/postpone.asm"
+.endif

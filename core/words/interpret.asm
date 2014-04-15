@@ -10,7 +10,7 @@ XT_INTERPRET:
     .dw DO_COLON
 PFA_INTERPRET:
     .dw XT_PARSENAME ; ( -- addr len )
-    .dw XT_QDUP   ; ( -- addr len len )
+    .dw XT_QDUP   ; ( -- addr len len | addr 0)
     .dw XT_DOCONDBRANCH
     .dw PFA_INTERPRET5
     .dw XT_DORECOGNIZERS

@@ -5,6 +5,14 @@ get-current
 help-wl set-current
 \ 
 
+\ 
+:  
+ ."  " 
+ ."  " 
+ ; 
+
+\  
+
 \ XT_ICOUNT
 : icount 
  ." ( addr -- addr+1 n ) " 
@@ -20,20 +28,15 @@ help-wl set-current
  ." ( xt i -- ) " 
  ."  stores XT as interrupt vector i " 
  ; 
-\ XT_ISREND
-: isr-end 
- ." ( --  ) " 
- ."  re-enables interrupts in an ISR " 
- ; 
 \ XT_NUMINT
 : #int 
  ." ( -- n ) " 
  ."  number of interrupt vectors (0 based) " 
  ; 
-\ XT_RXQ
-: rx? 
+\ XT_RXQ_ISR
+: rx?-isr 
  ." ( -- f) " 
- ."  check if unread characters are in the input queue. " 
+ ."  check if unread characters are in the input queue using interrupt dri " 
  ; 
 
 \ (C: "<space>name" -- )
@@ -42,6 +45,11 @@ help-wl set-current
 : [char] 
  ." ( -- c ) " 
  ."  skip leading space delimites, place the first character of the word o " 
+ ; 
+\ XT_BRACKETCOMPILE
+: [compile] 
+ ." ( -- c ) " 
+ ."  skip leading space delimites, place the first COMPILEacter of the wor " 
  ; 
 
 \ (C: "<space>name" -- ) 
@@ -54,18 +62,20 @@ help-wl set-current
 
 \ (C: "<spaces>name" -- )
 
+\ XT_COLON
+: : 
+ ." ( -- ) " 
+ ."  create a named entry in the dictionary, XT is DO_COLON " 
+ ; 
 \ XT_CREATE
 : create 
  ." ( -- a-addr ) " 
  ."  create a dictionary header. XT is (constant), with the address of the " 
  ; 
-
-\ (C: "<spaces>name" -- colon-sys )
-
-\ XT_COLON
-: : 
- ." (R: -- nest-sys ) " 
- ."  create named entry in the dictionary, XT is COLON " 
+\ XT_DOCREATE
+: (create) 
+ ." ( --  ) " 
+ ."  parse the input and create an empty vocabulary entry without XT and d " 
  ; 
 
 \ (C: "ccc<quote>" -- )
@@ -79,14 +89,6 @@ help-wl set-current
 : ." 
  ." ( -- ) " 
  ."  compiles string into dictionary to be printed at runtime " 
- ; 
-
-\ (C: -- colon-sys )
-
-\ XT_COLONNONAME
-: :noname 
- ." ( -- xt ) (R: -- nest-sys) " 
- ."  create unnamed entry in the dictionary, XT is COLON " 
  ; 
 
 \ (C: -- dest ) 
@@ -115,6 +117,11 @@ help-wl set-current
 
 \ (C: -- orig )
 
+\ XT_AHEAD
+: ahead 
+ ." ( f -- ) " 
+ ."  do a unconditional branch " 
+ ; 
 \ XT_IF
 : if 
  ." ( f -- ) " 
@@ -137,20 +144,12 @@ help-wl set-current
  ."  create named entry in the dictionary, XT is the data field " 
  ; 
 
-\ (C: colon-sys -- )
-
-\ XT_SEMICOLON
-: ; 
- ." ( -- )  (R: nest-sys -- ) " 
- ."  finish colon defintion, compiles (exit) and returns to interpreter st " 
- ; 
-
 \ (C: colon-sys1 -- colon-sys2 )
 
 \ XT_DOES
 : does> 
  ." ( i*x -- j*y ) (R: nest-sys1 -- ) " 
- ."  replace the runtime semantics " 
+ ."  organize the XT replacement to call other colon code " 
  ; 
 
 \ (C: dest -- ) 
@@ -227,7 +226,7 @@ help-wl set-current
 \ XT_2LITERAL
 : 2literal 
  ." ( -- x1 x2 ) " 
- ."  compile a cell pair literal in colon defintions " 
+ ."  compile a cell pair literal in colon definitions " 
  ; 
 
 \ (R: -- n)
@@ -256,11 +255,6 @@ help-wl set-current
 
 \ (R: -- xn .. x0 n)
 
-\ XT_N_R_FROM
-: nr> 
- ." ( xn .. x0 n -- ) " 
- ."  move n items from data stack to return stack " 
- ; 
 \ XT_N_TO_R
 : n>r 
  ." ( xn .. x0 n -- ) " 
@@ -272,7 +266,12 @@ help-wl set-current
 \ XT_INTERPRET
 : interpret 
  ." ( -- ) " 
- ."  interpret input word by word. may throw exceptions " 
+ ."  interpret input word by word. " 
+ ; 
+\ XT_INTERPRET
+: interpret 
+ ." ( -- ) " 
+ ."  interpret input word by word. " 
  ; 
 
 \ (R: j*y -- )
@@ -355,16 +354,37 @@ help-wl set-current
  ."  move DTOR to TOS " 
  ; 
 
+\ (R: xn .. x0 n -- )
+
+\ XT_N_R_FROM
+: nr> 
+ ." ( -- xn .. x0 n ) " 
+ ."  move n items from return stack to data stack " 
+ ; 
+
 \ MCU
 
-\ XT_TXQ
-: tx? 
- ." (-- f) " 
- ."  check if a character can be appended to output queue. " 
+\ XT_TXQ_POLL
+: tx?-poll 
+ ." ( -- f) " 
+ ."  check if a character can be send using register poll " 
+ ; 
+
+\ flag ) 
+
+\ XT_DIGITQ
+: digit? 
+ ." ( c -- (number|) " 
+ ."  tries to convert a character to a number, set flag accordingly " 
  ; 
 
 \ internal/hidden
 
+\ XT_DO2LITERAL
+: (2literal) 
+ ." (-- x1 x2 ) " 
+ ."  runtime of 2literal " 
+ ; 
 \ XT_DOBRANCH
 : (branch) 
  ." (-- ) " 
@@ -380,11 +400,6 @@ help-wl set-current
  ." (-- addr ) " 
  ."  place data field address on TOS " 
  ; 
-\ XT_DOCREATE
-: (create) 
- ." ( --  ) " 
- ."  creates the vocabulary header without XT and data field (PF) " 
- ; 
 \ XT_DODO
 : (do) 
  ." ( limit counter -- ) " 
@@ -393,22 +408,12 @@ help-wl set-current
 \ XT_DODOES
 : (does>) 
  ." (-- ) " 
- ."  runtime of does> " 
- ; 
-\ XT_DOEDEFER
-: (defer) 
- ." (i*x -- j*x ) " 
- ."  runtime of defer " 
+ ."  replace the XT written by CREATE to call the code that follows does> " 
  ; 
 \ XT_DOLITERAL
 : (literal) 
  ." (-- n1 ) " 
  ."  runtime of literal " 
- ; 
-\ XT_DOLITERAL2
-: (2literal) 
- ." (-- x1 x2 ) " 
- ."  runtime of 2literal " 
  ; 
 \ XT_DOLOOP
 : (loop) 
@@ -430,6 +435,21 @@ help-wl set-current
  ." (-- addr) " 
  ."  user variable of the address of the initial return stack " 
  ; 
+\ XT_DOSCOMMA
+: (s,) 
+ ." (addr len len' -- ) " 
+ ."  compiles a string from RAM to Flash " 
+ ; 
+\ XT_DOSLITERAL
+: (sliteral) 
+ ." (-- addr len ) " 
+ ."  runtime portion of sliteral " 
+ ; 
+\ XT_DOTO
+: (to) 
+ ." ( n -- ) " 
+ ."  runtime portion of to " 
+ ; 
 \ XT_DOUSER
 : (user) 
  ." (-- addr ) " 
@@ -439,16 +459,6 @@ help-wl set-current
 : (variable) 
  ." (-- addr ) " 
  ."  puts content of parameter field (1 cell) to TOS " 
- ; 
-\ XT_EDEFERFETCH
-: Edefer@ 
- ." (xt1 -- xt2 ) " 
- ."  does the real defer@ for eeprom defers " 
- ; 
-\ XT_EDEFERSTORE
-: Edefer! 
- ." (xt1 xt2 -- ) " 
- ."  does the real defer! for eeprom defers " 
  ; 
 \ XT_GMARK
 : >mark 
@@ -465,15 +475,30 @@ help-wl set-current
  ." (w -- ) " 
  ."  content of cell fetched on stack. " 
  ; 
-\ XT_INTRESTORE
-: int_restore 
- ." (sreg -- ) " 
- ."  restores SREG from TOS " 
+\ XT_ICOMPARELC
+: icompare-lower 
+ ." (cc1 cc2 -- f) " 
+ ."  compares two packed characters  " 
+ ; 
+\ XT_ISREND
+: isr-end 
+ ." ( --  ) " 
+ ."  re-enables interrupts in an ISR " 
+ ; 
+\ XT_ISREXEC
+: isr-exec 
+ ." (xt -- ) " 
+ ."  executes an interrupt service routine " 
  ; 
 \ XT_LMARK
 : <mark 
  ." (-- dest ) " 
  ."  place destination for backward branch " 
+ ; 
+\ XT_LOWEMIT
+: lowemit 
+ ." (w -- ) " 
+ ."  content of cell fetched on stack. " 
  ; 
 \ XT_LRESOLVE
 : <resolve 
@@ -500,49 +525,24 @@ help-wl set-current
  ." (-- ) " 
  ."  send the READY prompt to the command line " 
  ; 
-\ XT_RDEFERFETCH
-: Rdefer@ 
- ." (xt1 -- xt2 ) " 
- ."  does the real defer@ for ram defers " 
- ; 
-\ XT_RDEFERSTORE
-: Rdefer! 
- ." (xt1 xt2 -- ) " 
- ."  does the real defer! for ram defers " 
- ; 
 \ XT_SETBASE
 : setbase 
  ." (c -- ) " 
  ."  set the BASE value depending on the character " 
  ; 
-\ XT_UDEFERFETCH
-: Udefer@ 
- ." (xt1 -- xt2 ) " 
- ."  does the real defer@ for user based defers " 
- ; 
-\ XT_UDEFERSTORE
-: Udefer! 
- ." (xt1 xt2 -- ) " 
- ."  does the real defer! for user based defers " 
+\ XT_SKIPSCANCHAR
+: skipscanchar 
+ ." (c -- addr2 len2 ) " 
+ ."  skips char and scan what's left in source for char " 
  ; 
 \ XT_USART_INIT_RX
 : +usart 
- ." ( -- ) " 
+ ." (-- ) " 
  ."  initialize usart " 
  ; 
-\ XT_USART_INIT_RX
+\ XT_USART_INIT_TX_POLL
 : +usart 
- ." ( -- ) " 
- ."  initialize usart " 
- ; 
-\ XT_USART_INIT_TX
-: +usart 
- ." ( -- ) " 
- ."  initialize usart " 
- ; 
-\ XT_USART_INIT_TX
-: +usart 
- ." ( -- ) " 
+ ." (-- ) " 
  ."  initialize usart " 
  ; 
 
@@ -563,10 +563,25 @@ help-wl set-current
  ." (n1|u1 -- n2|u2 ) " 
  ."  optimized increment " 
  ; 
+\ XT_2DROP
+: 2drop 
+ ." (x1 x2 --  ) " 
+ ."  Remove the 2 top elements " 
+ ; 
+\ XT_2DUP
+: 2dup 
+ ." (x1 x2 -- x1 x2 x1 x2 ) " 
+ ."  Duplicate the 2 top elements " 
+ ; 
 \ XT_2SLASH
 : 2/ 
  ." (n1 -- n2 ) " 
  ."  arithmetic shift right " 
+ ; 
+\ XT_2SPIRW
+: !@spi 
+ ." (n1 -- n2 ) " 
+ ."  SPI exchange of 2 bytes, high byte first " 
  ; 
 \ XT_2STAR
 : 2* 
@@ -648,16 +663,6 @@ help-wl set-current
  ." (-- a-addr ) " 
  ."  location of the cell containing the number conversion radix " 
  ; 
-\ XT_BAUD
-: baud 
- ." (-- v) " 
- ."  returns usart baudrate " 
- ; 
-\ XT_BAUD
-: baud 
- ." (-- v) " 
- ."  returns usart baudrate " 
- ; 
 \ XT_BFETCH
 : b@ 
  ." (-- n2 ) " 
@@ -683,6 +688,26 @@ help-wl set-current
  ." (-- 32 ) " 
  ."  put ascii code of the blank to the stack " 
  ; 
+\ XT_BM_CLEAR
+: bm-clear 
+ ." (bitmask byte-addr --  ) " 
+ ."  clear bits set in bitmask on byte at addr " 
+ ; 
+\ XT_BM_SET
+: bm-set 
+ ." (bitmask byte-addr --  ) " 
+ ."  set bits from bitmask on byte at addr " 
+ ; 
+\ XT_BM_TOGGLE
+: bm-toggle 
+ ." (bitmask byte-addr --  ) " 
+ ."  toggle bits set in bitmask on byte at addr " 
+ ; 
+\ XT_BOUNDS
+: bounds 
+ ." (n1 n2 -- n2 n1 n2 ) " 
+ ."  Copy the first (top) stack item below the second stack item.  " 
+ ; 
 \ XT_BSTORE
 : b! 
  ." (n -- ) " 
@@ -698,6 +723,11 @@ help-wl set-current
  ." (-- n2 ) " 
  ."  Write memory pointed to by register B, increment B by 1 cell (Extende " 
  ; 
+\ XT_BUILT
+: built 
+ ." (-- ) " 
+ ."  prints the date and time the hex file was generated " 
+ ; 
 \ XT_BYTESWAP
 : >< 
  ." (n1 -- n2 ) " 
@@ -707,6 +737,11 @@ help-wl set-current
 : b> 
  ." (n1 -- n2 ) " 
  ."  read the B register (Extended VM) " 
+ ; 
+\ XT_CAS
+: cas 
+ ." (new old addr -- f ) " 
+ ."  Atomic Compare and Swap: store new at addr and set f to true if conte " 
  ; 
 \ XT_CATCH
 : catch 
@@ -748,20 +783,25 @@ help-wl set-current
  ." (-- ) " 
  ."  start up amforth. " 
  ; 
+\ XT_COLONNONAME
+: :noname 
+ ." (-- xt ) " 
+ ."  create an unnamed entry in the dictionary, XT is DO_COLON " 
+ ; 
 \ XT_COMMA
-: , 
+:  
  ." (n -- ) " 
  ."  compile 16 bit into flash at DP " 
+ ; 
+\ XT_COMPARE
+: compare 
+ ." (r-addr r-len f-addr f-len --  f) " 
+ ."  compares two strings in RAM " 
  ; 
 \ XT_COMPILE
 : compile 
  ." (-- ) " 
- ."  append the the next flash cell to flash at DP " 
- ; 
-\ XT_COUNT
-: count 
- ." (c-addr1 -- c-addr2 n) " 
- ."  c-addr1 is the address of a counted string in RAM " 
+ ."  read the following cell from the dictionary and append it to the curr " 
  ; 
 \ XT_CR
 : cr 
@@ -771,7 +811,7 @@ help-wl set-current
 \ XT_CSCAN
 : cscan 
  ." (addr1 n1 c -- addr1 n2 ) " 
- ."  Scan string at addr1/n1 for the first c, leaving addr1/n2, char at n2 " 
+ ."  Scan string at addr1/n1 for the first occurance of c, leaving addr1/n " 
  ; 
 \ XT_CSKIP
 : cskip 
@@ -805,13 +845,13 @@ help-wl set-current
  ; 
 \ XT_DDOT
 : d. 
- ." (d1 -- ) " 
- ."  double cell output " 
+ ." (d -- ) " 
+ ."  singed PNO with double cell numbers " 
  ; 
 \ XT_DDOTR
 : d.r 
- ." (d1 n -- ) " 
- ."  double cell output, right aligned into n characters, filled up with s " 
+ ." (d w -- ) " 
+ ."  singed PNO with double cell numbers, right aligned in width w " 
  ; 
 \ XT_DECIMAL
 : decimal 
@@ -843,25 +883,20 @@ help-wl set-current
  ." (n1 n2 -- flag ) " 
  ."  compares two double cell values " 
  ; 
-\ XT_DGREATER
-: d> 
- ." (d1 d2 -- flag ) " 
- ."  compares two double cell values (signed) " 
- ; 
-\ XT_DIGITQ
-: digit? 
- ." (c base -- number flag ) " 
- ."  tries to convert a character to a number, set flag accordingly " 
+\ XT_DGREATERZERO
+: d0> 
+ ." (d -- flag ) " 
+ ."  compares if a double double cell number is greater 0 " 
  ; 
 \ XT_DINVERT
 : dinvert 
  ." (d1 -- d2) " 
  ."  invert all bits in the double cell value " 
  ; 
-\ XT_DLESS
-: d< 
- ." (d1 d2 -- flag) " 
- ."  checks whether d1 is less than d2 " 
+\ XT_DLESSZERO
+: d0< 
+ ." (d -- flag ) " 
+ ."  compares if a double double cell number is less than 0 " 
  ; 
 \ XT_DMINUS
 : d- 
@@ -873,45 +908,40 @@ help-wl set-current
  ." (d1 -- d2 ) " 
  ."  double cell negation " 
  ; 
-\ XT_DOSCOMMA
-: (s,) 
- ." ; Compiler " 
- ."  compiles a string from RAM to Flash " 
- ; 
-\ XT_DOSP0
-: (sp0) 
- ." ; Stack " 
- ."  start address of the data stack " 
+\ XT_DOEDEFER
+: (defer) 
+ ." (i*x -- j*x ) " 
+ ."  runtime of defer " 
  ; 
 \ XT_DOT
 : . 
  ." (n -- ) " 
- ."  single cell numeric output " 
- ; 
-\ XT_DOTO
-: (to) 
- ." ; Tools " 
- ."  store the TOS to the named value (eeprom cell) " 
+ ."  singed PNO with single cell numbers " 
  ; 
 \ XT_DOTR
 : .r 
  ." (n w -- ) " 
- ."  single cell numeric output " 
+ ."  singed PNO with single cell numbers, right aligned in width w " 
  ; 
 \ XT_DOTS
 : .s 
  ." (-- ) " 
  ."  stack dump " 
  ; 
+\ XT_DOVALUE
+: (value) 
+ ." (-- n ) " 
+ ."  runtime of value " 
+ ; 
 \ XT_DO_STOREI_NRWW
 : (!i-nrww) 
  ." (n f-addr -- ) " 
- ."  writes a cell in flash using assembly code " 
+ ."  writes n to flash memory using assembly code (code to be placed in bo " 
  ; 
 \ XT_DO_STOREI_NVM
 : (!i-nvm) 
  ." (n f-addr -- ) " 
- ."  writes a cell in flash using NVM (atxmega) " 
+ ."  writes n to flash at f-addr using NVM (ATXmega) " 
  ; 
 \ XT_DP
 : dp 
@@ -938,10 +968,15 @@ help-wl set-current
  ." (c<name> -- ) " 
  ."  creates a defer vector which is kept in eeprom. " 
  ; 
-\ XT_EDP
-: edp 
- ." (-- e-addr ) " 
- ."  address of the first unused address in eeprom " 
+\ XT_EDEFERFETCH
+: Edefer@ 
+ ." (xt1 -- xt2 ) " 
+ ."  does the real defer@ for eeprom defers " 
+ ; 
+\ XT_EDEFERSTORE
+: Edefer! 
+ ." (xt1 xt2 -- ) " 
+ ."  does the real defer! for eeprom defers " 
  ; 
 \ XT_EE2RAM
 : ee>ram 
@@ -953,10 +988,15 @@ help-wl set-current
  ." (-- v) " 
  ."  address of the default user area content in eeprom " 
  ; 
+\ XT_EHERE
+: ehere 
+ ." (-- e-addr ) " 
+ ."  address of the next free address in eeprom " 
+ ; 
 \ XT_ELSE
 : else 
  ." (C: orig1 -- orig2 ) " 
- ."  resolve the forware reference and place a new unresolved forward refe " 
+ ."  resolve the forward reference and place a new unresolved forward refe " 
  ; 
 \ XT_EMIT
 : emit 
@@ -977,11 +1017,6 @@ help-wl set-current
 : environment 
  ." (-- wid) " 
  ."  word list identifier of the environmental search list " 
- ; 
-\ XT_ENVIRONMENTQ
-: environment? 
- ." (addr len -- 0 | i*x -1 ) " 
- ."  get environment information " 
  ; 
 \ XT_ENVSLASHHOLD
 : /hold 
@@ -1015,8 +1050,13 @@ help-wl set-current
  ; 
 \ XT_ENV_FORTHVERSION
 : version 
+ ." (-- n ) " 
+ ."  version number of amforth " 
+ ; 
+\ XT_ENV_MCUINFO
+: mcu-info 
  ." (-- faddr len ) " 
- ."  flash address of the amforth version string " 
+ ."  flash address of some CPU specific parameters " 
  ; 
 \ XT_EQUAL
 : = 
@@ -1028,15 +1068,25 @@ help-wl set-current
  ." (n -- flag ) " 
  ."  compare with 0 (zero) " 
  ; 
-\ XT_EWORDS
-: ewords 
- ." (-- ) " 
- ."  prints a list of all words in the environment " 
- ; 
 \ XT_EXECUTE
 : execute 
  ." (xt -- ) " 
  ."  execute XT " 
+ ; 
+\ XT_FAILDNUM
+: fail:d 
+ ." (-- addr ) " 
+ ."  Method to print a double cell number and throw exception  " 
+ ; 
+\ XT_FAILNUM
+: fail:i 
+ ." (-- addr ) " 
+ ."  Method to print a number and throw exception  " 
+ ; 
+\ XT_FAILS
+: fail:s 
+ ."     .dw XT_FAILS  ; postpone " 
+ ."  fail action for a string " 
  ; 
 \ XT_FETCH
 : @ 
@@ -1051,22 +1101,27 @@ help-wl set-current
 \ XT_FETCHENVM
 : @e 
  ." (e-addr - n) " 
- ."  read 1 cell from eeprom using NVM " 
+ ."  read 1 cell from eeprom using NVM (ATXmega) " 
  ; 
 \ XT_FETCHI
 : @i 
  ." (f-addr -- n1 ) " 
- ."  reads 1 cell from flash " 
+ ."  read 1 cell from flash " 
+ ; 
+\ XT_FETCHU
+: @u 
+ ." (offset -- n ) " 
+ ."  read 1 cell from USER area " 
  ; 
 \ XT_FILL
 : fill 
  ." (a-addr u c -- ) " 
  ."  fill u bytes memory beginning at a-addr with character c " 
  ; 
-\ XT_FIND
-: find 
- ." (addr -- [ addr 0 ] | [ xt [-1|1]] ) " 
- ."  search wordlists " 
+\ XT_FINDNAME
+: find-name 
+ ." (addr len --  0 | xt -1 | xt 1 ) " 
+ ."  search wordlists for the name from string addr/len " 
  ; 
 \ XT_FORTH
 : forth 
@@ -1083,15 +1138,20 @@ help-wl set-current
  ." (-- d ) " 
  ."  put the cpu frequency in Hz on stack " 
  ; 
+\ XT_F_CPU
+: f_cpu 
+ ." (-- d ) " 
+ ."  put the cpu frequency in Hz on stack " 
+ ; 
+\ XT_F_CPU
+: f_cpu 
+ ." (-- d ) " 
+ ."  put the cpu frequency in Hz on stack " 
+ ; 
 \ XT_GET_CURRENT
 : get-current 
  ." (-- wid) " 
  ."  get the wid of the current compilation word list " 
- ; 
-\ XT_GET_EE_ARRAY
-: get-e-array 
- ." (ee-addr -- itemn .. item0 n) " 
- ."  Get an array of cells from EEPROM " 
  ; 
 \ XT_GET_ORDER
 : get-order 
@@ -1100,7 +1160,7 @@ help-wl set-current
  ; 
 \ XT_GET_RECOGNIZER
 : get-recognizer 
- ." (-- widn .. wid0 n) " 
+ ." (-- recn .. rec0 n) " 
  ."  Get the current recognizer list " 
  ; 
 \ XT_GREATER
@@ -1122,6 +1182,11 @@ help-wl set-current
 : handler 
  ." (-- a-addr ) " 
  ."  USER variable used by catch/throw " 
+ ; 
+\ XT_HEADER
+: header 
+ ." (addr len wid -- nfa ) " 
+ ."  creates the vocabulary header without XT and data field (PF) in the w " 
  ; 
 \ XT_HERE
 : here 
@@ -1148,16 +1213,6 @@ help-wl set-current
  ." (r-addr r-len f-addr f-len --  f) " 
  ."  compares string in RAM with string in flash " 
  ; 
-\ XT_ICOMPARE
-: icompare 
- ." (r-addr r-len f-addr f-len --  f) " 
- ."  compares string in RAM with string in flash " 
- ; 
-\ XT_ICOMPARE
-: icompare 
- ." (r-addr r-len f-addr f-len --  f) " 
- ."  compares string in RAM with string in flash " 
- ; 
 \ XT_IMMEDIATE
 : immediate 
  ." (-- ) " 
@@ -1175,8 +1230,8 @@ help-wl set-current
  ; 
 \ XT_INTOFF
 : -int 
- ." (-- sreg ) " 
- ."  turns off all interrupts and leaves SREG in TOS " 
+ ." (-- ) " 
+ ."  turns off all interrupts  " 
  ; 
 \ XT_INTTRAP
 : int-trap 
@@ -1193,11 +1248,6 @@ help-wl set-current
  ." (xt1 c<char> -- ) " 
  ."  stores xt into defer or compiles code to do so at runtime " 
  ; 
-\ XT_ISREXEC
-: isr-exec 
- ." (xt -- ) " 
- ."  executes an interrupt service routine " 
- ; 
 \ XT_ITYPE
 : itype 
  ." (addr n --  ) " 
@@ -1213,10 +1263,15 @@ help-wl set-current
  ." (-- f) " 
  ."  fetch key? vector and execute it. should turn on key sender, if it is " 
  ; 
+\ XT_LATEST
+: latest 
+ ." (-- addr ) " 
+ ."  system LATEST " 
+ ; 
 \ XT_LBRACKET
 : [ 
  ." (--  ) " 
- ."  enter interpretation state " 
+ ."  enter interpreter mode " 
  ; 
 \ XT_LESSZERO
 : 0< 
@@ -1242,6 +1297,11 @@ help-wl set-current
 : <# 
  ." (-- ) " 
  ."  initialize the pictured numeric output conversion process " 
+ ; 
+\ XT_MARKER
+: (marker) 
+ ." (-- ) " 
+ ."  Duplicate first entry in the current search order list " 
  ; 
 \ XT_MAX
 : max 
@@ -1278,6 +1338,11 @@ help-wl set-current
  ." (n1 -- n2 ) " 
  ."  Read memory pointed to by register A plus offset (Extended VM) " 
  ; 
+\ XT_NAME2STRING
+: name>string 
+ ." (nt -- addr len ) " 
+ ."  get a (flash) string from a name token nt " 
+ ; 
 \ XT_NASTORE
 : na! 
  ." (n offs -- ) " 
@@ -1298,15 +1363,15 @@ help-wl set-current
  ." (n1 -- n2 ) " 
  ."  2-complement " 
  ; 
+\ XT_NFA2LFA
+: nfa>lfa 
+ ." (nfa -- lfa ) " 
+ ."  get the link field address from the name field address " 
+ ; 
 \ XT_NIP
 : nip 
  ." (n1 n2 -- n2 ) " 
  ."  Remove Second of Stack " 
- ; 
-\ XT_NOJTAG
-: -jtag 
- ." (-- ) " 
- ."  disable jtag at runtime " 
  ; 
 \ XT_NOOP
 : noop 
@@ -1328,20 +1393,35 @@ help-wl set-current
  ." (n -- flag ) " 
  ."  true if n is not zero " 
  ; 
-\ XT_NOWDT
-: -wdt 
- ." (-- ) " 
- ."  disable watch dog timer at runtime " 
- ; 
 \ XT_NUMBER
 : number 
  ." (addr len -- [n|d size] f) " 
- ."  convert a counted string at addr to a number " 
+ ."  convert a string at addr to a number " 
  ; 
 \ XT_NUMBERTIB
 : #tib 
  ." (-- addr ) " 
- ."  address of variable holding the number of characters in TIB " 
+ ."  variable holding the number of characters in TIB " 
+ ; 
+\ XT_N_FETCH_E
+: n@e 
+ ." (ee-addr n -- itemn .. item0) " 
+ ."  Get an array from EEPROM " 
+ ; 
+\ XT_N_SPIR
+: n@spi 
+ ." (addr len -- ) " 
+ ."  read len bytes from SPI to addr " 
+ ; 
+\ XT_N_SPIW
+: n!spi 
+ ." (addr len -- ) " 
+ ."  write len bytes to SPI from addr " 
+ ; 
+\ XT_N_STORE_E
+: n!e 
+ ." (recn .. rec0 n ee-addr -- ) " 
+ ."  Write a list to EEPROM " 
  ; 
 \ XT_ONLY
 : only 
@@ -1373,6 +1453,11 @@ help-wl set-current
  ." (char "ccc<char>" -- c-addr u ) " 
  ."  in input buffer parse ccc delimited string by the delimiter char. " 
  ; 
+\ XT_PARSENAME
+: parse-name 
+ ." ("<name>" -- c-addr u ) " 
+ ."  In the SOURCE buffer parse whitespace delimited string. Returns strin " 
+ ; 
 \ XT_PAUSE
 : pause 
  ." (-- ) " 
@@ -1398,6 +1483,16 @@ help-wl set-current
  ." (n a-addr -- ) " 
  ."  add n to content of RAM address a-addr " 
  ; 
+\ XT_POPCNT
+: popcnt 
+ ." (n1 -- n2 ) " 
+ ."  count the Number of 1 bits (population count) " 
+ ; 
+\ XT_POSTPONE
+: postpone 
+ ." (c" " --  ) " 
+ ."  postpone " 
+ ; 
 \ XT_PREVIOUS
 : previous 
  ." (-- ) " 
@@ -1416,7 +1511,7 @@ help-wl set-current
 \ XT_QSTACK
 : ?stack 
  ." (--  ) " 
- ."  check stack underflow, throw exception -42 " 
+ ."  check stack underflow, throw exception -4 " 
  ; 
 \ XT_QUIT
 : quit 
@@ -1426,37 +1521,52 @@ help-wl set-current
 \ XT_RBRACKET
 : ] 
  ." (--  ) " 
- ."  turn on compiler mode " 
+ ."  enter compiler mode " 
  ; 
 \ XT_RDEFER
 : Rdefer 
  ." (c<name> -- ) " 
  ."  creates a RAM based defer vector " 
  ; 
+\ XT_RDEFERFETCH
+: Rdefer@ 
+ ." (xt1 -- xt2 ) " 
+ ."  does the real defer@ for ram defers " 
+ ; 
+\ XT_RDEFERSTORE
+: Rdefer! 
+ ." (xt1 xt2 -- ) " 
+ ."  does the real defer! for ram defers " 
+ ; 
 \ XT_RECURSE
 : recurse 
  ." (-- ) " 
- ."  compile  XT of the word beeing currently defined into dictionary " 
+ ."  compile the XT of the word currently being defined into the dictionar " 
  ; 
 \ XT_REC_FIND
-: rec-find 
- ." (addr -- f ) " 
- ."  recognizer for find " 
+: rec:find 
+ ." (addr len -- f ) " 
+ ."  recognizer searching the dictionary " 
  ; 
-\ XT_REC_INTNUMBER
-: rec-intnum 
- ." (addr -- f ) " 
+\ XT_REC_INTNUM
+: rec:intnum 
+ ." (addr len -- f ) " 
  ."  recognizer for integer numbers " 
- ; 
-\ XT_REC_NOTFOUND
-: rec-notfound 
- ." (addr --  ) " 
- ."  recognizer for NOT FOUND " 
  ; 
 \ XT_REFILL
 : refill 
  ." (-- f ) " 
  ."  refills the input buffer " 
+ ; 
+\ XT_REFILLTIB
+: refill-tib 
+ ." (-- f ) " 
+ ."  refills the input buffer " 
+ ; 
+\ XT_REVEAL
+: reveal 
+ ." (-- ) " 
+ ."  makes an entry in a wordlist visible, if not already done. " 
  ; 
 \ XT_ROT
 : rot 
@@ -1478,30 +1588,55 @@ help-wl set-current
  ." (n1 n2 -- n3 ) " 
  ."  shift n1 n2-times logically right " 
  ; 
-\ XT_RX
-: rx 
+\ XT_RXQ_POLL
+: rx?-poll 
+ ." (-- f) " 
+ ."  check if a character can be appended to output queue using register p " 
+ ; 
+\ XT_RX_ISR
+: rx-isr 
  ." (-- c) " 
- ."  get 1 character from input queue, wait if needed " 
+ ."  get 1 character from input queue, wait if needed using interrupt driv " 
  ; 
-\ XT_RX
-: rx 
- ." (-- c) " 
- ."  get 1 character from input queue, wait if needed " 
+\ XT_RX_POLL
+: rx-poll 
+ ." (c -- ) " 
+ ."  wait for one character and read it from the terminal connection using " 
  ; 
-\ XT_RX
-: rx 
- ." (-- c) " 
- ."  get 1 character from input queue, wait if needed " 
+\ XT_R_FAIL
+: r:fail 
+ ." (-- addr ) " 
+ ."  there is no parser for this recognizer, this is the default and fails " 
  ; 
-\ XT_RXQ
-: rx? 
- ." ( -- f) " 
- ."  check if unread characters are in the input queue. " 
+\ XT_R_FIND
+: r:find 
+ ." (addr len -- f ) " 
+ ."  Methode table for find recognizer " 
  ; 
-\ XT_RXQ
-: rx? 
- ." ( -- f) " 
- ."  check if unread characters are in the input queue. " 
+\ XT_R_FIND
+: r:find 
+ ." (addr len -- f ) " 
+ ."  Methode table for find recognizer " 
+ ; 
+\ XT_R_FIND
+: r:find 
+ ." (addr len -- f ) " 
+ ."  Methode table for find recognizer " 
+ ; 
+\ XT_R_FIND
+: r:find 
+ ." (addr len -- f ) " 
+ ."  Methode table for find recognizer " 
+ ; 
+\ XT_R_INTDNUM
+: r:intdnum 
+ ." (-- addr ) " 
+ ."  Method table for double cell integers " 
+ ; 
+\ XT_R_INTNUM
+: r:intnum 
+ ." (-- addr ) " 
+ ."  Method table for single cell integers " 
  ; 
 \ XT_S2D
 : s>d 
@@ -1517,6 +1652,16 @@ help-wl set-current
 : search-wordlist 
  ." (c-addr len wid -- [ 0 ] | [ xt [-1|1]] ) " 
  ."  searches the word list wid for the word at c-addr/len " 
+ ; 
+\ XT_SEARCH_WORDLIST
+: search-wordlist 
+ ." (c-addr len wid -- [ 0 ] | [ xt [-1|1]] ) " 
+ ."  searches the word list wid for the word at c-addr/len " 
+ ; 
+\ XT_SEMICOLON
+: ; 
+ ." (-- ) " 
+ ."  finish colon defintion, compiles (exit) and returns to interpret stat " 
  ; 
 \ XT_SET_CURRENT
 : set-current 
@@ -1553,6 +1698,11 @@ help-wl set-current
  ." (wid -- ) " 
  ."  prints the name of the words in a wordlist " 
  ; 
+\ XT_SHOWWORDLIST
+: show-wordlist 
+ ." (wid -- ) " 
+ ."  prints the name of the words in a wordlist " 
+ ; 
 \ XT_SIGN
 : sign 
  ." (n -- ) " 
@@ -1563,11 +1713,6 @@ help-wl set-current
  ." (n1 n2 -- n3) " 
  ."  divide n1 by n2. giving the quotient " 
  ; 
-\ XT_SLASHKEY
-: /key 
- ." (-- ) " 
- ."  fetch /key vector and execute it, should turn off the sender of key e " 
- ; 
 \ XT_SLASHMOD
 : /mod 
  ." (n1 n2 -- rem quot) " 
@@ -1575,21 +1720,21 @@ help-wl set-current
  ; 
 \ XT_SLASHSTRING
 : /string 
- ." (addr1 u1 n-- addr2 u2 ) " 
+ ." (addr1 u1 n -- addr2 u2 ) " 
  ."  adjust string from addr1 to addr1+n, reduce length from u1 to u2 by n " 
  ; 
-\ XT_SLEEP
-: sleep 
- ." (mode -- ) " 
- ."  put the controller into the specified sleep mode " 
- ; 
 \ XT_SLITERAL
-: (sliteral) 
- ." ; System " 
- ."  " 
+: sliteral 
+ ." (C: addr len -- ) " 
+ ."  compiles a string to flash, at runtime leaves ( -- flash-addr count)  " 
  ; 
 \ XT_SOURCE
 : source 
+ ." (-- addr n ) " 
+ ."  address and current length of the input buffer " 
+ ; 
+\ XT_SOURCETIB
+: source-tib 
  ." (-- addr n ) " 
  ."  address and current length of the input buffer " 
  ; 
@@ -1614,7 +1759,7 @@ help-wl set-current
  ."  emits n space(s) (bl) " 
  ; 
 \ XT_SPIRW
-: spirw 
+: c!@spi 
  ." (txbyte -- rxbyte) " 
  ."  SPI exchange of 1 byte " 
  ; 
@@ -1651,22 +1796,27 @@ help-wl set-current
 \ XT_STORE
 : ! 
  ." (n addr -- ) " 
- ."  write 16bit to RAM memory, low byte first " 
+ ."  write n to RAM memory at addr, low byte first " 
  ; 
 \ XT_STOREE
 : !e 
  ." (n e-addr -- ) " 
- ."  write to eeprom address " 
+ ."  write n (2bytes) to eeprom address " 
  ; 
 \ XT_STOREENVM
 : !e 
  ." (n e-addr -- ) " 
- ."  write to eeprom address using nvm (atxmega) " 
+ ."  write n (2bytes) to eeprom address using nvm (atxmega) " 
  ; 
 \ XT_STOREI
 : !i 
  ." (n addr -- ) " 
- ."  Deferred action for flash write of a single cell " 
+ ."  Deferred action to write a single 16bit cell to flash " 
+ ; 
+\ XT_STOREU
+: !u 
+ ." (n offset -- ) " 
+ ."  write n to USER area at offset " 
  ; 
 \ XT_SWAP
 : swap 
@@ -1686,17 +1836,22 @@ help-wl set-current
 \ XT_TICK
 : ' 
  ." ("<spaces>name" -- XT ) " 
- ."  search dictionary for name, returns XT or throw an exception -13 " 
+ ."  search dictionary for name, return XT or throw an exception -13 " 
  ; 
 \ XT_TO
 : to 
  ." (n <name> -- ) " 
  ."  store the TOS to the named value (eeprom cell) " 
  ; 
-\ XT_TOUSART
-: >usart 
- ." (-- ) " 
- ."  initialize the user area to use the system terminal for IO " 
+\ XT_TOLOWER
+: tolower 
+ ." (C --  c) " 
+ ."  if C is an uppercase letter convert it to lowercase " 
+ ; 
+\ XT_TOUPPER
+: toupper 
+ ." (c -- C ) " 
+ ."  if c is a lowercase letter convert it to uppercase " 
  ; 
 \ XT_TO_A
 : >a 
@@ -1713,65 +1868,80 @@ help-wl set-current
  ." (ud1 c-addr1 u1 -- ud2 c-addr2 u2 ) " 
  ."  convert a string to a number  c-addr2/u2 is the unconverted string " 
  ; 
+\ XT_TRAVERSEWORDLIST
+: traverse-wordlist 
+ ." (i*x xt wid -- j*x ) " 
+ ."  call the xt for every member of the wordlist wid until xt returns fal " 
+ ; 
 \ XT_TRUE
 : true 
  ." (-- -1 ) " 
  ."  leaves the value -1 (true) on TOS " 
+ ; 
+\ XT_TUCK
+: tuck 
+ ." (n1 n2 -- n2 n1 n2 ) " 
+ ."  Copy the first (top) stack item below the second stack item.  " 
  ; 
 \ XT_TURNKEY
 : turnkey 
  ." (-- n*y ) " 
  ."  Deferred action during startup/reset " 
  ; 
-\ XT_TX
-: tx 
- ." (c -- ) " 
- ."  put 1 character into output queue, wait if needed, enable UDRIE inter " 
- ; 
-\ XT_TX
-: tx 
- ." (c -- ) " 
- ."  put 1 character into output queue, wait if needed, enable UDRIE inter " 
- ; 
-\ XT_TX
-: tx 
- ." (c -- ) " 
- ."  put 1 character into output queue, wait if needed, enable UDRIE inter " 
- ; 
-\ XT_TXQ
-: tx? 
+\ XT_TXQ_ISR
+: tx?-isr 
  ." (-- f) " 
  ."  check if a character can be appended to output queue. " 
  ; 
-\ XT_TXQ
-: tx? 
- ." (-- f) " 
- ."  check if a character can be appended to output queue. " 
+\ XT_TX_ISR
+: tx-isr 
+ ." (c -- ) " 
+ ."  put 1 character into output queue, wait if needed, enable UDRIE inter " 
+ ; 
+\ XT_TX_POLL
+: tx-poll 
+ ." (c -- ) " 
+ ."  check availability and send one character to the terminal using regis " 
  ; 
 \ XT_TYPE
 : type 
  ." (addr n -- ) " 
  ."  print a RAM based string " 
  ; 
+\ XT_UBRR
+: ubrr 
+ ." (-- v) " 
+ ."  returns usart UBRR settings " 
+ ; 
 \ XT_UDDOT
 : ud. 
- ." (ud1 w -- ) " 
- ."  double cell output " 
+ ." (ud -- ) " 
+ ."  unsigned PNO with double cell numbers " 
  ; 
 \ XT_UDDOTR
 : ud.r 
  ." (ud w -- ) " 
- ."  double cell output " 
+ ."  unsigned PNO with double cell numbers, right aligned in width w " 
+ ; 
+\ XT_UDEFERFETCH
+: Udefer@ 
+ ." (xt1 -- xt2 ) " 
+ ."  does the real defer@ for user based defers " 
+ ; 
+\ XT_UDEFERSTORE
+: Udefer! 
+ ." (xt1 xt2 -- ) " 
+ ."  does the real defer! for user based defers " 
  ; 
 \ XT_UDOT
 : u. 
- ." (ud1 -- ) " 
- ."  double cell output " 
+ ." (u -- ) " 
+ ."  unsigned PNO with single cell numbers " 
  ; 
 \ XT_UDOTR
 : u.r 
- ." (ud w -- ) " 
- ."  double cell output " 
+ ." (u w -- ) " 
+ ."  unsigned PNO with single cells numbers, right aligned in width w " 
  ; 
 \ XT_UDSLASHMOD
 : ud/mod 
@@ -1783,10 +1953,20 @@ help-wl set-current
  ." (u1 u2 -- flag ) " 
  ."  true if u1 > u2 (unsigned) " 
  ; 
+\ XT_UGREATEREQUAL
+: u>= 
+ ." (u1 u2 -- flag ) " 
+ ."  compare two unsigned numbers, returns true flag if u1 is greater then " 
+ ; 
 \ XT_ULESS
 : u< 
  ." (u1 u2 -- flasg) " 
  ."  true if u1 < u2 (unsigned) " 
+ ; 
+\ XT_ULESSEQUAL
+: u<= 
+ ." (u1 u2 -- flag ) " 
+ ."  compare two unsigned numbers, returns true flag if u1 is less then or " 
  ; 
 \ XT_UMSLASHMOD
 : um/mod 
@@ -1801,7 +1981,7 @@ help-wl set-current
 \ XT_UNUSED
 : unused 
  ." (-- n ) " 
- ."  number of unused dictionary cells " 
+ ."  Amount of available RAM (incl. PAD) " 
  ; 
 \ XT_UP_FETCH
 : up@ 
@@ -1818,10 +1998,10 @@ help-wl set-current
  ." (-- ) " 
  ."  initialize usart " 
  ; 
-\ XT_USART
-: +usart 
+\ XT_USARTX
+: +usartx 
  ." (-- ) " 
- ."  initialize usart " 
+ ."  initialize the atxmega usart (ATXmega) " 
  ; 
 \ XT_USER
 : user 
@@ -1838,15 +2018,10 @@ help-wl set-current
  ." (ud n -- ) " 
  ."  Print n digits, fill in preceeding zeros if needed " 
  ; 
-\ XT_VALUE
-: value 
- ." (n <name> -- ) " 
- ."  create a dictionary entry for a value and allocate 1 cell in EEPROM. " 
- ; 
 \ XT_VARIABLE
 : variable 
  ." (cchar -- ) " 
- ."  create an dictionary entry for a variable and allocate 1 cell RAM spa " 
+ ."  create a dictionary entry for a variable and allocate 1 cell RAM " 
  ; 
 \ XT_VER
 : ver 
@@ -1862,6 +2037,11 @@ help-wl set-current
 : within 
  ." (n min max -- f) " 
  ."  check if n is within min..max " 
+ ; 
+\ XT_WLSCOPE
+: wlscope 
+ ." (addr len -- addr' len' wid ) " 
+ ."  dynamically place a word in a wordlist. The word name may be changed. " 
  ; 
 \ XT_WORD
 : word 
@@ -1882,6 +2062,26 @@ help-wl set-current
 : xor 
  ." (n1 n2 -- n3) " 
  ."  exclusive or " 
+ ; 
+\ XT_XRXQ_POLL
+: x-rx?-poll 
+ ." (-- f) " 
+ ."  check if a character can read from the terminal (Poll, ATXmega) " 
+ ; 
+\ XT_XRX_POLL
+: x-rx-poll 
+ ." (-- c) " 
+ ."  wait for and get one character from the terminal (Poll, ATXmega) " 
+ ; 
+\ XT_XTXQ_POLL
+: x-tx?-poll 
+ ." (-- f) " 
+ ."  check if a character can be sent (Poll, ATXmega) " 
+ ; 
+\ XT_XTX_POLL
+: x-tx-poll 
+ ." (c -- ) " 
+ ."  wait for the terminal becomes ready and put 1 character to it (Poll,  " 
  ; 
 \ XT_ZERO
 : 0 

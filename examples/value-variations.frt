@@ -50,14 +50,14 @@
 
 : cache-value 
     (value)
-    dup edp dup , dup cell+ to edp !e
+    dup ehere dup , dup cell+ to ehere !e
     postpone @cache
     postpone !cache
     here 2 ( 1 cell ) allot dup , ! \ 3 address units, remember?
 ;
 
 \ \ test case
-\ edp dup . \ keep the eeprom address
+\ ehere dup . \ keep the eeprom address
 \ 42 cache-value c-dp 
 \ 17 to c-dp
 \ c-dp . dup @e . \ prints 17 and 42

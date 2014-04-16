@@ -17,7 +17,6 @@
 .include "dict_interrupt.inc"
 
 .include "words/pick.asm"
-.include "words/sleep.asm"
 .include "words/is.asm"
 
 .include "words/dotstring.asm"

@@ -58,7 +58,7 @@ PFA_NUMBER0:
 	.dw $2e ; .
 	.dw XT_EQUAL
 	.dw XT_DOCONDBRANCH
-	.dw PFA_NUMBER2
+	.dw PFA_NUMBER6
 	; its a double cell number
         ; incorporate sign into number
 	.dw XT_R_FROM
@@ -71,8 +71,9 @@ PFA_NUMBER3:
 	.dw XT_DOBRANCH
 	.dw PFA_NUMBER5
 PFA_NUMBER2:
-	.dw XT_2DROP
 	.dw XT_DROP
+PFA_NUMBER6:
+	.dw XT_2DROP
 	.dw XT_R_FROM
 	.dw XT_DROP
         .dw XT_R_FROM

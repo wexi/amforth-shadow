@@ -1,3 +1,10 @@
+.if AMFORTH_RO_SEG > NRWW_START_ADDR
+.if NRWW_STOP_ADDR - NRWW_START_ADDR == 0x7FF
+.include "dict/appl_2k.inc"
+.exit
+.endif
+.endif
+
 .include "words/ver.asm"
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

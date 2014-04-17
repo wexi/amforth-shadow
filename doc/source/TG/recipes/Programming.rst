@@ -19,6 +19,7 @@ Programming and Debugging
    Profiler
    Quotations
    RAM-Efficiency
+   Recognizer
    Tracer
    Upgrade-Amforth
    Unbreakable

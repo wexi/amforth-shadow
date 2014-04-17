@@ -1,10 +1,19 @@
+
+.include "words/docreate.asm"
+.include "words/backslash.asm"
+.include "words/lparenthesis.asm"
+
+.include "words/compile.asm"
+.include "words/comma.asm"
+.include "words/brackettick.asm"
+
+
 .include "words/literal.asm"
 .include "words/sliteral.asm"
 .include "words/g_mark.asm"
 .include "words/g_resolve.asm"
 .include "words/l_mark.asm"
 .include "words/l_resolve.asm"
-; .include "words/qpairs.asm"
 
 .include "words/ahead.asm"
 .include "words/if.asm"
@@ -44,27 +53,12 @@
 .include "words/abortstring.asm"
 .include "words/abort.asm"
 
-.include "words/code.asm"
-.include "words/end-code.asm"
-
-.include "words/environment.asm"
-.include "words/env-wordlists.asm"
-.include "words/env-slashpad.asm"
-.include "words/env-slashhold.asm"
-.include "words/env-forthname.asm"
-.include "words/env-forthversion.asm"
-.include "words/env-cpu.asm"
-.include "words/env-mcuinfo.asm"
-.include "words/env-usersize.asm"
-
 .include "words/fetch-ee-array.asm"
 .include "words/store-ee-array.asm"
 .include "words/get-current.asm"
 .include "words/get-order.asm"
-.include "words/set-recognizer.asm"
-.include "words/get-recognizer.asm"
 
 .include "words/compare.asm"
 .include "words/nfa2lfa.asm"
 
-.include "words/postpone.asm"
+.include "words/eesy.asm"	;write dp/here/ehere to E²

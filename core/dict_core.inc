@@ -16,7 +16,6 @@
 .include "words/store.asm"
 .include "words/cstore.asm"
 .include "words/cfetch.asm"
-.include "words/fetchc.asm"
 .include "words/fetch-u.asm"
 .include "words/store-u.asm"
 
@@ -27,19 +26,12 @@
 .include "words/over.asm"
 .include "words/drop.asm"
 .include "words/rot.asm"
-.include "words/notrot.asm"
 .include "words/nip.asm"
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;
 .include "words/r_from.asm"
 .include "words/to_r.asm"
 .include "words/r_fetch.asm"
-.include "words/rdrop.asm"
 
-;;;;;;;;;;;;;;;;;;;;;;;;
-.include "words/less.asm"
-.include "words/equal.asm"
-.include "words/greater.asm"
 
 .include "words/notequal.asm"
 .include "words/equalzero.asm"
@@ -60,14 +52,9 @@
 .include "words/umslashmod.asm"
 .include "words/umstar.asm"
 
-.include "words/cinvert.asm"
 .include "words/invert.asm"
 .include "words/2slash.asm"
 .include "words/2star.asm"
-.include "words/u2slash.asm"
-.include "words/4slash.asm"
-.include "words/4star.asm"
-.include "words/u4slash.asm"
 .include "words/and.asm"
 .include "words/or.asm"
 .include "words/xor.asm"
@@ -77,7 +64,6 @@
 .include "words/lshift.asm"
 .include "words/rshift.asm"
 .include "words/plusstore.asm"
-.include "words/minusstore.asm"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 .include "words/rpfetch.asm"
 .include "words/rpstore.asm"
@@ -96,5 +82,18 @@
 .include "words/cmove_g.asm"
 .include "words/byteswap.asm"
 .include "words/up.asm"
+.include "words/1ms.asm"
+.include "words/2to_r.asm"
+.include "words/2r_from.asm"
+
+.include "dict_core_mcu.inc"
+
+; now colon words
+;;;;;;;;;;;;;;;;;;;;;;;;
+.include "words/2literal.asm"
+.include "words/less.asm"
+.include "words/equal.asm"
+.include "words/greater.asm"
 .include "words/s_to_d.asm"
 .include "words/not.asm"
+

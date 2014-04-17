@@ -158,6 +158,8 @@ The shadow is proud to have contributed the Word List Scope idea and implementat
 
 + reverse ( X1 .. Xn n -- Xn .. X1 n ) :: [FORTH] LIFO made FIFO.
 
++ marker "name" :: [FORTH] A different implementation that backs up word lists only.
+
 * Deviations
 
 + vocabulary <name> :: [ASM] creates a constant with a new wid (wordlist id) value.

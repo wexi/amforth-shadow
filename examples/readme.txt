@@ -22,3 +22,6 @@ ascii.frt: prints an ascii table on screen
 life.frt: Conveys game of life. Its very memory intensive, the example
    code works on an Atmega16, but a bigger one would allow larger
    worlds.
+
+string-rec.frt: converts a " delimited string into a printable,
+   compilable and postponable text object. It replaces the s" command.

@@ -40,7 +40,8 @@ released but will be part of the next release.
 See the code section at Sourceforge to get the
 `most recent sources <http://sourceforge.net/p/amforth/code/HEAD/tree/trunk/>`__
 
-* core: 2nd generation of :ref:`Recognizers`.
+* core: 2nd generation of :ref:`Recognizers` and their use for native 
+  :ref:`String literals <Recognizer>`.
 * core: renamed ``edp`` to ``ehere``. ``here`` points to data space, ``ehere`` 
   points to eeprom data space.
 * core: merged code for defer's and value's. Speed improvements

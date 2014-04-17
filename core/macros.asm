@@ -13,6 +13,9 @@
 .set VE_HEAD = $0000
 .set VE_ENVHEAD = $0000
 
+; conditional assembly needs preparation
+.set DICT_COMPILER2 = 0 ; 
+
 .include "user.inc"
 
   .def zerol = r2

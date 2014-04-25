@@ -1,7 +1,7 @@
 
-\ construct a recognizer
-: recognizer: ( int-xt comp-xt post-xt "name" -- )
-   create , , , 
+\ build the methods table for a recognizer
+: recognizer: ( interpret-xt compile-xt postpone-xt "name" -- )
+   create swap rot , , , 
 ;
 
-\ useage see Recognizer Recipe
+\ usage see Recognizer Recipe

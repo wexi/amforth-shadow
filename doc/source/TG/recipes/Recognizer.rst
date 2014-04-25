@@ -1,3 +1,4 @@
+.. _Recognizer:
 
 ==========
 Recognizer
@@ -46,7 +47,7 @@ of the SOURCE buffer only, a ``refill`` will change the content.
 
 .. code-block:: forth
 
-   ' sliteral ' sliteral ' noop recognizer: r:string
+   ' noop ' sliteral ' sliteral recognizer: r:string
 
    : rec:string ( addr len -- )
       over c@ [char] " <> if 2drop r:fail exit then

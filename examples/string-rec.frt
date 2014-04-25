@@ -1,6 +1,6 @@
 
 
-' sliteral ' sliteral ' noop recognizer: r:string
+' noop ' sliteral ' sliteral recognizer: r:string
 
 : rec:string ( addr len -- )
   over c@ [char] " <> if 2drop r:fail exit then

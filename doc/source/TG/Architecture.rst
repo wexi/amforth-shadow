@@ -309,9 +309,9 @@ data inside the forth interpreter and a word to parse a word.
 .. code-block:: forth
    
    \ order is important!
-   :noname ... ;  \ postpone action
-   :noname ... ;  \ compile action
    :noname ... ;  \ interpret action
+   :noname ... ;  \ compile action
+   :noname ... ;  \ postpone action
    recognizer: r:foo
 
    : rec:foo ( addr len -- i*x r:foo | r:fail ) ... ;
@@ -375,14 +375,14 @@ printed and an exception is thrown.
 
 .. code-block:: forth
 
-   :noname . -48 throw ;
-   ' literal
    ' noop
+   ' literal
+   :noname . -48 throw ;
    recognizer: r:intnum
 
-   :noname d. -48 throw ;
-   ' 2literal
    ' noop
+   ' 2literal
+   :noname d. -48 throw ;
    recognizer: r:intdnum
 
    : rec:intnum ( addr len -- n r:intnum | d r:intdnum | r:fail )
@@ -404,9 +404,9 @@ immediate words for compiling and postponing.
 
 .. code-block:: forth
 
-   :noname 0< if  postpone [compile] then , ; ,
-   :noname 0< if , exit then execute ; ,
-   :noname drop execute ; ,
+   :noname drop execute ; 
+   :noname 0< if , exit then execute ; 
+   :noname 0< if  postpone [compile] then , ; 
    recognizer: r:find
 
    : rec:find ( addr len -- XT flags r:find | r:fail )

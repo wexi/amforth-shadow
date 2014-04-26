@@ -10,6 +10,7 @@ Hardware Modules
    Efficient-Bitmanipulation
    Interrupt-ISR
    Interrupt-Critical-Section
+   NRWW
    SPI
    Telnet
    Timer

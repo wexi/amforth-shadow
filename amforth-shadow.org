@@ -237,6 +237,10 @@ BOOFA is an AVRDUDE compatible Flash/EEPROM programmer. [[https://github.com/wex
 
 ~.equ AMFORTH_RO_SEG = NRWW_START_ADDR + 512 ;make room for BOOFA~
 
+Since trunk@1548 HQ attempts to pack as much as possible asm code into the core. What asm code goes into the core is determined solely by the MCU NRWW block size -- 8k, 4k or 2k. The shadow complained
+that this new method causes core overflow when BOOFA is needed on the NRWW block as well and suggested an alternative code packing method. Until HQ adopts an alternative method the least intrusive
+solution that the shadow have found, when BOOFA is needed, was to switch the MCU core size... Examine the first lines in core/dict/core_8k.inc, etc.
+
 * amforth-shell.py enhancements
 
 + #include vs. #install :: #include would skip uploading if the file has already been uploaded. #install is unconditional. [[HQ]] now calls conditional file inclusion #require and unconditional inclusion

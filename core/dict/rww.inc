@@ -8,5 +8,5 @@
 .elif AMFORTH_NRWW_SIZE > 2000
 .include "dict/appl_2k.inc"
 .else
-.error "AMFORTH_RO_SEG too small. Cannot continue"
+.error "AMFORTH_NRWW_SIZE too small. Cannot continue"
 .endif

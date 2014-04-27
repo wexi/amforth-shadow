@@ -10,8 +10,6 @@
 ; here as well. In this case do *not* use 'dict_mcu.inc''
 ; here. 
 
-.include "dict_mcu.inc"
-
 ; The file dict_compiler2.inc contains a number of
 ; non-essential words with compiler functionality.
 ; It is recoomended but not strictly necessairy

@@ -8,12 +8,14 @@
 .org pc_
 .include "drivers/generic-isr.asm"
 ; lower part of the dictionary
+.include "dict/rww.inc"
 .include "dict_appl.inc"
 
 .set DPSTART = pc
 
 .org AMFORTH_RO_SEG
 .include "amforth-interpreter.asm"
+.include "dict_core.inc"
 .include "dict_appl_core.inc"
 
 .set flashlast = pc

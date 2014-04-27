@@ -25,5 +25,6 @@
 .set rstackstart = RAMEND
 .set stackstart  = RAMEND - 80
 
+.set AMFORTH_RO_SEG = NRWW_START_ADDR
 ; all of amforth is in one segment
 .include "amforth-low.asm"

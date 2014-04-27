@@ -12,8 +12,11 @@
 .include "drivers/generic-isr.asm"
 
 ; lower part of the dictionary
-.include "dict_appl_core.inc"
+.include "dict/rww.inc"
 .include "dict_appl.inc"
+.include "dict_core.inc"
+.include "dict_appl_core.inc"
+
 
 .set DPSTART = pc
 .set flashlast = pc

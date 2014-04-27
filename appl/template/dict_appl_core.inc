@@ -18,9 +18,6 @@
 ; to be close to the interpreter code. Watch for 
 ; error messages from the assembler and fix *all*. 
 
-.include "dict_core.inc"
-
-
 ; these 5 files are almost always used as well.
 ; They have to go to the NRWW section. Always.
 .include "words/store-e.asm"

@@ -86,7 +86,7 @@
 .include "words/2to_r.asm"
 .include "words/2r_from.asm"
 
-.include "dict_core_mcu.inc"
+.include "dict/nrww.inc"
 
 ; now colon words
 ;;;;;;;;;;;;;;;;;;;;;;;;

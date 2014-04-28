@@ -86,8 +86,17 @@
 .include "words/2to_r.asm"
 .include "words/2r_from.asm"
 
-.include "dict_core_mcu.inc"
 
+
+.if AMFORTH_NRWW_SIZE>8000
+.include "dict/core_8k.inc"
+.elif AMFORTH_NRWW_SIZE>4000
+.include "dict/core_4k.inc"
+.elif AMFORTH_NRWW_SIZE>2000
+.include "dict/core_2k.inc"
+.else
+.error "AMFORTH_NRWW_SIZE too small, cannot continue"
+.endif
 ; now colon words
 ;;;;;;;;;;;;;;;;;;;;;;;;
 .include "words/2literal.asm"
@@ -96,4 +105,3 @@
 .include "words/greater.asm"
 .include "words/s_to_d.asm"
 .include "words/not.asm"
-

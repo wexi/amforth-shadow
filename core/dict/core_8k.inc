@@ -176,4 +176,3 @@
 .include "words/tib.asm"
 
 .include "words/init-user.asm"
-.include "dict_compiler2.inc"

@@ -1,7 +1,3 @@
-.if AMFORTH_RO_SEG > NRWW_START_ADDR
-.include "dict/core_4k.inc"
-.exit
-.endif
 
 .include "words/n_to_r.asm"
 .include "words/n_r_from.asm"

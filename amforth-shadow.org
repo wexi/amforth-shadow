@@ -299,18 +299,18 @@ For more information see tools/amforth-shell.py beginning comments.
 
 + #include vs. #install :: #include would skip uploading if the file has
      already been uploaded in the shell session. #install is
-     unconditional. [[HQ]] calls conditional file inclusion #require and
+     unconditional. HQ now calls conditional file inclusion #require and
      unconditional inclusion #include. This is influenced by gforth. The
-     Shadow (for now) will not follow suit.
+     Shadow (for now) will not follow suit for his deep rooted C
+     language habits.
 
-+ <<create>> --capture :: Capture compiled word names.
++ --create :: <<create>> Capture compiled word names.
 
-+ <<conceal>> --conceal :: Substitute earlier captured word names with
-     serial numbers.
++ --conceal :: <<conceal>> Substitute earlier captured word names with serial numbers.
 
-+ <<log>> --log :: This option collects the actual code that it sent to
-                   the AmForth system, comments free and following all
-                   string substituion.
++ --log :: <<log>> This option collects the actual code that it sent to
+           the AmForth system, comments free and following all string
+           substituion.
 
 + --rtscts :: Hardware handshake. This option is for a more reliable
               serial connection if your AmForth implementation supports

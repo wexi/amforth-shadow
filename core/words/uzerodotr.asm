@@ -1,4 +1,4 @@
-; ( ud n -- ) 
+; ( u n -- ) 
 ; Numeric IO
 ; Print n digits, fill in preceeding zeros if needed
 VE_UZERODOTR:

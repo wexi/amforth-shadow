@@ -10,8 +10,8 @@ presented here would be adopted by [[http://amforth.sourceforge.net/][AmForth]] 
 * Thoughts (aka what to do next)
 
 [[http://sourceforge.net/users/mtrute][Matthias Trute]], AmForth creator, believes that its GPLv2 license means that users are entitled to receive the source of any code which the developer has chosen to include in the distribution, whether
-this code has an AmForth origin or not. While [[http://www.amazon.com/Intellectual-Property-Open-Source-Protecting/dp/0596517963][the Shadow questions this claim based on a reliable source]] the Shadow recommends to abide by Matthias expectations and to solve pesky commercial
-situations through massive obfuscation of the source code. Thus, expect further amforth-shell [[log][--log]] development.
+this code has an AmForth origin or not. While [[http://www.amazon.com/Intellectual-Property-Open-Source-Protecting/dp/0596517963][the Shadow questions this claim based on a reliable source]] the Shadow recommends to abide by Matthias expectations and solve pesky commercial situations
+through obfuscation of the source code. See amforth-shell [[create][--create]], [[conceal][--conceal]] and [[log][--log]] options.
 
 * <<eesy>> Reduce EEPROM based pointers wear out
 
@@ -241,6 +241,10 @@ BOOFA is an AVRDUDE compatible Flash/EEPROM programmer. [[https://github.com/wex
 
 + #include vs. #install :: #include would skip uploading if the file has already been uploaded. #install is unconditional. [[HQ]] now calls conditional file inclusion #require and unconditional inclusion
      #include. This is influenced by gforth. The Shadow for now will not follow suit.
+
++ <<create>> Capture compiled word names.
+
++ <<conceal>> Substitute earlier captured word names with serial numbers.
 
 + <<log>> A distiller function :: The --log option collects to a file the actual code that it sent to the AmForth system, comments free and after string substituion.
 

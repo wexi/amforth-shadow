@@ -33,11 +33,21 @@
 # $d5 constant CRC8MSB
 # 10 constant max_number_of_users
 #
-# Invoke the shell with the argument --log log.frt to collect the lines
-# which were uploaded to the AmForth system that received an " ok"
-# response (log.frt is just a file-name example). This file can later be
-# uploaded to another system using a tool simpler than the shell. Leave
-# the shell by #exit to close log.frt properly.
+# The following two step "create & conceal procedure" can conserve
+# dictionary space and obfuscate the resulting Forth code:
+#
+# Step #1: Invoke the shell with the argument --create <filename.frt> to
+# save your compiled wordlist names into a <filename.frt> of your
+# choice.
+#
+# Step #2: Invoke the shell with the argument --conceal <filename.frt>
+# to substitute in the next compilation pass the names of the words that
+# you captured in the earlier step with arbitrary ones.
+# 
+# Invoke the shell with the argument --log <filename.frt> to collect the 
+# lines which were uploaded to the AmForth system that received an " ok"
+# response. This file can later be uploaded to another system using a tool 
+# simpler than the shell. Leave the shell by #exit to close the file properly.
 #
 # Invoke the shell with the argument --rtscts to enable serial port
 # RTS/CTS hardware handshake connection.
@@ -45,7 +55,7 @@
 # "eesy" is automatically sent to the application before leaving the program 
 # to synchronize the memory allocation pointers.
 #
-# "allwords" replaces "words" in #update-words implementation.
+# "allwords"/"newwords" replace "words" in #update-words implementation.
 #
 # =====================================================================
 # DOCUMENTATION
@@ -583,6 +593,17 @@ class AMForth(object):
     def main(self):
         "Main function called when module is used as a script"
         upload_files, interact = self.parse_arg()
+
+        if self._conceal:
+            try:
+                frt = self._dict.read()
+                self._dict.close()
+                wl = eval(frt)
+                for i in range(len(wl)):
+                    self._appl_defs[wl[i]] = "^^" + str(i)
+            except:
+                pass
+
         try:
             for fn in upload_files:
                 if fn == "-":
@@ -608,6 +629,9 @@ class AMForth(object):
             except AMForthException:
                 print "\nLost contact with AmForth"
             self.serial_disconnect()
+            if self._create:
+                self._dict.write(repr(self._amforth_words))
+                self._dict.close()
             if self._log:
                 self._log.write("eesy\n")
                 self._log.close()
@@ -635,8 +659,12 @@ additional definitions (e.g. register names)
             default=self.serial_rtscts, help="Serial port RTS/CTS enable")
         parser.add_argument("--speed", "-s", action="store",
             type=int, default=self.serial_speed, help="Serial port speed")
-        parser.add_argument("--log", type=argparse.FileType('w'),
+        parser.add_argument("--log", "-o", type=argparse.FileType('w'),
                             help="Uploaded Forth log-file")
+        parser.add_argument("--create", type=argparse.FileType('w'),
+                            help="Create user dictionary")
+        parser.add_argument("--conceal", type=argparse.FileType('r'),
+                            help="Conceal user dictionary")
         parser.add_argument("--line-length", "-l", action="store",
             type=int, default=self.max_line_length,
             help="Maximum length of amforth input line")
@@ -662,6 +690,10 @@ additional definitions (e.g. register names)
         self._serial_rtscts = arg.rtscts
         self._serial_speed = arg.speed
         self._log = arg.log
+        assert not arg.create or not arg.conceal, "Either --create or --conceal"
+        self._dict = arg.create if arg.create else arg.conceal
+        self._create = True if arg.create else False
+        self._conceal = True if arg.conceal else False        
         self.editor = arg.editor
         behavior = self._config.current_behavior
         behavior.error_on_output = not arg.no_error_on_output
@@ -1230,11 +1262,13 @@ additional definitions (e.g. register names)
         dp = int(dp[:-3])
         if self._amforth_dp != dp:
             self._amforth_dp = dp
-            self.send_line("allwords")
+            self.send_line("newwords" if self._create else "allwords")
             words = self.read_response()
             if words[-3:] != " ok":
                 return # Something went wrong, just silently ignore
-            self._amforth_words = words.split(" ") + self.interact_directives
+            self._amforth_words = words[:-4].split(" ")
+            if not self._create:
+                self._amforth_words += self.interact_directives
 
     def _update_cpu(self):
         self.progress_callback("Information", None, "getting MCU name..")

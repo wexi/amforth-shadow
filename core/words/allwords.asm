@@ -1,6 +1,6 @@
 ; ( -- ) 
 ; Tools
-; prints a list of all searchable words in the dictionary
+; given a ( WIDₙ .. WID₁ n ) search order print all words in WID₁ to WIDₙ
 VE_ALLWORDS:
     .dw $ff08
     .db "allwords"

@@ -1,6 +1,6 @@
 ; ( -- )
 ; Tools
-; prints a list of all compiled dictionary words
+; given a ( WIDₙ .. WID₁ n ) search order print all words in WID₁ to WIDₙ₋₁ 
 VE_NEWWORDS:
     .dw $ff08
     .db "newwords"

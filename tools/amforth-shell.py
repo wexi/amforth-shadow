@@ -34,15 +34,17 @@
 # 10 constant max_number_of_users
 #
 # The following two step "create & conceal procedure" can conserve
-# dictionary space and obfuscate the resulting Forth code:
+# dictionary space and obfuscate the resulting Forth code.  IMPORTANT:
+# It is assumed that FORTH-WORDLIST is the deepest WID in the search
+# order, i.e., it is WIDn of a GET-ORDER ( WIDn .. WID1 n ) stack. The
+# shell obtains this list via NEWWORDS.
 #
-# Step #1: Invoke the shell with the argument --create <filename.frt> to
-# save your compiled wordlist names into a <filename.frt> of your
-# choice.
+# Step #1: Invoke the shell with the argument --create <filename> to
+# save your compiled wordlist names into a <filename> of your choice.
 #
-# Step #2: Invoke the shell with the argument --conceal <filename.frt>
-# to substitute in the next compilation pass the names of the words that
-# you captured in the earlier step with arbitrary ones.
+# Step #2: Invoke the shell with the argument --conceal <filename> to
+# replace in the next compilation run the names of the words that you
+# captured in step #1 with arbitrary new ones.
 # 
 # Invoke the shell with the argument --log <filename.frt> to collect the 
 # lines which were uploaded to the AmForth system that received an " ok"
@@ -55,7 +57,7 @@
 # "eesy" is automatically sent to the application before leaving the program 
 # to synchronize the memory allocation pointers.
 #
-# "allwords"/"newwords" replace "words" in #update-words implementation.
+# ALLWORDS/NEWWORDS replaces WORDS in #update-words implementation.
 #
 # =====================================================================
 # DOCUMENTATION
@@ -659,12 +661,12 @@ additional definitions (e.g. register names)
             default=self.serial_rtscts, help="Serial port RTS/CTS enable")
         parser.add_argument("--speed", "-s", action="store",
             type=int, default=self.serial_speed, help="Serial port speed")
-        parser.add_argument("--log", "-o", type=argparse.FileType('w'),
-                            help="Uploaded Forth log-file")
         parser.add_argument("--create", type=argparse.FileType('w'),
-                            help="Create user dictionary")
+                            help="Create compiled words dictionary")
         parser.add_argument("--conceal", type=argparse.FileType('r'),
-                            help="Conceal user dictionary")
+                            help="Conceal compiled words dictionary")
+        parser.add_argument("--log", type=argparse.FileType('w'),
+                            help="Uploaded Forth log-file")
         parser.add_argument("--line-length", "-l", action="store",
             type=int, default=self.max_line_length,
             help="Maximum length of amforth input line")
@@ -689,11 +691,11 @@ additional definitions (e.g. register names)
         self._serial_port = arg.port
         self._serial_rtscts = arg.rtscts
         self._serial_speed = arg.speed
-        self._log = arg.log
         assert not arg.create or not arg.conceal, "Either --create or --conceal"
         self._dict = arg.create if arg.create else arg.conceal
         self._create = True if arg.create else False
         self._conceal = True if arg.conceal else False        
+        self._log = arg.log
         self.editor = arg.editor
         behavior = self._config.current_behavior
         behavior.error_on_output = not arg.no_error_on_output

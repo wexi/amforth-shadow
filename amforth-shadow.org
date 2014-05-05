@@ -4,48 +4,77 @@
 #+OPTIONS: email:t
 #+STARTUP: indent
 
-[[https://github.com/wexi/amforth-shadow][<<HQ>> AmForth-Shadow]] is a sandbox for [[http://en.wikipedia.org/wiki/Atmel_AVR%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20][AVR8]] Forth development that is maintained by an experienced embedded systems programmer, yet a novice[fn:1] in Forth. It is hoped that the ideas that are
-presented here would be adopted by [[http://amforth.sourceforge.net/][AmForth]] headquarters (HQ). The following summarizes the Shadow changes to HQ's code.
+<<HQ>> [[https://github.com/wexi/amforth-shadow][AmForth-Shadow]] is a sandbox for [[http://en.wikipedia.org/wiki/Atmel_AVR%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20][AVR8]] Forth development that is
+maintained by an experienced embedded systems programmer, yet a
+novice[fn:1] in Forth. It is hoped that the ideas that are presented
+here would be adopted by [[http://amforth.sourceforge.net/][AmForth]] headquarters (HQ). The following
+summarizes the Shadow changes to HQ's code.
 
-* Thoughts (aka what to do next)
+* Thoughts
 
-[[http://sourceforge.net/users/mtrute][Matthias Trute]], AmForth creator, believes that its GPLv2 license means that users are entitled to receive the source of any code which the developer has chosen to include in the distribution, whether
-this code has an AmForth origin or not. While [[http://www.amazon.com/Intellectual-Property-Open-Source-Protecting/dp/0596517963][the Shadow questions this claim based on a reliable source]] the Shadow recommends to abide by Matthias expectations and solve pesky commercial situations
-through obfuscation of the source code. See amforth-shell [[create][--create]], [[conceal][--conceal]] and [[log][--log]] options.
+[[http://sourceforge.net/users/mtrute][Matthias Trute]], AmForth creator, believes that its GPLv2 license means
+that users are entitled to receive the source of any code which the
+developer has chosen to include in the distribution, whether this code
+has an AmForth origin or not. While [[http://www.amazon.com/Intellectual-Property-Open-Source-Protecting/dp/0596517963][the Shadow questions this claim
+based on a reliable source]] the Shadow recommends to abide by Matthias
+expectations and solve pesky commercial situations through obfuscation
+of the source code. See the new amforth-shell options [[create][--create]],
+[[conceal][--conceal]] and [[log][--log]].
 
 * <<eesy>> Reduce EEPROM based pointers wear out
 
-The memory allocation pointers, EE_DP, EE_HERE and EE_EHERE now have RAM_DP, RAM_HERE and RAM_EHERE copies.  IMPORTANT: Remember to execute EESY ( -- ) to sync the EE pointer values with their RAM
-copies.  This is done automatically for you by tools/amforth-shell.py before leaving the program.
+The memory allocation pointers, EE_DP, EE_HERE and EE_EHERE now have
+RAM_DP, RAM_HERE and RAM_EHERE copies.  IMPORTANT: Remember to execute
+EESY ( -- ) to sync the EE pointer values with their RAM copies.  This
+is done automatically for you by tools/amforth-shell.py before leaving
+the program.
 
 * Soft Interrupt Service
 
-One of AmForth features is the ability to write Interrupt Service Routines (ISR), aka Interrupt Handlers, in Forth. However, in the current implementation (SVN r1430) those
-ISRs should run with the hardware interrupt system disabled. This means that one has to keep ISRs short and defer long processing to the "main". The following changes to
-the kernel introduce an eight level soft interrupts queue, allowing the Forth code Second Level Interrupt Handlers (SLIH) to be interruptible and thus be as slow to execute
-as necessary. The new first level interrupt handling (FLIH) is suitable for type I interrupt sources, those acknowledged by execution of their interrupt vectors.
+One of AmForth features is the ability to write Interrupt Service
+Routines (ISR), aka Interrupt Handlers, in Forth. However, in the
+current implementation (SVN r1430) those ISRs should run with the
+hardware interrupt system disabled. This means that one has to keep ISRs
+short and defer long processing to the "main". The following changes to
+the kernel introduce an eight level soft interrupts queue, allowing the
+Forth code Second Level Interrupt Handlers (SLIH) to be interruptible
+and thus be as slow to execute as necessary. The new first level
+interrupt handling (FLIH) is suitable for type I interrupt sources,
+those acknowledged by execution of their interrupt vectors.
 
-CAN interrupts, in the supported at90can32/64/128 \micro{}C's, are safely routed to the queue by CANGIE.ENIT auto disable. The Forth code should acknowledge the specific
-CAN interrupt cause before resetting ENIT.
+CAN interrupts, in the supported at90can32/64/128 \micro{}C's, are
+safely routed to the queue by CANGIE.ENIT auto disable. The Forth code
+should acknowledge the specific CAN interrupt cause before resetting
+ENIT.
 
 ** New words
 
-The following ("soft rear-end") words were added to the existing +int and -int ("hard front-end") which control SREG I-bit
+The following ("soft rear-end") words were added to the existing +int
+and -int ("hard front-end") which control SREG I-bit
 
-+ int+ ( -- ) "soft interrupts on" :: Enables soft interrupts. If ~int+~ is the ISR last instruction the ISR routine would return before the next queued interrupt is served.
++ int+ ( -- ) "soft interrupts on" :: Enables soft interrupts. If ~int+~
+     is the ISR last instruction the ISR routine would return before the
+     next queued interrupt is served.
 
-+ int- ( -- ) "soft interrupts off" :: Disables soft interrupts. If this instruction is the ISR first the ISR will not be interrupted.
++ int- ( -- ) "soft interrupts off" :: Disables soft interrupts. If this
+     instruction is the ISR first the ISR will not be interrupted.
 
-+ int' ( -- addr ) "soft interrupts apostrophe" :: Returns the address of a system variable where the lower byte, if non zero, indicates occurrence of a hard interrupt overflow. The overflow mark is
-     the interrupting-device program address. Clear this mark by: ~0 int' c!~. The higher byte, if non-zero, indicates having the soft interrupts inhibited.
++ int' ( -- addr ) "soft interrupts apostrophe" :: Returns the address
+     of a system variable where the lower byte, if non zero, indicates
+     occurrence of a hard interrupt overflow. The overflow mark is the
+     interrupting-device program address. Clear this mark by: ~0 int'
+     c!~. The higher byte, if non-zero, indicates having the soft
+     interrupts inhibited.
 
 ** Compatibility
 
-As by default soft interrupts are enabled, existing code should not be impacted. ISRs should be regular Forth colon definitions!
+As by default soft interrupts are enabled, existing code should not be
+impacted. ISRs should be regular Forth colon definitions!
 
 ** Limitation
 
-If you are not using USART CTS, see [[handshake]], it is recommended to turn interrupts off (~int-~) when compiling new code.
+If you are not using USART CTS, see [[handshake]], it is recommended to turn
+interrupts off (~int-~) when compiling new code.
 
 ** Implementation
 
@@ -55,8 +84,11 @@ If you are not using USART CTS, see [[handshake]], it is recommended to turn int
 
 * <<handshake>> USART tx/rx isr with RTS/CTS/DTR support
 
-Define the following macros in your application "template.asm" according to your project ports/pins use. AmForth is considered a DCE device -- RTS and DTR are input signals, CTS is output. Note that
-these controls are independent of each other -- you can implement any of them, none or all. Also note that RTS requires an edge sensitive interrupt input.
+Define the following macros in your application "template.asm" according
+to your project ports/pins use. AmForth is considered a DCE device --
+RTS and DTR are input signals, CTS is output. Note that these controls
+are independent of each other -- you can implement any of them, none or
+all. Also note that RTS requires an edge sensitive interrupt input.
 
 #+BEGIN_EXAMPLE
 .set WANT_ISR_RX = 1	;interrupt driven receive
@@ -84,9 +116,13 @@ Overrides the default 16/16 character I/O buffer
 .endmacro
 #+END_EXAMPLE
 
-The CTS mechanism enables AmForth to control its input characters rate. CTS turns OFF when the input buffer can accommodate just two more characters. *IMPORTANT*: The CTS also turns OFF before writing
-to the FLASH and to the E²PROM memories as these operations are executed with the interrupt system disabled. The input buffer has to become half empty before CTS turns ON again. Change the definitions
-in drivers/usart-isr-rx.asm if you need different ON/OFF levels.
+The CTS mechanism enables AmForth to control its input characters
+rate. CTS turns OFF when the input buffer can accommodate just two more
+characters. *IMPORTANT*: The CTS also turns OFF before writing to the
+FLASH and to the E²PROM memories as these operations are executed with
+the interrupt system disabled. The input buffer has to become half empty
+before CTS turns ON again. Change the definitions in
+drivers/usart-isr-rx.asm if you need different ON/OFF levels.
 
 #+BEGIN_EXAMPLE
 #define RTS_ENABLE	;output queue gate
@@ -103,7 +139,8 @@ in drivers/usart-isr-rx.asm if you need different ON/OFF levels.
 .endmacro
 #+END_EXAMPLE
 
-The RTS mechanism enables the host computer to control AmForth output characaters rate. 
+The RTS mechanism enables the host computer to control AmForth output
+characaters rate.
 
 #+BEGIN_EXAMPLE
 #define DTR_ENABLE
@@ -112,17 +149,28 @@ The RTS mechanism enables the host computer to control AmForth output characater
 .endmacro
 #+END_EXAMPLE
 
-Output characters are dropped when the host computer is down or not connected.
+Output characters are dropped when the host computer is down or not
+connected.
  
 * WLSCOPE
 
-The shadow is proud to have contributed the Word List Scope idea and implementation.
+The shadow is proud to have contributed the Word List Scope idea and
+implementation.
 
 * General purpose new words
 
-+ allwords :: [ASM] Lists all words on the search order. Used by amforth-shell.py.
++ allwords :: [ASM] Lists all words in the wordlists search order. This
+              command is used by amforth-shell.
 
-+ @c :: [ASM] Like C@ but reads the byte as a signed 8 bit integer (i.e., extends sign).
++ newwords :: [ASM] Lists all words in the wordlists search order except
+              for the deepest one, that is assumed to be the
+              FORTH-WORDLIST. This command is used by the amforth-shell
+              code obfuscation procedure, see [[create][--create]] and
+              [[conceal][--conceal]]. Compiled word names that you wish to preserve
+              should be added to FORTH-WORDLIST.
+
++ @c :: [ASM] Like C@ but reads the byte as a signed 8 bit integer
+        (i.e., extends sign).
 
 + cinvert :: [ASM] Complements a single byte.
 
@@ -152,23 +200,29 @@ The shadow is proud to have contributed the Word List Scope idea and implementat
 
 + rdrop  ( R: X -- ) :: [ASM] Drop one cell from top of run-time stack.
 
-+ 2rdrop  ( R: X1 X2 -- ) :: [ASM] Drop two cells from top of run-time stack.
++ 2rdrop  ( R: X1 X2 -- ) :: [ASM] Drop two cells from top of run-time
+     stack.
 
 + 0drop  ( X -- 0 ) :: [ASM] Replace top of stack with zero.
 
 + reverse ( X1 .. Xn n -- Xn .. X1 n ) :: [FORTH] LIFO made FIFO.
 
-+ marker "name" :: [FORTH] A different implementation that backs up word lists only.
++ marker "name" :: [FORTH] A different implementation that backs up word
+                   lists only.
 
 * Deviations
 
-+ vocabulary <name> :: [ASM] creates a constant with a new wid (wordlist id) value.
++ vocabulary <name> :: [ASM] creates a constant with a new wid (wordlist
+     id) value.
 
-+ also <vocabulary-name> :: [ASM] adds the vocabulary's wid to the search order head.
++ also <vocabulary-name> :: [ASM] adds the vocabulary's wid to the
+     search order head.
 
 * Cookbook
 
-Using Edefer to resolve forward references is wasteful since it adds one level of runtime indirection and needs additional EEPROM and FLASH space to implement. Here's a simple solution:
+Using Edefer to resolve forward references is wasteful since it adds one
+level of runtime indirection and needs additional EEPROM and FLASH space
+to implement. Here's a simple solution:
 
 #+BEGIN_EXAMPLE
 \ One forward reference capable resolver, use either forward& or &forward.
@@ -233,30 +287,45 @@ variable _forward			\ f-addr to patch
 
 * BOOFA bootloader support
 
-BOOFA is an AVRDUDE compatible Flash/EEPROM programmer. [[https://github.com/wexi/boofa][Visit BOOFA GitHub repository]]. To reserve space for BOOFA put in your template.asm the following definition:
+BOOFA is an AVRDUDE compatible Flash/EEPROM programmer. [[https://github.com/wexi/boofa][Visit BOOFA
+GitHub repository]]. To reserve space for BOOFA put in your template.asm
+the following definition:
 
 ~.equ AMFORTH_RO_SEG = NRWW_START_ADDR + 512 ;make room for BOOFA~
 
 * amforth-shell.py enhancements
 
-+ #include vs. #install :: #include would skip uploading if the file has already been uploaded. #install is unconditional. [[HQ]] now calls conditional file inclusion #require and unconditional inclusion
-     #include. This is influenced by gforth. The Shadow for now will not follow suit.
+For more information see tools/amforth-shell.py beginning comments.
 
-+ <<create>> Capture compiled word names.
++ #include vs. #install :: #include would skip uploading if the file has
+     already been uploaded in the shell session. #install is
+     unconditional. [[HQ]] calls conditional file inclusion #require and
+     unconditional inclusion #include. This is influenced by gforth. The
+     Shadow (for now) will not follow suit.
 
-+ <<conceal>> Substitute earlier captured word names with serial numbers.
++ <<create>> --capture :: Capture compiled word names.
 
-+ <<log>> A distiller function :: The --log option collects to a file the actual code that it sent to the AmForth system, comments free and after string substituion.
++ <<conceal>> --conceal :: Substitute earlier captured word names with
+     serial numbers.
 
-+ Hardware handshake :: The --rtscts option is for a more reliable serial connection if your AmForth supports.
++ <<log>> --log :: This option collects the actual code that it sent to
+                   the AmForth system, comments free and following all
+                   string substituion.
+
++ --rtscts :: Hardware handshake. This option is for a more reliable
+              serial connection if your AmForth implementation supports
+              it.
 
 * Emacs support
 
-+ Emacs amforth mode :: amoforth.el is a fork of gforth.el. It enforces OpenFirmware indentation rules. It would need much attention to reach full usefulness.
++ Emacs amforth mode :: amoforth.el is a fork of gforth.el. It enforces
+     OpenFirmware indentation rules. It would need much attention to
+     reach full usefulness.
 
 * Footnotes
 
-[fn:1] Forth is an old language, no one with less than 20 years of Forth programming experience counts :-)
+[fn:1] Forth is an old language, no one with less than 20 years of Forth
+programming experience counts :-)
 
 
 

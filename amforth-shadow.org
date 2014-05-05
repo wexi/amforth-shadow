@@ -15,8 +15,7 @@ summarizes the Shadow changes to HQ's code.
 [[http://sourceforge.net/users/mtrute][Matthias Trute]], AmForth creator, believes that its GPLv2 license means
 that users are entitled to receive the source of any code which the
 developer has chosen to include in the distribution, whether this code
-has an AmForth origin or not. While [[http://www.amazon.com/Intellectual-Property-Open-Source-Protecting/dp/0596517963][the Shadow questions this claim
-based on a reliable source]] the Shadow recommends to abide by Matthias
+has an AmForth origin or not. While [[http://www.amazon.com/Intellectual-Property-Open-Source-Protecting/dp/0596517963][the Shadow questions this claim based on a reliable source]] the Shadow recommends to abide by Matthias
 expectations and solve pesky commercial situations through obfuscation
 of the source code. See the new amforth-shell options [[create][--create]],
 [[conceal][--conceal]] and [[log][--log]].

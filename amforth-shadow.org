@@ -4,7 +4,7 @@
 #+OPTIONS: email:t
 #+STARTUP: indent
 
-<<HQ>> [[https://github.com/wexi/amforth-shadow][AmForth-Shadow]] is a sandbox for [[http://en.wikipedia.org/wiki/Atmel_AVR%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20][AVR8]] Forth development that is
+[[https://github.com/wexi/amforth-shadow][AmForth-Shadow]] <<HQ>> is a sandbox for [[http://en.wikipedia.org/wiki/Atmel_AVR%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20][AVR8]] Forth development that is
 maintained by an experienced embedded systems programmer, yet a
 novice[fn:1] in Forth. It is hoped that the ideas that are presented
 here would be adopted by [[http://amforth.sourceforge.net/][AmForth]] headquarters (HQ). The following
@@ -21,7 +21,7 @@ expectations and solve pesky commercial situations through obfuscation
 of the source code. See the new amforth-shell options [[create][--create]],
 [[conceal][--conceal]] and [[log][--log]].
 
-* <<eesy>> Reduce EEPROM based pointers wear out
+* Reduce EEPROM based pointers wear out <<eesy>>
 
 The memory allocation pointers, EE_DP, EE_HERE and EE_EHERE now have
 RAM_DP, RAM_HERE and RAM_EHERE copies.  IMPORTANT: Remember to execute
@@ -82,7 +82,7 @@ interrupts off (~int-~) when compiling new code.
 2. core/amforth-interpreter.asm: SLIH launcher.
 3. core/words/swi??.asm: Soft interrupts control words.
 
-* <<handshake>> USART tx/rx isr with RTS/CTS/DTR support
+* USART tx/rx isr with RTS/CTS/DTR support <<handshake>>
 
 Define the following macros in your application "template.asm" according
 to your project ports/pins use. AmForth is considered a DCE device --

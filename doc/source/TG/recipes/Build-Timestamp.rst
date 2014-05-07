@@ -140,22 +140,19 @@ edit the :file:`build.xml` file in the project application directory as follows:
 
 
    <!-- add to build.xml -->
-   <macrodef name="git-branch">
-        <attribute name="output" />
-        <sequential>
+    <macrodef name="git-branch">
+	<attribute name="output" />
+	<sequential>
 
-            <exec executable="git" outputproperty="branch" >
-                <arg value="status"/>
-                <arg value="--short"/>
-                <arg value="-b"/>
-                <arg value="-u"/>
-                <arg value="all"/>
-                <arg value="--porcelain"/>
+	    <exec executable="git" outputproperty="branch" >
+		<arg value="rev-parse"/>
+		<arg value="--abbrev-ref"/>
+		<arg value="HEAD"/>
                 <env key="LANG" value="C"/>
-            </exec>
+	    </exec>
             <property name="@{output}" value="${branch}"/>
-        </sequential>
-   </macrodef>
+	</sequential>
+    </macrodef>
 
    <target name="git-info">
         <git-branch output="branch" />
@@ -175,7 +172,7 @@ It prints the current branch name in the terminal:
 .. code-block:: none
 
    > git-info
-   ## master ok
+    master ok
    >
 
 Its easy to add this command to the :command:`applturnkey` actions as well.

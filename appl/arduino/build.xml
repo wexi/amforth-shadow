@@ -39,6 +39,16 @@
 		    eepromfile="leonardo.eep.hex"
 		/>
 	</target>
+        <target name="leonardo.fuses" description="Set fuses for LEONARDO">
+	<echo>Writing fuses</echo>
+	<avrdude-3fuses
+		    type="avrisp2"
+		    mcu="m32u4"
+		    efuse="0xc7"
+		    hfuse="0x99"
+		    lfuse="0xcf"
+	/>
+    </target>
 
 	<target name="mega128.hex" description="Hexfiles for Arduino Mega Board (Atmega1280) www.arduino.cc">
 		<avrasm2 projectname="mega128" mcu="atmega1280"/>
@@ -68,7 +78,6 @@
 		/>
 	</target>
 	<target name="diecimila.hex" description="Hexfiles for Arduino Diecimila Board (Atmega168) www.arduino.cc">
-	    <echo message="Did you adapt your dict_appl files? They are optimizied for the bigger controllers now! Your build may fail!"/>
 		<avrasm2 projectname="diecimila" mcu="atmega168"/>
 	</target>
 

@@ -106,11 +106,10 @@ diecimila.fuse:   EFUSE=0xF9
 # 'code' for trunk and x.y for the releases (i.e 5.0)
 #VERSION=5.0
 VERSION=code
-AMFORTH=$(HOME)/amforth-$(VERSION)
 CORE=$(AMFORTH)/core
 
 # directories
-ATMEL=$(HOME)/atmel
+ATMEL=$(AMFORTH)/Atmel
 
 # ------------------------
 # PROGRAMMER CONFIGURATION
@@ -126,7 +125,7 @@ AVRDUDE_FLAGS=-q -P $(PORT) -c $(PROGRAMMER)
 # ASSEMBLER TO USE
 # ----------------
 
-AS_INCLUDE=-I $(ATMEL)/include -I$(CORE)
+AS_INCLUDE=-I $(ATMEL)/Appnotes2 -I$(CORE)
 
 ASM=wine $(ATMEL)/avrasm2.exe
 # flags Specific to avrasm2.exe

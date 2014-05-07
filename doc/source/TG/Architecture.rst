@@ -404,9 +404,10 @@ immediate words for compiling and postponing.
 
 .. code-block:: forth
 
+   ( XT flags -- )
    :noname drop execute ; 
-   :noname 0< if , exit then execute ; 
-   :noname 0< if  postpone [compile] then , ; 
+   :noname 0> if compile, else execute then ; 
+   :noname 0> if postpone [compile] then , ; 
    recognizer: r:find
 
    : rec:find ( addr len -- XT flags r:find | r:fail )

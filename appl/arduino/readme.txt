@@ -9,7 +9,7 @@ Model		Microcontroler	Host	Xtal	DBG-LED	Flash	B-Load			Ram	Fuses (E,H,L)
 Mega		ATMega 1280	uart0	16Mhz	PB7	128K	512b/1k/2k/4k		8k	F7 D9 FF
 Diecimila	ATMega 168	uart0	16Mhz	PB5	16K	128b/256b/512b/1k	1k	F9 DD FF
 Duemilanove	ATMega 328	uart0	16Mhz	PB5	32k	256b/512b/1k/2k		2k	05 D9 FF
-Uno         ATMega 328	uart0	16Mhz	PB5	32k	256b/512b/1k/2k		2k	05 D9 FF
+Uno             ATMega 328	uart0	16Mhz	PB5	32k	256b/512b/1k/2k		2k	05 D9 FF
 Sanguino	ATMega 644	uart0	16Mhz	PB0	64k	512/1k/2k/4k		4k	FD F9 FF
 
 

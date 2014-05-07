@@ -47,20 +47,26 @@ of the SOURCE buffer only, a ``refill`` will change the content.
 
 .. code-block:: forth
 
-   ' noop ' sliteral ' sliteral recognizer: r:string
+     ' noop 
+     ' sliteral 
+     :noname type -48 throw ; 
+   recognizer: r:string
 
    : rec:string ( addr len -- )
       over c@ [char] " <> if 2drop r:fail exit then
-      negate 1+ >in +! drop \ reset parse area to SOURCE
+      negate 1+ >in +! drop \ expand parse area 
       [char] " parse  \ get trailing delimiter
-      -1 /string \ compensate the +1 above
+      -1 /string \ remove limiter
       r:string
    ;
 
    ' rec:string place-rec
 
-The first line is simply the method table definition. The three methods
-are already defined in amforth so nothing special here.
+The first line is simply the method table definition. The first two methods
+are already defined in amforth so nothing special here. The third method is
+called when the data is beeing postponed. For now, a string cannot be postponed,
+which would essentially lead to a string copy from the defining word to
+the new one. Instead an exception -48 is thrown.
 
 The rec:string definition is more complex. The first line
 
@@ -114,5 +120,3 @@ data without the ``s"`` command.
      foo bar    ok
    >
 
-Since the postpone action is defined to be the same as the compile action,
-``postpone "foo bar"`` will work.

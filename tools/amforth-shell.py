@@ -596,15 +596,21 @@ class AMForth(object):
         "Main function called when module is used as a script"
         upload_files, interact = self.parse_arg()
 
+        base_str = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        base_len = len(base_str)
+        def encode(num):
+            code = ""
+            while num:
+                num, rem = divmod(num, base_len)
+                code = base_str[rem] + code
+            return code if code else "0"
+
         if self._conceal:
-            try:
-                frt = self._dict.read()
-                self._dict.close()
-                wl = eval(frt)
-                for i in range(len(wl)):
-                    self._appl_defs[wl[i]] = "^^" + str(i)
-            except:
-                pass
+            frt = self._dict.read()
+            self._dict.close()
+            wl = eval(frt)
+            for wn, wd in enumerate(wl):
+                self._appl_defs[wd] = "^^" + encode(wn)
 
         try:
             for fn in upload_files:

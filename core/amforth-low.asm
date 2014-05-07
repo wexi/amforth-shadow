@@ -14,7 +14,7 @@
 ; lower part of the dictionary
 .include "dict/rww.inc"
 .include "dict_appl.inc"
-.include "dict/nrww.inc"
+.include "dict/nrww.inc" ; well, not really nrww, but simplifies things alot
 .include "dict_appl_core.inc"
 
 

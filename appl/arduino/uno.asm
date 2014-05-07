@@ -20,5 +20,9 @@
 ; baud rate of terminal
 .equ BAUD = 38400
 .include "drivers/usart_0.asm"
+; settings for 1wire interface, if desired
+;.equ OW_PORT=PORTB
+;.EQU OW_BIT=4
+;.include "drivers/1wire.asm"
 
 .include "amforth.asm"

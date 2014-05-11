@@ -1,5 +1,3 @@
-.include "dict_core.inc"
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;
 .include "drivers/atxmega_nvm.asm"
 .include "words/fetch-i.asm"

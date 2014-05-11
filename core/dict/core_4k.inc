@@ -11,7 +11,7 @@
 .include "words/abs.asm"
 .include "words/pick.asm"
 .include "words/cellplus.asm"
-.include "dict_interrupt.inc"
+.include "dict/interrupt.inc"
 
 ; now the relocatable colon words
 

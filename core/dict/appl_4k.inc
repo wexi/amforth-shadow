@@ -75,4 +75,4 @@
 .include "words/traverse-wordlist.asm"
 .include "words/find-name.asm"
 
-.include "dict_compiler.inc"
+.include "dict/compiler1.inc"

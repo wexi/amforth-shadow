@@ -2,6 +2,8 @@
 ;;;;
 ;;;; GPL V2 (only)
 
+.equ AMFORTH_NRWW_SIZE = (FLASHEND - AMFORTH_RO_SEG) * 2
+
 .set pc_ = pc
 .org $0000
   jmp_ COLD_START

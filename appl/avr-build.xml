@@ -15,9 +15,20 @@
 	       <fileset dir="." includes="*.map"/>	       
 	    </delete>
 	</target>
+    <target name="git-info">
+	<git-branch output="branch" />
+	<length property="length" string="${branch}"/>
+        <copy tofile="words/git-info.asm" file="words/git-info.tmpl" overwrite="true">
+          <filterset>
+            <filter token="BRLEN" value="${length}"/>
+            <filter token="BRNAME" value="${branch}"/>
+          </filterset>
+        </copy>
+	
+    </target>
 	
     <macrodef name="avra">
-	<attribute name="binary"       default="avra" />
+	<attribute name="binary"       default="../../Atmel/avra" />
 	<attribute name="includes"     default="../../Atmel/Appnotes" />
 	<attribute name="projectname"  default="undefined"/>
 	<attribute name="mcu"          default="undefined"/>
@@ -144,6 +155,19 @@
 		<arg line="-U efuse:w:@{efuse}:m"/>
 		<arg line="-v"/>
 	    </exec>
+	</sequential>
+    </macrodef>
+    <macrodef name="git-branch">
+	<attribute name="output" />
+	<sequential>
+
+	    <exec executable="git" outputproperty="branch" >
+		<arg value="rev-parse"/>
+		<arg value="--abbrev-ref"/>
+		<arg value="HEAD"/>
+                <env key="LANG" value="C"/>
+	    </exec>
+            <property name="@{output}" value="${branch}"/>
 	</sequential>
     </macrodef>
 

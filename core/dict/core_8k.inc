@@ -14,7 +14,7 @@
 
 .include "words/show-wordlist.asm"
 .include "words/words.asm"
-.include "dict_interrupt.inc"
+.include "dict/interrupt.inc"
 
 .include "words/pick.asm"
 .include "words/is.asm"
@@ -172,3 +172,4 @@
 .include "words/tib.asm"
 
 .include "words/init-user.asm"
+.include "dict/compiler2.inc"

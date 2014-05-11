@@ -3,14 +3,14 @@
 ; optional or application specific. They are placed
 ; in the RWW flash section.
 
-; The file dict_compiler2.inc contains a number of
+; The file dict/compiler2.inc contains a number of
 ; non-essential words with compiler functionality.
 ; It is recoomended but not strictly necessairy
 ; to include it. It is already included by default
 ; on atmegas with 8k boot loader sections, but it is
 ; safe to include this file twice.
 
-.include "dict_compiler2.inc"
+.include "dict/compiler2.inc"
 
 ; turnkey is always needed and application specific
 .include "words/applturnkey.asm"

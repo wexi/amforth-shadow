@@ -6,4 +6,4 @@
 .include "words/applturnkey.asm"
 .include "words/built.asm"
 
-.include "dict_compiler2.inc"
+.include "dict/compiler2.inc"

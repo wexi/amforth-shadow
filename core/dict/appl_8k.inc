@@ -1,1 +1,1 @@
-.include "dict_compiler.inc"
+.include "dict/compiler1.inc"

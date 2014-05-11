@@ -1,6 +1,4 @@
 
-.set AMFORTH_NRWW_SIZE=(FLASHEND-AMFORTH_RO_SEG)*2
-
 .if AMFORTH_NRWW_SIZE > 8000
 .include "dict/appl_8k.inc"
 .elif AMFORTH_NRWW_SIZE > 4000

@@ -10,7 +10,7 @@
 
 .include "words/show-wordlist.asm"
 .include "words/words.asm"
-.include "dict_interrupt.inc"
+.include "dict/interrupt.inc"
 
 .include "words/pick.asm"
 .include "words/is.asm"
@@ -19,7 +19,7 @@
 .include "words/squote.asm"
 
 .include "words/fill.asm"
-.include "dict_compiler.inc"
+.include "dict/compiler1.inc"
 
 .include "words/environment.asm"
 .include "words/env-wordlists.asm"

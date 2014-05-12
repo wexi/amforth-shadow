@@ -7,8 +7,17 @@ VE_EQUAL:
     .dw VE_HEAD
     .set VE_HEAD = VE_EQUAL
 XT_EQUAL:
-    .dw DO_COLON
+    .dw PFA_EQUAL
 PFA_EQUAL:
-    .dw XT_MINUS
-    .dw XT_EQUALZERO
-    .dw XT_EXIT
+    ld temp0, Y+
+    ld temp1, Y+
+    sub tosl, temp0
+    brne PFA_EQUAL0	
+    sbc tosh, temp1
+    breq PFA_EQUAL1
+PFA_EQUAL0:
+    movw tosl, zerol
+    jmp_ DO_NEXT
+PFA_EQUAL1:	
+    sbiw tosl, 1
+    jmp_ DO_NEXT

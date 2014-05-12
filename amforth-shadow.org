@@ -173,6 +173,8 @@ implementation.
 
 + cinvert :: [ASM] Complements a single byte.
 
++ ?= ( n1 n2 -- n1 false | true ) :: [ASM] twisted compare, true when n1 equals n2.
+
 + u2/ :: [ASM] Unsigned division by 2.
 
 + u4/ :: [ASM] Unsigned division by 4.

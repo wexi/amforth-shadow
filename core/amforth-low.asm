@@ -10,7 +10,7 @@
 
 .include "amforth-interpreter.asm"
 .include "drivers/generic-isr.asm"
-
+.set AMFORTH_NRWW_SIZE=(FLASHEND-AMFORTH_RO_SEG)*2
 ; lower part of the dictionary
 .include "dict/rww.inc"
 .include "dict_appl.inc"

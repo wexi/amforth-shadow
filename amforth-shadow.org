@@ -206,7 +206,9 @@ implementation.
 
 + 0drop  ( X -- 0 ) :: [ASM] Replace top of stack with zero.
 
-+ reverse ( X1 .. Xn n -- Xn .. X1 n ) :: [FORTH] LIFO made FIFO.
++ reverse  ( X1 .. Xn n -- Xn .. X1 n ) :: [FORTH] LIFO made FIFO.
+
++ weekday  ( d m y -- wd ) :: [FORTH] wd 0/Mon .. 6/Sun
 
 + marker "name" :: [FORTH] A different implementation that backs up word
                    lists only.

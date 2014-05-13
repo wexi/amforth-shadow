@@ -10,9 +10,8 @@ XT_QEQUAL:
     .dw PFA_QEQUAL
 PFA_QEQUAL:
     ldd temp0, Y+0		;temp0 = low n1
-    sub tosl, temp0
-    brne PFA_QEQUAL0
     ldd temp1, Y+1		;temp1 = high n1
+    sub tosl, temp0
     sbc tosh, temp1
     breq PFA_QEQUAL1
 PFA_QEQUAL0:

@@ -12,7 +12,6 @@ PFA_EQUAL:
     ld temp0, Y+
     ld temp1, Y+
     sub tosl, temp0
-    brne PFA_EQUAL0	
     sbc tosh, temp1
     breq PFA_EQUAL1
 PFA_EQUAL0:

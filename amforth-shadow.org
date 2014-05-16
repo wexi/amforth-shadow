@@ -15,10 +15,12 @@ summarizes the Shadow changes to HQ's code.
 [[http://sourceforge.net/users/mtrute][Matthias Trute]], AmForth creator, believes that its GPLv2 license means
 that users are entitled to receive the source of any code which the
 developer has chosen to include in the distribution, whether this code
-has an AmForth origin or not. While [[http://www.amazon.com/Intellectual-Property-Open-Source-Protecting/dp/0596517963][the Shadow questions this claim based on a reliable source]] the Shadow recommends to abide by Matthias
+has an AmForth origin or not. While [[http://www.amazon.com/Intellectual-Property-Open-Source-Protecting/dp/0596517963][the Shadow questions this claim
+based on a reliable source]] the Shadow recommends to abide by Matthias
 expectations and solve pesky commercial situations through obfuscation
 of the source code. See the new amforth-shell options [[create][--create]],
-[[conceal][--conceal]] and [[log][--log]].
+[[conceal][--conceal]] and [[log][--log]]. Further development is needed in this connection,
+see the [[NOTE][the note below]].
 
 * Reduce EEPROM based pointers wear out <<eesy>>
 
@@ -206,12 +208,12 @@ implementation.
 
 + 0drop  ( X -- 0 ) :: [ASM] Replace top of stack with zero.
 
-+ reverse  ( X1 .. Xn n -- Xn .. X1 n ) :: [FORTH] LIFO made FIFO.
++ reverse  ( X1 .. Xn n -- Xn .. X1 n ) :: LIFO made FIFO.
 
-+ weekday  ( d m y -- wd ) :: [FORTH] wd 0/Mon .. 6/Sun
++ weekday  ( d m y -- wd ) :: wd 0/Mon .. 6/Sun
 
-+ marker "name" :: [FORTH] A different implementation that backs up word
-                   lists only.
++ marker "name" :: A different implementation that backs up word lists
+                   only.
 
 * Deviations
 
@@ -309,7 +311,13 @@ For more information see tools/amforth-shell.py beginning comments.
 
 + --create :: <<create>> Capture compiled word names.
 
-+ --conceal :: <<conceal>> Substitute earlier captured word names with serial numbers.
++ --conceal :: <<conceal>> Substitute earlier captured word names with
+               serial numbers.\\ <<NOTE>> NOTE: A limitation that has
+               yet to be addressed is how to detect for concealment
+               names which were altered through the WLSCOPE
+               mechanism. Alternatively, and perhaps better, is the
+               removal of these words from the captured word list which
+               ~--create~ had generated.
 
 + --log :: <<log>> This option collects the actual code that it sent to
            the AmForth system, comments free and following all string

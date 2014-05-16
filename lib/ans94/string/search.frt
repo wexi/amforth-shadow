@@ -8,7 +8,7 @@
     \ Is c-addr2 u2 a prefix of c-addr1 u1 ?
     tuck 2>r min 2r> str= ;
 
-: => < 0= ;
+: >= < 0= ;
 
 : search ( c-addr1 u1 c-addr2 u2 -- c-addr3 u3 flag ) \ string
     2>r 2dup

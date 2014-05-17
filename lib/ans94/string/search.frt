@@ -13,7 +13,7 @@
 : search ( c-addr1 u1 c-addr2 u2 -- c-addr3 u3 flag ) \ string
     2>r 2dup
     begin
-    dup 2r@ nip >=
+    dup r@ >= \ 2r@ nip >=
     while
     2dup 2r@ string-prefix? if
         2swap 2drop 2r> 2drop true exit

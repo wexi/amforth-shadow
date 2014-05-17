@@ -10,14 +10,14 @@ XT_2R_FETCH:
     .dw PFA_2R_FETCH
 PFA_2R_FETCH:
     savetos
-    pop tosl
-    pop tosh
-    savetos
-    movw zl, tosl
+    pop zl
+    pop zh
     pop tosl
     pop tosh
     push tosh
     push tosl
     push zh
     push zl
+    savetos
+    movw tosl, zl
     jmp_ DO_NEXT

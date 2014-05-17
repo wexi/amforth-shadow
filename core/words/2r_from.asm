@@ -10,9 +10,10 @@ XT_2R_FROM:
     .dw PFA_2R_FROM
 PFA_2R_FROM:
     savetos
+    pop zl
+    pop zh
     pop tosl
     pop tosh
     savetos
-    pop tosl
-    pop tosh
+    movw tosl, zl
     jmp_ DO_NEXT

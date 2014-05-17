@@ -19,21 +19,17 @@ EE_CURRENT:
 EE_FORTHWORDLIST:
     .dw VE_HEAD      ; pre-defined (compiled in) wordlist
 EE_ORDERLISTLEN:
-    .dw 2
+    .dw 1
 EE_ORDERLIST: ; list of wordlist id, exactly numwordlist entries
     .dw EE_FORTHWORDLIST      ; get/set-order
-    .dw EE_FORTHWORDLIST      ; get/set-order
-    .byte  (NUMWORDLISTS-1)*CELLSIZE ; two slots are already used
+    .byte  (NUMWORDLISTS-1)*CELLSIZE ; one slot is already used
 EE_RECOGNIZERS:
 EE_RECOGNIZERLISTLEN:
     .dw 2
 EE_RECOGNIZERLIST:
     .dw XT_REC_FIND
     .dw XT_REC_INTNUM
-    .dw -1
-    .dw -1
-    .dw -1
-    .dw -1
+    .byte  (NUMRECOGNIZERS-2)*CELLSIZE ; two slots are already used
 
 EE_WLSCOPE:
     .dw XT_GET_CURRENT  ; default wordlist scope

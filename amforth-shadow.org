@@ -19,8 +19,7 @@ has an AmForth origin or not. While [[http://www.amazon.com/Intellectual-Propert
 based on a reliable source]] the Shadow recommends to abide by Matthias
 expectations and solve pesky commercial situations through obfuscation
 of the source code. See the new amforth-shell options [[create][--create]],
-[[conceal][--conceal]] and [[log][--log]]. Further development is needed in this connection,
-see the [[NOTE][the note below]].
+[[conceal][--conceal]] and [[log][--log]].
 
 * Reduce EEPROM based pointers wear out <<eesy>>
 
@@ -160,59 +159,57 @@ implementation.
 
 * General purpose new words
 
-+ allwords :: [ASM] Lists all words in the wordlists search order. This
-              command is used by amforth-shell.
+- allwords ( -- ) :: [ASM] Lists all words in the word-lists search
+     order. This command is used by amforth-shell for typing auto
+     completion.
 
-+ newwords :: [ASM] Lists all words in the wordlists search order except
-              for the deepest one, that is assumed to be the
-              FORTH-WORDLIST. This command is used by the amforth-shell
-              code obfuscation procedure, see [[create][--create]] and
-              [[conceal][--conceal]]. Compiled word names that you wish to preserve
-              should be added to FORTH-WORDLIST.
+- my-words ( WIDn .. WID1 n -- ) :: [ASM] Lists all given
+     word-lists. This command is used by amforth-shell to create the
+     appl.dic file.
 
-+ @c :: [ASM] Like C@ but reads the byte as a signed 8 bit integer
+- @c :: [ASM] Like C@ but reads the byte as a signed 8 bit integer
         (i.e., extends sign).
 
-+ cinvert :: [ASM] Complements a single byte.
+- cinvert :: [ASM] Complements a single byte.
 
-+ ?= ( n1 n2 -- n1 false | true ) :: [ASM] twisted compare, true when n1 equals n2.
+- ?= ( n1 n2 -- n1 false | true ) :: [ASM] twisted compare, true when n1 equals n2.
 
-+ u2/ :: [ASM] Unsigned division by 2.
+- u2/ :: [ASM] Unsigned division by 2.
 
-+ u4/ :: [ASM] Unsigned division by 4.
+- u4/ :: [ASM] Unsigned division by 4.
 
-+ 4/ :: [ASM] Signed division by 4.
+- 4/ :: [ASM] Signed division by 4.
 
-+ 4* :: [ASM] Unsigned multiplication by 4.
+- 4* :: [ASM] Unsigned multiplication by 4.
 
-+ -! ( n a-addr ) :: [ASM] Subtracts n from the cell in a-addr.
+- -! ( n a-addr ) :: [ASM] Subtracts n from the cell in a-addr.
 
-+ -rot  ( n1 n2 n3 -- n3 n1 n2 ) :: [ASM] "not-rote".
+- -rot  ( n1 n2 n3 -- n3 n1 n2 ) :: [ASM] "not-rote".
 
-+ cell- :: [ASM] Cell size address subtraction.
+- cell- :: [ASM] Cell size address subtraction.
 
-+ du256* ( ud -- ud*256 ) :: double unsigned multiplication by 256.  
+- du256* ( ud -- ud*256 ) :: double unsigned multiplication by 256.  
 
-+ du256/ ( ud -- ud/256 ) :: double unsigned division by 256.  
+- du256/ ( ud -- ud/256 ) :: double unsigned division by 256.  
 
-+ du<  (ud1 ud2 -- flag ) :: [ASM] is ud1 less than ud2 ?
+- du<  (ud1 ud2 -- flag ) :: [ASM] is ud1 less than ud2 ?
 
-+ d@ d! :: [ASM] double precision fetch and store.
+- d@ d! :: [ASM] double precision fetch and store.
 
-+ 2@ 2! :: [ASM] two cell fetch and store.
+- 2@ 2! :: [ASM] two cell fetch and store.
 
-+ rdrop  ( R: X -- ) :: [ASM] Drop one cell from top of run-time stack.
+- rdrop  ( R: X -- ) :: [ASM] Drop one cell from top of run-time stack.
 
-+ 2rdrop  ( R: X1 X2 -- ) :: [ASM] Drop two cells from top of run-time
+- 2rdrop  ( R: X1 X2 -- ) :: [ASM] Drop two cells from top of run-time
      stack.
 
-+ 0drop  ( X -- 0 ) :: [ASM] Replace top of stack with zero.
+- 0drop  ( X -- 0 ) :: [ASM] Replace top of stack with zero.
 
-+ reverse  ( X1 .. Xn n -- Xn .. X1 n ) :: LIFO made FIFO.
+- reverse  ( X1 .. Xn n -- Xn .. X1 n ) :: LIFO made FIFO.
 
-+ weekday  ( d m y -- wd ) :: wd 0/Mon .. 6/Sun
+- weekday  ( d m y -- wd ) :: wd 0/Mon .. 6/Sun
 
-+ marker "name" :: A different implementation that backs up word lists
+- marker "name" :: A different implementation that backs up word lists
                    only.
 
 * Deviations
@@ -309,15 +306,14 @@ For more information see tools/amforth-shell.py beginning comments.
      Shadow (for now) will not follow suit for his deep rooted C
      language habits.
 
-+ --create :: <<create>> Capture compiled word names.
++ --create, -c :: <<create>> The argument of this option is a wordlist
+                  whose words need to be captured into the file
+                  appl.dic. Multiple -c options can be specifed.
 
-+ --conceal :: <<conceal>> Substitute earlier captured word names with
-               serial numbers.\\ <<NOTE>> NOTE: A limitation that has
-               yet to be addressed is how to detect for concealment
-               names which were altered through the WLSCOPE
-               mechanism. Alternatively, and perhaps better, is the
-               removal of these words from the captured word list which
-               ~--create~ had generated.
++ --conceal, -C :: <<conceal>> Replace future compiled words that appear
+                   in appl.dic with (compact) base 62 numbers with a
+                   unique ^^ prefix. Thus, all created names are
+                   expected to require just 2 dictionary Flash words.
 
 + --log :: <<log>> This option collects the actual code that it sent to
            the AmForth system, comments free and following all string

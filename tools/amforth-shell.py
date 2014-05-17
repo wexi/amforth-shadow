@@ -33,18 +33,17 @@
 # $d5 constant CRC8MSB
 # 10 constant max_number_of_users
 #
-# The following two step "create & conceal procedure" can conserve
-# dictionary space and obfuscate the resulting Forth code.  IMPORTANT:
-# It is assumed that FORTH-WORDLIST is the deepest WID in the search
-# order, i.e., it is WIDn of a GET-ORDER ( WIDn .. WID1 n ) stack. The
-# shell obtains this list via NEWWORDS.
+# The following two step create & conceal procedure can conserve a
+# significant dictionary space and obfuscate the resulting Forth code.
 #
-# Step #1: Invoke the shell with the argument --create <filename> to
-# save your compiled wordlist names into a <filename> of your choice.
+# Step 1: Invoke the shell with one or more -c (--create) arguments:
+# -c <vocabulary1> -c <vocabulary2> etc. This would create a file
+# of the appended word-lists; the file name is appl.dic.
 #
-# Step #2: Invoke the shell with the argument --conceal <filename> to
-# replace in the next compilation run the names of the words that you
-# captured in step #1 with arbitrary new ones.
+# Step 2: Invoke the shell with the argument -C (--conceal) to
+# substitute in the next compilation session the names of the words in
+# appl.dic with compact names (a ^^ prefix followed by a base62 serial
+# number).
 # 
 # Invoke the shell with the argument --log <filename.frt> to collect the 
 # lines which were uploaded to the AmForth system that received an " ok"
@@ -57,7 +56,7 @@
 # "eesy" is automatically sent to the application before leaving the program 
 # to synchronize the memory allocation pointers.
 #
-# ALLWORDS/NEWWORDS replaces WORDS in #update-words implementation.
+# ALLWORDS replaces WORDS in #update-words implementation.
 #
 # =====================================================================
 # DOCUMENTATION
@@ -606,8 +605,9 @@ class AMForth(object):
             return code if code else "0"
 
         if self._conceal:
-            frt = self._dict.read()
-            self._dict.close()
+            fp = open("appl.dic", "r")
+            frt = fp.read()
+            fp.close()
             wl = eval(frt)
             for wn, wd in enumerate(wl):
                 self._appl_defs[wd] = "^^" + encode(wn)
@@ -629,20 +629,27 @@ class AMForth(object):
             traceback.print_exc()
             return 1
         finally:
-            try:
-                self.send_line("eesy")        #RAM to EE sync
-                response = self.read_response()
-                if response[-3:] == " ok":
-                    print "\nMemory alloc pointers synced, goodbye."
-            except AMForthException:
-                print "\nLost contact with AmForth"
-            self.serial_disconnect()
-            if self._create:
-                self._dict.write(repr(self._amforth_words))
-                self._dict.close()
             if self._log:
                 self._log.write("eesy\n")
                 self._log.close()
+            try:
+                if self._create:
+                    self.send_line(" ".join(self._create) + " %d my-words" % len(self._create))
+                    response = self.read_response()
+                    words = set(response[:-4].split(" "))
+                    fp = file("appl.dic", "w")
+                    fp.write(repr(tuple(words)))
+                    fp.close()
+                    print "\nappl.dic file created with %d entries" % len(words),
+
+                self.send_line("eesy") #RAM to EE sync
+                response = self.read_response()
+                if response[-3:] == " ok":
+                    print "\nMemory alloc pointers synced, good-bye."
+
+            except AMForthException:
+                print "\nLost contact with AmForth"
+            self.serial_disconnect()
         return 0
 
     def parse_arg(self):
@@ -667,10 +674,10 @@ additional definitions (e.g. register names)
             default=self.serial_rtscts, help="Serial port RTS/CTS enable")
         parser.add_argument("--speed", "-s", action="store",
             type=int, default=self.serial_speed, help="Serial port speed")
-        parser.add_argument("--create", type=argparse.FileType('w'),
-                            help="Create compiled words dictionary")
-        parser.add_argument("--conceal", type=argparse.FileType('r'),
-                            help="Conceal compiled words dictionary")
+        parser.add_argument("--create", "-c", metavar="VOC", type=str, action="append",
+                            help="Capture word-list VOC into 'appl.dic'")
+        parser.add_argument("--conceal", "-C", action="store_true",
+                            help="Conceal word names in 'appl.dic'")
         parser.add_argument("--log", type=argparse.FileType('w'),
                             help="Uploaded Forth log-file")
         parser.add_argument("--line-length", "-l", action="store",
@@ -698,9 +705,8 @@ additional definitions (e.g. register names)
         self._serial_rtscts = arg.rtscts
         self._serial_speed = arg.speed
         assert not arg.create or not arg.conceal, "Either --create or --conceal"
-        self._dict = arg.create if arg.create else arg.conceal
-        self._create = True if arg.create else False
-        self._conceal = True if arg.conceal else False        
+        self._create = arg.create
+        self._conceal = arg.conceal
         self._log = arg.log
         self.editor = arg.editor
         behavior = self._config.current_behavior
@@ -1270,13 +1276,11 @@ additional definitions (e.g. register names)
         dp = int(dp[:-3])
         if self._amforth_dp != dp:
             self._amforth_dp = dp
-            self.send_line("newwords" if self._create else "allwords")
+            self.send_line("allwords")
             words = self.read_response()
             if words[-3:] != " ok":
                 return # Something went wrong, just silently ignore
-            self._amforth_words = words[:-4].split(" ")
-            if not self._create:
-                self._amforth_words += self.interact_directives
+            self._amforth_words = words[:-4].split(" ") + self.interact_directives
 
     def _update_cpu(self):
         self.progress_callback("Information", None, "getting MCU name..")

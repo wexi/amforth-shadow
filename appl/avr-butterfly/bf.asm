@@ -1,20 +1,13 @@
-; Settings for the avr butterfly demo board
+; for a description, what can be done in this
+; file see ../template/template.asm. You may want to
+; copy that file to this one and edit it afterwards.
+
 .include "macros.asm"
 .include "device.asm"
+
 .equ AMFORTH_RO_SEG = NRWW_START_ADDR
-.equ TIBSIZE  = $64    ; 80 characters is one line...
-.equ APPUSERSIZE = 10  ; size of user area
 
-; cpu clock in hertz
 .equ F_CPU = 8000000
-; baud rate of terminal
-.equ BAUD = 9600
 .include "drivers/usart.asm"
-
-.set NUMWORDLISTS=8
-
-.set rstackstart = RAMEND
-.set stackstart  = RAMEND - 80
-.set WANT_SPI = 1
 
 .include "amforth.asm"

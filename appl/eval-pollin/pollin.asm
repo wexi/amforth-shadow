@@ -1,18 +1,22 @@
-; Settings for the pollin eval boards with various atmega's
+; for a description, what can be done in this
+; file see ../template/template.asm. You may want to
+; copy that file to this one and edit it afterwards.
+
 .include "macros.asm"
 .include "device.asm"
-.equ AMFORTH_RO_SEG = NRWW_START_ADDR
-.equ TIBSIZE  = $64    ; 80 characters is one line...
-.equ APPUSERSIZE = 10  ; size of user area
+
+.equ AMFORTH_RO_SEG = NRWW_START_ADDR+1
 
 ; cpu clock in hertz
 .equ F_CPU = @F_CPU@
-; baud rate of terminal
-.equ BAUD = 9600
+.set BAUD_MAXERROR = 30
+.equ TIMER_INT = OVF2addr
+
 .include "drivers/usart@USART@.asm"
 
-.set rstackstart = RAMEND
-.set stackstart  = RAMEND - 80
+; settings for 1wire interface
+.equ OW_PORT=PORTB
+.EQU OW_BIT=4
+.include "drivers/1wire.asm"
 
-.set NUMWORDLISTS = 8
 .include "amforth.asm"

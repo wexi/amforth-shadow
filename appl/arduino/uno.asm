@@ -1,28 +1,18 @@
+; for a description, what can be done in this
+; file see ../template/template.asm. You may want to
+; copy that file to this one and edit it afterwards.
+
 .include "macros.asm"
 .include "device.asm"
 
 .equ AMFORTH_RO_SEG = NRWW_START_ADDR
 
-.equ TIBSIZE  = $64   ; 80 characters is one line...
-.equ APPUSERSIZE = 10 ; size of application user area
-
-; the dictionary search treats lowercase and uppercase
-; letters the same. Set to 0 if you do not want it
-.set WANT_IGNORECASE = 1
-
-; cpu clock in hertz
 .equ F_CPU = 16000000
-
-.set rstackstart = RAMEND
-.set stackstart  = RAMEND - 80
-
-.set NUMWORDLISTS = 8
-; baud rate of terminal
-.equ BAUD = 38400
 .include "drivers/usart_0.asm"
+
 ; settings for 1wire interface, if desired
-;.equ OW_PORT=PORTB
-;.EQU OW_BIT=4
-;.include "drivers/1wire.asm"
+.equ OW_PORT=PORTB
+.EQU OW_BIT=4
+.include "drivers/1wire.asm"
 
 .include "amforth.asm"

@@ -2,10 +2,9 @@
 ; file see ../template/template.asm. You may want to
 ; copy that file to this one and edit it afterwards.
 
-.include "macros.asm"
-.include "device.asm"
+.include "preamble.inc"
 
-.equ AMFORTH_RO_SEG = NRWW_START_ADDR+1
+.set AMFORTH_RO_SEG = NRWW_START_ADDR+1
 
 ; cpu clock in hertz
 .equ F_CPU = @F_CPU@

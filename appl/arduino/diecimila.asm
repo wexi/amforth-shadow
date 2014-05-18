@@ -1,7 +1,4 @@
-.include "macros.asm"
-.include "devices/atmega168/device.asm"
-
-.equ AMFORTH_RO_SEG = NRWW_START_ADDR
+.include "preamble.inc"
 
 .set WANT_IGNORECASE = 1
 

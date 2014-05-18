@@ -6,16 +6,12 @@
 ;
 ; note: .set is like a variable, .equ is like a constant
 ;
-; first is to include the macros from the amforth
-; directory
+; first is include the preamble. It contains macro definitions, 
+; default settings and mcu specific stuff like register names. 
+; The files included with it depend on the -I order of the 
+; assembler.
 
-.include "macros.asm"
-
-; include the amforth device definition file. These
-; files include the *def.inc from atmel internally.
-.include "device.asm"
-
-.equ MCUSR = MCUCSR
+.include "preamble.inc"
 
 ; The amforth code is split into two segments, one starting
 ; at address 0 (the RWW area) and one starting in
@@ -97,7 +93,7 @@
 ; DRIVER SECTION
 ; 
 ; settings for 1wire interface, if desired
-.equ OW_PORT=PORTE
+.equ OW_PORT=PORTB
 .equ OW_BIT=4
 .include "drivers/1wire.asm"
 

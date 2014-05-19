@@ -9,15 +9,15 @@
 \ separate local stack
 \ max. call depth 10
 
+\ "2" means "1 cells", if portability is a concern
+
 #10 cells constant l-size
-l-size buffer: l \ the stack
-variable lsp     \ the stackpointer
+\ the local stack pointer and the stack itself
+l-size cell+ buffer: lsp
 
 \ initialize l-stackpointer, call it
-\ in turnkey prior to use it!
-: l-init
-  l l-size + 2 - lsp !
-;
+\ in e.g. turnkey prior to use!
+: l-init lsp l-size + lsp ! ;
 
 \ general stack access, unsued
 : l@ lsp @ @ ;
@@ -30,7 +30,9 @@ variable lsp     \ the stackpointer
 : local@ negate lsp @ + @ ;
 : local! negate lsp @ + ! ;
 
-: local ( n "name" -- )
+\ define a local by its offset
+\ relative to the local stack pointer
+: local ( offset "name" -- )
     (value) ,
     ['] local@ ,
     ['] local! ,

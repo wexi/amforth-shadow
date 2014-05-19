@@ -72,10 +72,15 @@
 
 ; default settings as specified in core/macros.asm. Uncomment and
 ; change them if necessairy.
-; .set TIBSIZE  = $64    ; ANS94 needs at least 80 characters per line
+
+; Size of the Terminal Input Buffer. This is the command line buffer.
+; .set TIBSIZE  = $64    ; bytes; ANS94 needs at least 80 characters per line
+
+; The total USER size is the sum of the system internal USER area plus
+; the size specified here.
 ; .set APPUSERSIZE = 10  ; size of application specific user area in bytes
 
-; addresses of various data segments
+; addresses of various data segments. 
 ;.set rstackstart = RAMEND      ; start address of return stack, grows downward
 ;.set stackstart  = RAMEND - 80 ; start address of data stack, grows downward
 ; change only if you know what to you do
@@ -86,16 +91,17 @@
 ;.set NUMWORDLISTS = 8
 
 ; Total number of recognizers.
-; There are 2 recognizers for the core system already in use. 
+; There are 2 recognizers for the core system already in use. That makes
+; 2 for your application.
 ;.set NUMRECOGNIZERS = 4 
 
 
 ; DRIVER SECTION
 ; 
-; settings for 1wire interface, if desired
-.equ OW_PORT=PORTB
-.equ OW_BIT=4
-.include "drivers/1wire.asm"
+; settings for 1wire interface, uncomment to use it
+;.equ OW_PORT=PORTB
+;.equ OW_BIT=4
+;.include "drivers/1wire.asm"
 
 ; include the whole source tree.
 .include "amforth.asm"

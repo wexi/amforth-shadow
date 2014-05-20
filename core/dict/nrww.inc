@@ -87,6 +87,16 @@
 .include "words/2r_from.asm"
 
 
+.include "words/store-e.asm"
+.include "words/fetch-e.asm"
+.include "words/store-i.asm"
+.if FLASHEND > $10000
+  .include "words/store-i_big.asm"
+.else
+  .include "words/store-i_nrww.asm"
+.endif
+.include "words/fetch-i.asm"
+
 
 .if AMFORTH_NRWW_SIZE>8000
 .include "dict/core_8k.inc"

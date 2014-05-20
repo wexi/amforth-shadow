@@ -1,5 +1,2 @@
-.include "words/store-e.asm"
-.include "words/fetch-e.asm"
-.include "words/store-i.asm"
-.include "words/store-i_nrww.asm"
-.include "words/fetch-i.asm"
+; This file is intentionally left empty
+; do not delete it!

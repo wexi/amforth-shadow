@@ -29,11 +29,10 @@ PFA_FINDNAME3:
     .dw XT_QDUP
     .dw XT_DOCONDBRANCH
     .dw PFA_FINDNAME4
-	.dw XT_TO_R
-	.dw XT_TO_R
-	.dw XT_2DROP
-	.dw XT_R_FROM
-	.dw XT_R_FROM
+	.dw XT_ROT
+	.dw XT_DROP
+	.dw XT_ROT
+	.dw XT_DROP
 	.dw XT_UNLOOP
 	.dw XT_EXIT
 PFA_FINDNAME4:

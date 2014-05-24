@@ -1,6 +1,6 @@
-; ( n a-addr -- ) 
-; Arithmetics
-; add n to content of RAM address a-addr
+; ( n addr -- ) 
+; Arithmetic
+; add n to the addressed word
 VE_PLUSSTORE:
     .dw $ff02
     .db "+!"
@@ -9,13 +9,13 @@ VE_PLUSSTORE:
 XT_PLUSSTORE:
     .dw PFA_PLUSSTORE
 PFA_PLUSSTORE:
-    movw zl, tosl		;a-addr
-    loadtos			;n
+    movw zh:zl, tosh:tosl	;Z = addr
+    loadtos			;TOS = n
     ldd temp0, Z+0
     ldd temp1, Z+1
-    add temp0, tosl
-    adc temp1, tosh
-    std Z+0, temp0
-    std Z+1, temp1
+    add tosl, temp0
+    adc tosh, temp1
+    std Z+0, tosl
+    std Z+1, tosh
     loadtos
     jmp_ DO_NEXT

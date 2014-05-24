@@ -1,6 +1,6 @@
-; ( n a-addr -- ) 
-; Arithmetics
-; subtract n from the content of RAM address a-addr
+; ( n addr -- ) 
+; Arithmetic
+; subtract n from the addressed word
 VE_MINUSSTORE:
     .dw $ff02
     .db "-!"
@@ -9,13 +9,15 @@ VE_MINUSSTORE:
 XT_MINUSSTORE:
     .dw PFA_MINUSSTORE
 PFA_MINUSSTORE:
-    movw zl, tosl		;a-addr
-    loadtos			;n
-    ldd temp0, Z+0
-    ldd temp1, Z+1
-    sub temp0, tosl
-    sbc temp1, tosh
-    std Z+0, temp0
-    std Z+1, temp1
-    loadtos
+    movw zl, tosl		;Z = addr
+    ld temp0, Y+		;temp = n
+    ld temp1, Y+
+    ldd tosl, Z+0
+    ldd tosh, Z+1
+    sub tosl, temp0
+    sbc tosh, temp1
+    std Z+0, tosl
+    std Z+1, tosh
+    ld tosl, Y+
+    ld tosh, Y+
     jmp_ DO_NEXT

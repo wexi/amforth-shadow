@@ -1,3 +1,4 @@
+# -*- mode: org; mode: auto-fill; fill-column: 75; -*- 
 #+TITLE: The Shadow Knows
 #+AUTHOR: Enoch
 #+EMAIL: ixew@hotmail.com
@@ -6,9 +7,9 @@
 
 [[https://github.com/wexi/amforth-shadow][AmForth-Shadow]] <<HQ>> is a sandbox for [[http://en.wikipedia.org/wiki/Atmel_AVR%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20][AVR8]] Forth development that is
 maintained by an experienced embedded systems programmer, yet a
-novice[fn:1] in Forth. It is hoped that the ideas that are presented
-here would be adopted by [[http://amforth.sourceforge.net/][AmForth]] headquarters (HQ). The following
-summarizes the Shadow changes to HQ's code.
+novice[fn:1] in Forth. It is hoped that the ideas that are presented here
+would be adopted by [[http://amforth.sourceforge.net/][AmForth]] headquarters (HQ). The following summarizes the
+Shadow changes to HQ's code.
 
 * Thoughts
 
@@ -172,7 +173,8 @@ implementation.
 
 - cinvert :: [ASM] Complements a single byte.
 
-- ?= ( n1 n2 -- n1 false | true ) :: [ASM] twisted compare, true when n1 equals n2.
+- ?= ( n1 n2 -- n1 false | true ) :: [ASM] twisted compare, true when n1
+     equals n2.
 
 - u2/ :: [ASM] Unsigned division by 2.
 
@@ -182,7 +184,18 @@ implementation.
 
 - 4* :: [ASM] Unsigned multiplication by 4.
 
-- -! ( n a-addr ) :: [ASM] Subtracts n from the cell in a-addr.
+- -! ( n addr -- ) :: [ASM] Subtracts n from the addressed word.
+
+- -!@ ( n addr -- n' ) :: [ASM] Subtracts n from the addressed word and
+     return the difference. 
+
+- +!@ ( n addr -- n') :: [ASM] Adds n to the addressed word and return the
+     sum.
+
+- c+! ( b addr -- ) :: [ASM] Adds b to the addressed byte.
+
+- c+!@ ( b addr -- b' ) :: [ASM] Adds b to the addressed byte and return
+     the sum.
 
 - -rot  ( n1 n2 n3 -- n3 n1 n2 ) :: [ASM] "not-rote".
 

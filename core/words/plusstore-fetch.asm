@@ -1,5 +1,5 @@
 ; ( n addr -- n' ) 
-; Arithmetic
+; Arithmetics
 ; add n to the addressed word and return the sum
 VE_PLUSSTOREFETCH:
     .dw $ff03

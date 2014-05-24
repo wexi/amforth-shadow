@@ -1,5 +1,5 @@
 ; ( b addr -- ) 
-; Arithmetic
+; Arithmetics
 ; add b to the addressed byte
 VE_CPLUSSTOREFETCH:
     .dw $ff04

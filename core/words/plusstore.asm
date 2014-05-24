@@ -1,5 +1,5 @@
 ; ( n addr -- ) 
-; Arithmetic
+; Arithmetics
 ; add n to the addressed word
 VE_PLUSSTORE:
     .dw $ff02

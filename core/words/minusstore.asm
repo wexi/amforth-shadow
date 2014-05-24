@@ -1,5 +1,5 @@
 ; ( n addr -- ) 
-; Arithmetic
+; Arithmetics
 ; subtract n from the addressed word
 VE_MINUSSTORE:
     .dw $ff02

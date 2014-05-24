@@ -1,5 +1,5 @@
 ; ( n addr -- n' ) 
-; Arithmetic
+; Arithmetics
 ; subtract n from the addressed word and return the difference
 VE_MINUSSTOREFETCH:
     .dw $ff03

@@ -13,14 +13,18 @@ Shadow changes to HQ's code.
 
 * Thoughts
 
-[[http://sourceforge.net/users/mtrute][Matthias Trute]], AmForth creator, believes that its GPLv2 license means
-that users are entitled to receive the source of any code which the
-developer has chosen to include in the distribution, whether this code
-has an AmForth origin or not. While [[http://www.amazon.com/Intellectual-Property-Open-Source-Protecting/dp/0596517963][the Shadow questions this claim
-based on a reliable source]] the Shadow recommends to abide by Matthias
-expectations and solve pesky commercial situations through obfuscation
-of the source code. See the new amforth-shell options [[create][--create]],
-[[conceal][--conceal]] and [[log][--log]].
+- [[http://sourceforge.net/users/mtrute][Matthias Trute]], AmForth creator, believes that its GPLv2 license means
+  that users are entitled to receive the source of any code which the
+  developer has chosen to include in the distribution, whether this code
+  has an AmForth origin or not. While [[http://www.amazon.com/Intellectual-Property-Open-Source-Protecting/dp/0596517963][the Shadow questions this claim based
+  on a reliable source]], the Shadow recommends to abide by Matthias
+  expectations and solve pesky commercial situations through obfuscation of
+  the source code. See the new amforth-shell options [[create][--create]], [[conceal][--conceal]]
+  and [[log][--log]].
+
+- Words implemented in AVR assembly language cannot be interrupted by [[SLIH][soft
+  interrupts]]. This is the main reason for the proliferation of assembly
+  language implemented words. For example, see ~+!@~ below.
 
 * Reduce EEPROM based pointers wear out <<eesy>>
 
@@ -30,7 +34,7 @@ EESY ( -- ) to sync the EE pointer values with their RAM copies.  This
 is done automatically for you by tools/amforth-shell.py before leaving
 the program.
 
-* Soft Interrupt Service
+* <<SLIH>> Soft Interrupt Service
 
 One of AmForth features is the ability to write Interrupt Service
 Routines (ISR), aka Interrupt Handlers, in Forth. However, in the

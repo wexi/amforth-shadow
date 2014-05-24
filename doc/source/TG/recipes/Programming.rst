@@ -20,6 +20,7 @@ Programming and Debugging
    Quotations
    RAM-Efficiency
    Recognizer
+   Testing
    Tracer
    Upgrade-Amforth
    Unbreakable

@@ -1,3 +1,3 @@
 
 \ a trivial multitasking friendly ms
-: ms ?do pause 1ms loop ;
+: ms 0 ?do pause 1ms loop ;

@@ -2,12 +2,13 @@
 \ boards from www.pollin.de
 \ needs the device register definitions loaded
 
+#require ms.frt
+
 marker _pollin_
 
 decimal
 
 \ wait some milliseconds
-: ms 0 ?do 1ms loop ;
 : blinkdelay 250 ms ;
 
 PORTD 5  portpin: led1

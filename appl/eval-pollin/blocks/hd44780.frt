@@ -7,8 +7,6 @@
 
 marker _hd44780_
 
-\ helper routine
-: ms 0 ?do 1ms loop ;
 
 hex
 

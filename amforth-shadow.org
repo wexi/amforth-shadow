@@ -165,6 +165,11 @@ implementation.
 
 * General purpose new words
 
+- reboot :: [ASM] A "cold" rename to match the Linux tradition. The Shadow
+            implementation of reboot is not identical to HQ's for the need
+            to initialize the RAM based memory alloc pointers and the soft
+            interrupts subsystem.
+
 - allwords ( -- ) :: [ASM] Lists all words in the word-lists search
      order. This command is used by amforth-shell for typing auto
      completion.
@@ -230,7 +235,10 @@ implementation.
 - marker "name" :: A different implementation that backs up word lists
                    only.
 
-* Deviations
+* Deviations from standard Forth
+
+Since the worlist order is kept on the EEPROM it is good practice to reduce
+the number of rewrites. Hence:
 
 + vocabulary <name> :: [ASM] creates a constant with a new wid (wordlist
      id) value.

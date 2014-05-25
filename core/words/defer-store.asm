@@ -11,9 +11,7 @@ XT_DEFERSTORE:
 PFA_DEFERSTORE:
     .dw XT_1PLUS
     .dw XT_DUP
-    .dw XT_DOLITERAL
-    .dw 2
-    .dw XT_PLUS   ; 2 +
+    .dw XT_CELLPLUS ; 2+
     .dw XT_FETCHI
     .dw XT_EXECUTE
     .dw XT_EXIT

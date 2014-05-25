@@ -1,20 +1,20 @@
-; ( -- ) 
+; ( i*x -- ) (R: j*y -- )
 ; System
 ; start up amforth.
-VE_COLD:
-    .dw $ff04
-    .db "cold"
+VE_REBOOT:
+    .dw $ff06
+    .db "reboot"
     .dw VE_HEAD
-    .set VE_HEAD = VE_COLD
-XT_COLD:
-    .dw PFA_COLD
+    .set VE_HEAD = VE_REBOOT
+XT_REBOOT:
+    .dw PFA_REBOOT
 	
 COLD_START:
     clr zerol
     clr zeroh
     rjmp clr_ints
 
-PFA_COLD:
+PFA_REBOOT:
     cli
     out_ MCUSR, zerol		; programmatic restart
 

@@ -1,4 +1,4 @@
-; ( -- ) 
+; ( i*x -- ) (R: j*y -- )
 ; System
 ; start up amforth.
 VE_COLD:
@@ -9,8 +9,7 @@ VE_COLD:
 XT_COLD:
     .dw PFA_COLD
 PFA_COLD:
-    in_ r10, MCUSR
-    clr r11
+    in_ mcu_boot, MCUSR
     clr zerol
     clr zeroh
     out_ MCUSR, zerol

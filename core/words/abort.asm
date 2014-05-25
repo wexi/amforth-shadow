@@ -9,6 +9,5 @@ VE_ABORT:
 XT_ABORT:
     .dw DO_COLON
 PFA_ABORT:
-    .dw XT_DOLITERAL
-    .dw -1
+    .dw XT_TRUE ; -1
     .dw XT_THROW

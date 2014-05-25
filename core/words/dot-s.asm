@@ -9,18 +9,15 @@ VE_DOTS:
 XT_DOTS:
     .dw DO_COLON
 PFA_DOTS:
-    .dw XT_SP0
-    .dw XT_SP_FETCH
-    .dw XT_CELLPLUS
+    .dw XT_DEPTH
+    .dw XT_ZERO
     .dw XT_DOQDO
     .dw PFA_DOTS2
 PFA_DOTS1:
     .dw XT_I
-    .dw XT_FETCH 
+    .dw XT_PICK
     .dw XT_UDOT
-    .dw XT_DOLITERAL
-    .dw 2
-    .dw XT_DOPLUSLOOP
+    .dw XT_DOLOOP
     .dw PFA_DOTS1
 PFA_DOTS2:
     .dw XT_EXIT

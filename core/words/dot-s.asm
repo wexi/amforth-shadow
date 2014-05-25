@@ -9,10 +9,10 @@ VE_DOTS:
 XT_DOTS:
     .dw DO_COLON
 PFA_DOTS:
-    .dw XT_DEPTH
     .dw XT_DOLITERAL
     .dw '#'
     .dw XT_EMIT
+    .dw XT_DEPTH
     .dw XT_DUP
     .dw XT_DOT
 PFA_DOTS1:
@@ -27,5 +27,3 @@ PFA_DOTS1:
     .dw PFA_DOTS1
 PFA_DOTS2:
     .dw XT_EXIT
-
-	

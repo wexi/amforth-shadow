@@ -1,5 +1,5 @@
 ; ( n addr -- ) 
-; Memory
+; System Value
 ; Deferred action to write a single 16bit cell to flash
 VE_STOREI:
     .dw $ff02

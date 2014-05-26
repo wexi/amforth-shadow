@@ -1,6 +1,6 @@
-; ( c" " --  )
-; Interpreter
-; postpone
+; ( "<space>name" --  )
+; Compiler
+; Append the compilation semantics of "name" to the dictionary
 VE_POSTPONE:
     .dw $0008
     .db "postpone"

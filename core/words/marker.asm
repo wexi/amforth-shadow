@@ -1,6 +1,6 @@
-; ( -- ) 
-; Search Order
-; Duplicate first entry in the current search order list
+; ( -- e-addr ) 
+; System Value
+; The eeprom address until which MARKER saves and restores the eeprom data.
 VE_MARKER:
     .dw $ff08
     .db "(marker)"

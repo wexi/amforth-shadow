@@ -13,7 +13,9 @@ PFA_R_FAIL:
     .dw XT_FAILS  ; compile
     .dw XT_FAILS  ; postpone
 
-; fail action for a string
+; ( addr len -- )
+; Interpreter
+; default failure action for strings. Prints the string and throws exception -13.
 VE_FAILS:
     .dw $ff06
     .db "fail:s"

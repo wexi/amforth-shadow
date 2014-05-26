@@ -1,6 +1,6 @@
 ; ( -- c ) (C: "<space>name" -- )
-; Tools
-; skip leading space delimites, place the first COMPILEacter of the word on the stack
+; Compiler
+; Append the compilation semantics of "name" to the dictionary, if any
 VE_BRACKETCOMPILE:
     .dw $0009
     .db "[compile]",0

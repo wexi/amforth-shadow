@@ -355,8 +355,9 @@ Loop counters are checked on signed compares.
 Block
 .....
 
-amforth has limited block support with I2C/TWI
-serial eeprom chips with 2 byte addresses.
+amforth has limited block support to work
+with the flash memory and I2C/SPI eeprom
+devices.
 
 Double Number
 .............
@@ -418,7 +419,9 @@ sensitive words are available as assembly code as well.
 Locals
 ......
 
-amforth does not currently support locals.
+The locals support offers a single local value
+with the name X. It can easily expanded to
+support more by the user.
 
 Memory Allocation
 .................
@@ -482,39 +485,40 @@ there is library code available that uses the old fashioned vocabulary.
 Strings
 .......
 
-:command:`SLITERAL`, :command:`CMOVE>`,
-:command:`CMOVE`, :command:`COMPARE>`, and
-:command:`/STRING` are implemented.
+All words from the strings word set are supported.
 
-:command:`-TRAILING`, :command:`BLANK`,
-and :command:`SEARCH` are not implemented.
-
-Forth 200x
+Forth 2012
 ----------
 
-amforth provides the :command:`defer/is`,
-:command:`buffer:` and the :command:`structure`
-extensions from the forth 200x standards.
+amforth provides the following extensions from the
+forth 2012 standard
 
 Defer and IS
-............
-
-:command:`defer` give the possibility of vectored execution. Amforth
-has 3 different kind of such vectors, varying in how they are stored: EEPROM, RAM
-or the USER area. The EEPROM makes it possible to save the settings permanently,
-the RAM enables frequent changes. Finally the user area is for multitasking.
+  :command:`defer` give the possibility of vectored execution. Amforth
+  has 3 different kind of such vectors, varying in how they are stored: EEPROM, RAM
+  or the USER area. The EEPROM makes it possible to save the settings permanently,
+  the RAM enables frequent changes. Finally the user area is for multitasking.
 
 Buffer:
-.......
-
-The buffer allocates a named memory (RAM) region. It is superior to
-the usual create foo xx allot since amforth has a non-unified
-memory model and the code snippet does not the same as an unified memory
-model forth (with the dictionary being at the same memory as the allot
-command works).
+  The buffer allocates a named memory (RAM) region. It is superior to
+  the usual create foo xx allot since amforth has a non-unified
+  memory model and the code snippet does not the same as an unified memory
+  model forth (with the dictionary being at the same memory as the allot
+  command works).
 
 Structures
-..........
+  Fully supported
+
+`Synonyms <http://www.forth200x.org/synonym.htmlSynynom>`_
+  Fully supported
+
+Traverse-wordlist
+  Iterating over a wordlist works. The name>xy words are not supported.
+
+Values
+  The additional value definitions are supported. A way to implement
+  own value data items is provided.
+
 
 Amforth
 -------
@@ -667,3 +671,33 @@ copies the string from the RAM into flash using the
 word
 :command:`S,`
 .
+. The
+default terminal device is selected at compile time.
+
+These basic words include a call to the
+:command:`PAUSE` command to enable the 
+use of multitasking.
+
+Other IO depend on the hardware connected to the
+micro controller. Code exists to use LCD and TV
+devices. CAN, USB or I2C are possible as well.
+Another use of the redirect feature is the
+following: consider some input data in external
+EEPROM (or SD-Cards). To read it, the words
+:command:`KEY` and :command:`KEY?`
+can be redirected to fetch the data from them.
+
+Strings
+.......
+
+Strings can be stored in two areas: RAM and FLASH.
+It is not possible to distinguish between the
+storage areas based on the addresses found on the
+data stack, it's up to the developer to keep track.
+
+Strings are stored as counted strings with a 16 bit
+counter value (1 flash cell)
+Strings in flash are compressed: two consecutive
+characters (bytes) are placed into one flash cell. The standard
+word :command:`S"` copies the string from the RAM into 
+flash using the word :command:`S,`.

@@ -29,17 +29,17 @@ Using Test Cases
 
 The tester uses 4 words:
 
-``TESTING`` add your comment here
+:command:`TESTING` add your comment here
   is a "talking comment" to make the output somehow look nice.
 
-``{``
+:command:`{`
   starts a new test. Prepare the stack and call your function, then
 
-``->``
+:command:`->`
   indicates that the test code is complete. Add the remaining stack after
   this word.
 
-``}``
+:command:`}`
   completes the test by comparing the stack with the expected stack. If
   everything is well, the ok prompt will appear.
 

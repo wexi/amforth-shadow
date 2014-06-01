@@ -199,3 +199,11 @@ What resources are available in my own assembly words?
 You can use any resource if you take care. There are some things you need to obey: Never
 use the T flag in the machine status register SREG. Only the CPU registers named temp0..temp5
 are save to use without the need of restoration. Any other register change may be harmful.
+
+What is the release policy?
+---------------------------
+
+Releases are made when there are ready. Usually the list of changes is limited
+to only a few things. Every release is considered stable and ready for production
+use. The version number gets increased by 0.1 with every release. That means, 
+that a .0 release is nothing special.

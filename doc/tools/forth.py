@@ -16,6 +16,11 @@ from pygments.token import Error, Punctuation, Literal, Token, \
 from pygments.lexers.web import HtmlLexer
 
 
+# backwards compatibility
+from pygments.lexers.sql import SqlLexer, MySqlLexer, SqliteConsoleLexer
+from pygments.lexers.shell import BashLexer, BashSessionLexer, BatchLexer, \
+     TcshLexer
+
 __all__ = ['ForthLexer']
 
 
@@ -151,7 +156,11 @@ class ForthLexer(RegexLexer):
             # amforth specific
             (r'(@i|!i|@e|!e|pause|noop|turnkey|sleep|'
              r'itype|icompare|sp@|sp!|rp@|rp!|up@|up!|'
+             r'>a|a>|a@|a!|a@+|a@-|>b|b>|b@|b!|b@+|b@-|'
              r'sp0|rp0|\(evaluate\)|int-trap|int!)'+delimiter, Keyword.Type),
+            # defining words. The next word is a new command name
+            (r'(Evalue|Rvalue|Uvalue|Edefer|Rdefer|Udefer)(\s+)',bygroups(Keyword.Namespace, Text), 'worddef'),
+
             (valid_name, Name.Function),      # Anything else is executed
 
         ],

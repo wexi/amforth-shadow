@@ -911,3 +911,6 @@ The address of this data structure is an execution token. This execution
 token replaces the standard XT that :command:`create` has already
 written for words that are defined using :command:`con`. This
 leads inevitably to a flash erase cycle.
+already
+written for words that are defined using :command:`con`. This
+leads inevitably to a flash erase cycle.

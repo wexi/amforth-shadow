@@ -11,7 +11,7 @@ my %RSTACK;
 my %CSTACK;
 my %CATEGORY;
 
-my $version="5.0";
+my $version="5.4";
 
 my $texdir="../doc";
 my $asmdir="../core/words";

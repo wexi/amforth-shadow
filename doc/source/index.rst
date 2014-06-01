@@ -32,18 +32,31 @@ and `EPUB <AmForth.epub>`_.
 .. raw:: html
   :file: leon-video.html
 
-Under Construction
-------------------
+.. raw:: html
+  :file: recognizers.html
+
+Work In Progress
+................
 
 Here you'll find things that are not yet
 released but will be part of the next release.
 See the code section at Sourceforge to get the
 `most recent sources <http://sourceforge.net/p/amforth/code/HEAD/tree/trunk/>`__
 
+* recipes: `Test Driven Development <http://en.wikipedia.org/wiki/Test-driven_development>`_ 
+  with :ref:`Amforth <Testing>`.
+* lib: Fully support the ANS94 String wordset. With a little help from gforth.
+* core: Double cell return stack access words (:command:`2>r` and 
+  :command:`2r>`) missed the internal swap's. Added new :command:`2r@`.
+* misc: limited locals and blocks support.
+
+7.5.2013: release 5.3
+......................
+
 * core: 2nd generation of :ref:`Recognizers` and their use for native 
   :ref:`String literals <Recognizer>`.
-* core: renamed ``edp`` to ``ehere``. ``here`` points to data space, ``ehere`` 
-  points to eeprom data space.
+* core: renamed :command:`edp` to :command:`ehere`. :command:`here` 
+  points to data space, :command:`ehere`   points to eeprom data space.
 * core: merged code for defer's and value's. Speed improvements
   for defer actions.
 * community: MMC/SD-Card from Lubos (So Sorry for beeing late) and 
@@ -52,26 +65,6 @@ See the code section at Sourceforge to get the
 * doc: `Japanese Getting Started <http://amforth-installation-ja.readthedocs.org/ja/latest/index.html>`__
 * doc: new recipes: :ref:`Forward`, :ref:`Extended-VM`, :ref:`Quotations`, :ref:`Exceptions`,
   :ref:`Coroutines`,  updated recipes: :ref:`SPI`, :ref:`Ardiuno Helloworld`
-
-23.12.2013: release 5.2
-.......................
-
-* Improved and extended :ref:`Values`
-* Forth 2012 `Traverse-Wordlist <http://www.forth200x.org/traverse-wordlist.html>`__
-* improved documentation
-* core: added :command:`d0=` and :command:`0=` as assembly primitives and
-  use them in other compare operations. Saves a lot of code space.
-* Wordlist entries are now 8bit clean. Words with umlauts or e.g.
-  Greek commands work as expected, unless the terminal does not cooperate.
-  Thanks to Enoch.
-
-.. code-block:: forth
-
-   > : Σ  0 swap 0  do  +  loop  ;
-    ok
-   > 7 8 9 3 Σ .
-    24  ok
-   >
 
 More To Read
 ----------------

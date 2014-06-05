@@ -11,6 +11,6 @@ XT_WORDS:
 PFA_WORDS:
     .dw XT_DOLITERAL
     .dw EE_ORDERLIST
-    .dw XT_FETCHE		;must be one wordlist
+    .dw XT_FETCHE		;must have one wordlist
     .dw XT_SHOWWORDLIST
     .dw XT_EXIT

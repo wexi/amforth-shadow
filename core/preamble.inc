@@ -1,7 +1,11 @@
+; generic macros and register definitions
 .include "macros.asm"
+
+; controller specific file selected via include
+; directory definition when calling the assembler (-I)
 .include "device.asm"
 
-; some defaults, can be changed in your application master file
+; some defaults, change them in your application master file
 ; see template.asm for an example
 
 .set AMFORTH_RO_SEG = NRWW_START_ADDR

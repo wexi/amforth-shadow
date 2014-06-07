@@ -31,7 +31,11 @@ PFA_USART:          ; ( -- )
   .dw XT_DOLITERAL
   .dw BAUDRATE_LOW
   .dw XT_CSTORE
-
+.if XT_USART_INIT_RX!=0
   .dw XT_USART_INIT_RX
+.endif
+.if XT_USART_INIT_TX!=0
   .dw XT_USART_INIT_TX
+.endif
+
   .dw XT_EXIT

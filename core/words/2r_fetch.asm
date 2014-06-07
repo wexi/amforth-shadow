@@ -3,7 +3,7 @@
 ; fetch content of TOR
 VE_2R_FETCH:
     .dw $ff03
-    .db "2r@"
+    .db "2r@",0
     .dw VE_HEAD
     .set VE_HEAD = VE_2R_FETCH
 XT_2R_FETCH:

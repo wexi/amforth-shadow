@@ -1,16 +1,12 @@
 ;;; usart driver, receiving
 
-.set pc_ = pc
-.org URXCaddr
-  jmp_ usart_rx_isr
-.org pc_
 
 ; sizes have to be powers of 2!
 .equ usart_rx_size = $10
 .equ usart_rx_mask = usart_rx_size - 1
 .dseg
-usart_rx_in: .byte 1
-usart_rx_out: .byte 1
+usart_rx_in: .byte 2
+usart_rx_out: .byte 2
 usart_rx_data: .byte usart_rx_size+2
 .cseg
 
@@ -55,6 +51,11 @@ usart_rx_isr_finish:
   out SREG, xl
   pop xl
   reti
+
+.set usartrxpc = pc
+.org URXCaddr
+  jmp_ usart_rx_isr
+.org usartrxpc
 
 ; ( -- ) Hardware Access
 ; R( --)

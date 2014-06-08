@@ -15,18 +15,10 @@
   .set XT_USART_INIT_RX = 0
 .endif
 
-.if WANT_ISR_TX == 1
-  .include "drivers/usart-isr-tx.asm"
-  .include "words/usart-tx-isr.asm"
-  .set XT_TX  = XT_TX_ISR
-  .set XT_TXQ = XT_TXQ_ISR
-  .set XT_USART_INIT_TX = XT_USART_INIT_TX_ISR
-.else
-  .include "words/usart-tx-poll.asm"
-  .set XT_TX  = XT_TX_POLL
-  .set XT_TXQ = XT_TXQ_POLL
-  .set XT_USART_INIT_TX = 0
-.endif
+.include "words/usart-tx-poll.asm"
+.set XT_TX  = XT_TX_POLL
+.set XT_TXQ = XT_TXQ_POLL
+.set XT_USART_INIT_TX = 0
 
 .include "words/ubrr.asm"
 .include "words/usart.asm"

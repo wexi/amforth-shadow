@@ -10,12 +10,20 @@
 
 .set AMFORTH_RO_SEG = NRWW_START_ADDR
 
-.set WANT_ISR_TX = 0
+; receiving is asynchron, so an interrupt queue is useful.
 .set WANT_ISR_RX = 1
+
+; case insensitve dictionary lookup.
 .set WANT_IGNORECASE = 0
+
+; map all memories to one address space. Details in the
+; technical guide
 .set WANT_UNIFIED = 0
 
+; terminal input buffer
 .set TIBSIZE  = $64    ; ANS94 needs at least 80 characters per line
+
+; USER variables *in addition* to system ones
 .set APPUSERSIZE = 10  ; size of application specific user area in bytes
 
 ; addresses of various data segments

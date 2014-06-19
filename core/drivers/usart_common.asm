@@ -3,7 +3,6 @@
 .if WANT_ISR_RX == 1
   .set USART_B_VALUE = bm_ENABLE_TX | bm_ENABLE_RX | bm_ENABLE_INT_RX
   .include "drivers/usart-isr-rx.asm"
-  .include "words/usart-rx-isr.asm"
   .set XT_RX  = XT_RX_ISR
   .set XT_RXQ = XT_RXQ_ISR
   .set XT_USART_INIT_RX = XT_USART_INIT_RX_ISR

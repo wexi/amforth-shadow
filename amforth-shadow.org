@@ -24,8 +24,7 @@ Shadow changes to HQ's code.
 
 - Words implemented in AVR assembly language cannot be interrupted by [[SLIH][soft
   interrupts]]. This is the main reason for the proliferation of assembly
-  language implemented words in the AmForth-Shadow version. For example,
-  see +!@ below.
+  language implemented words in the AmForth-Shadow version.
 
 * Reduce EEPROM based pointers wear out <<eesy>>
 
@@ -196,16 +195,9 @@ implementation.
 
 - -! ( n addr -- ) :: [ASM] Subtracts n from the addressed word.
 
-- -!@ ( n addr -- n' ) :: [ASM] Subtracts n from the addressed word and
-     return the difference. 
-
-- +!@ ( n addr -- n') :: [ASM] Adds n to the addressed word and return the
-     sum.
-
 - c+! ( b addr -- ) :: [ASM] Adds b to the addressed byte.
 
-- c+!@ ( b addr -- b' ) :: [ASM] Adds b to the addressed byte and return
-     the sum.
+- c-! ( b addr -- ) :: [ASM] Adds b to the addressed byte.
 
 - -rot  ( n1 n2 n3 -- n3 n1 n2 ) :: [ASM] "not-rote".
 

@@ -9,10 +9,10 @@ VE_CPLUSSTORE:
 XT_CPLUSSTORE:
     .dw PFA_CPLUSSTORE
 PFA_CPLUSSTORE:
-    movw zh:zl, tosh:tosl	;Z = addr
-    loadtos			;TOSL = b
+    movw zh:zl, tosh:tosl	;addr
+    loadtos			;b
     ld temp0, Z
-    add tosl, temp0
-    st Z, tosl
+    add temp0, tosl
+    st Z, temp0
     loadtos
     jmp_ DO_NEXT

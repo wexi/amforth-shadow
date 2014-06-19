@@ -1,6 +1,6 @@
-; ( b addr -- ) 
+; ( b1 addr -- b2 ) 
 ; Arithmetics
-; add b to the addressed byte
+; add b1 to the addressed byte and return the sum
 VE_CPLUSSTOREFETCH:
     .dw $ff04
     .db "c+!@"

@@ -193,12 +193,11 @@ implementation.
 
 - 4* :: [ASM] Unsigned multiplication by 4.
 
-- -! ( w addr -- ) :: [ASM] Subtracts w from the addressed word.
+- -! ( w addr -- ) :: [ASM] Subtracts w from addressed word.
 
-- +!@ ( w1 addr -- w2 ) :: [ASM] Adds w1 to the addressed word and return
-     the word sum w2.
+- +!@ ( w1 addr -- w2 ) :: [ASM] Adds w1 to addressed word and returns sum.
 
-- c++@ ( addr -- b ) :: [ASM] inc addressed byte and return its value.
+- c++@ ( addr -- b ) :: [ASM] increments addressed byte and returns value.
 
 - -rot  ( n1 n2 n3 -- n3 n1 n2 ) :: [ASM] "not-rote".
 

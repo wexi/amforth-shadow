@@ -1,6 +1,6 @@
 ; ( w1 addr -- w2 ) 
 ; Arithmetics
-; add w1 to the addressed word and return the sum
+; add w1 to the addressed word and return the sum w2
 VE_PLUSSTOREFETCH:
     .dw $ff03
     .db "+!@",0
@@ -9,8 +9,8 @@ VE_PLUSSTOREFETCH:
 XT_PLUSSTOREFETCH:
     .dw PFA_PLUSSTOREFETCH
 PFA_PLUSSTOREFETCH:
-    movw zh:zl, tosh:tosl	;Z = addr
-    loadtos			;TOS = w1
+    movw zh:zl, tosh:tosl	;addr
+    loadtos			;w1
     ld temp0, Z
     ldd temp1, Z+1
     add tosl, temp0

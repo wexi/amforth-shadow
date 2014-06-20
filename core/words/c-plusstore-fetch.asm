@@ -9,8 +9,8 @@ VE_CPLUSSTOREFETCH:
 XT_CPLUSSTOREFETCH:
     .dw PFA_CPLUSSTOREFETCH
 PFA_CPLUSSTOREFETCH:
-    movw zh:zl, tosh:tosl	;Z = addr
-    loadtos			;TOSL = b
+    movw zh:zl, tosh:tosl	;addr
+    loadtos			;b
     ld temp0, Z
     add tosl, temp0
     st Z, tosl

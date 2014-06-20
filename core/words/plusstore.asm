@@ -1,6 +1,6 @@
-; ( n addr -- ) 
+; ( w addr -- ) 
 ; Arithmetics
-; add n to the addressed word
+; add w to the addressed word
 VE_PLUSSTORE:
     .dw $ff02
     .db "+!"
@@ -10,12 +10,12 @@ XT_PLUSSTORE:
     .dw PFA_PLUSSTORE
 PFA_PLUSSTORE:
     movw zh:zl, tosh:tosl	;addr
-    loadtos			;n
+    loadtos			;w
     ld temp0, Z
     ldd temp1, Z+1
-    add temp0, tosl
-    adc temp1, tosh
-    st Z, temp0
-    std Z+1, temp1
+    add tosl, temp0
+    adc tosh, temp1
+    st Z, tosl
+    std Z+1, tosh
     loadtos
     jmp_ DO_NEXT

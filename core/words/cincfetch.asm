@@ -1,6 +1,6 @@
 ; ( addr -- b' ) 
 ; Arithmetics
-; increment addressed byte and return value
+; increment addressed byte and return new value
 VE_CINCFETCH:
     .dw $ff03
     .db "++c",0

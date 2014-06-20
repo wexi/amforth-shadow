@@ -9,7 +9,7 @@ VE_UNUSED:
 XT_UNUSED:
     .dw DO_COLON
 PFA_UNUSED:
-    .dw XT_SP0
+    .dw XT_SP_FETCH
     .dw XT_HERE
     .dw XT_MINUS
     .dw XT_EXIT

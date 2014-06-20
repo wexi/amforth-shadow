@@ -86,7 +86,6 @@
 .include "words/2to_r.asm"
 .include "words/2r_from.asm"
 
-
 .include "words/store-e.asm"
 .include "words/fetch-e.asm"
 .include "words/store-i.asm"
@@ -96,7 +95,6 @@
   .include "words/store-i_nrww.asm"
 .endif
 .include "words/fetch-i.asm"
-
 
 .if AMFORTH_NRWW_SIZE>8000
 .include "dict/core_8k.inc"
@@ -114,4 +112,3 @@
 .include "words/equal.asm"
 .include "words/greater.asm"
 .include "words/s_to_d.asm"
-.include "words/not.asm"

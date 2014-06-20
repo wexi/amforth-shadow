@@ -86,18 +86,18 @@ There are some notes that may affect your program
   calls ``key?`` in a loop until a character is
   available.</li>
 * AmForth uses one of the following words depending on
-  two WANT settings. They default in :file:`macros.asm`
-  to WANT_RX_ISR=1 and WANT_TX_ISR=0.
+  the WANT_RX_ISR settings. It defaults in :file:`preamble.inc`
+  to WANT_RX_ISR=1.
 
-  +--------------------+--------------------+
-  |   WANT_RX_ISR      |      WANT_TX_ISR   |
-  +==========+=========+==========+=========+
-  |   0      |    1    |    0     |    1    |
-  +----------+---------+----------+---------+
-  | rx-poll  | rx-isr  | tx-poll  | tx-isr  |
-  | and      | and     | and      | and     |
-  | rx?-poll | rx?-isr | tx?-poll | tx?-isr |
-  +----------+---------+----------+---------+
+  +--------------------+
+  |   WANT_RX_ISR      |
+  +==========+=========+
+  |   0      |    1    |
+  +----------+---------+
+  | rx-poll  | rx-isr  |
+  | and      | and     |
+  | rx?-poll | rx?-isr |
+  +----------+---------+
 
 * All IO words with more complexity (e.g. ``type``
   or ``accept`` call any of the 4 deferred words. There

@@ -197,7 +197,7 @@ implementation.
 
 - +!@ ( w1 addr -- w2 ) :: [ASM] Adds w1 to addressed word and returns sum.
 
-- c++@ ( addr -- b ) :: [ASM] increments addressed byte and returns value.
+- c++ ( addr -- b ) :: [ASM] increments addressed byte and returns value.
 
 - -rot  ( n1 n2 n3 -- n3 n1 n2 ) :: [ASM] "not-rote".
 

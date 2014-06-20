@@ -2,8 +2,8 @@
 ; Arithmetics
 ; increment addressed byte and return value
 VE_CINCFETCH:
-    .dw $ff04
-    .db "c++@"
+    .dw $ff03
+    .db "c++",0
     .dw VE_HEAD
     .set VE_HEAD = VE_CINCFETCH
 XT_CINCFETCH:

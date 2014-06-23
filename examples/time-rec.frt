@@ -7,6 +7,9 @@
 
 \ append it to the recognizer stack with
 \ ' rec:h:m:s get-recognizer 1+ set-recognizer
+\ and than enter 02:00:00 to get 7200. (double 
+\ cell number) which is the number of seconds 
+\ 2 hours have.
 
 #require m-star-slash.frt
 
@@ -32,7 +35,10 @@
 \ factor the code
 \ add milliseconds?
 
-\ test cases (xy=XT of r:intdnum, ab=XT of r:fail)
+\ test cases (xy=XT of r:dnum, ab=XT of r:fail)
+\ tests are made outside of the interpreter, thus the
+\ need for explicit strings.
+
 \ > s" 01:00:00" rec:h:m:s . d.
 \ xy 3600
 \ > s" 01:00:0a" rec:h:m:s .

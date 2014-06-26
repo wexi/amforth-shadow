@@ -27,8 +27,8 @@ EE_RECOGNIZERS:
 EE_RECOGNIZERLISTLEN:
     .dw 2
 EE_RECOGNIZERLIST:
-    .dw XT_REC_FIND
-    .dw XT_REC_INTNUM
+    .dw XT_REC_WORD
+    .dw XT_REC_NUM
     .byte  (NUMRECOGNIZERS-2)*CELLSIZE ; two slots are already used
 
 EE_WLSCOPE:

@@ -11,8 +11,7 @@ XT_POSTPONE:
 PFA_POSTPONE:
     .dw XT_PARSENAME
     .dw XT_DORECOGNIZERS
-    .dw XT_1PLUS
-    .dw XT_1PLUS ; skip to postpone action
+    .dw XT_CELLPLUS ; skip to postpone action, beware, this is dangerous code
     .dw XT_FETCHI
     .dw XT_EXECUTE
     .dw XT_EXIT

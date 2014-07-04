@@ -30,7 +30,7 @@ PFA_R_DNUM:
 
 ; ( -- addr )
 ; Interpreter
-; Method to print a number and throw exception 
+; Method to print a number and throw exception "invalid postpone"
 VE_FAILNUM:
     .dw $ff06
     .db "fail:i"
@@ -47,7 +47,7 @@ PFA_FAILNUM:
 
 ; ( -- addr )
 ; Interpreter
-; Method to print a double cell number and throw exception 
+; Method to print a double cell number and throw exception "invalid postpone"
 VE_FAILDNUM:
     .dw $ff06
     .db "fail:d"

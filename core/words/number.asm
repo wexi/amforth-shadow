@@ -160,26 +160,15 @@ PFA_SETBASE3:
 
 ; (c -- ) Numeric IO
 ; R( -- )
-; set the BASE value depending on the character
-;VE_SETBASE:
-;    .dw $FF07 
-;    .db "setbase",0
+; get sign flag.
+;VE_NUMBERSIGN:
+;    .dw $FF08
+;    .db "get-sign"
 ;    .dw VE_HEAD
-;    .set VE_HEAD = VE_SETBASE
+;    .set VE_HEAD = VE_NUMBERSIGN
 XT_NUMBERSIGN:
     .dw DO_COLON 
 PFA_NUMBERSIGN:        ; ( c -- ) 
-    .dw XT_OVER
-    .dw XT_CFETCH
-    .dw XT_DOLITERAL
-    .dw '+'
-    .dw XT_EQUAL
-    .dw XT_DOCONDBRANCH
-    .dw PFA_NUMBERSIGN_MINUS
-      .dw XT_DOLITERAL
-      .dw 1
-      .dw XT_SLASHSTRING
-PFA_NUMBERSIGN_MINUS:
     .dw XT_OVER    ; ( -- addr len addr )
     .dw XT_CFETCH
     .dw XT_DOLITERAL
@@ -188,10 +177,10 @@ PFA_NUMBERSIGN_MINUS:
     .dw XT_DUP
     .dw XT_TO_R
     .dw XT_DOCONDBRANCH
-    .dw PFA_NUMBERSIGN_PLUS
+    .dw PFA_NUMBERSIGN_DONE
     .dw XT_DOLITERAL      ; skip sign character
     .dw 1
     .dw XT_SLASHSTRING
-PFA_NUMBERSIGN_PLUS:
+PFA_NUMBERSIGN_DONE:
     .dw XT_R_FROM
     .dw XT_EXIT

@@ -10,7 +10,6 @@
 .include "words/d-equal.asm"
 .include "words/udot.asm"
 .include "words/udotr.asm"
-.include "words/dot-s.asm"
 
 .include "words/show-wordlist.asm"
 .include "words/words.asm"

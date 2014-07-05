@@ -13,22 +13,36 @@
 
 #require m-star-slash.frt
 
-: rec:h:m:s ( c-addr u -- d r:intdnum | r:fail )
-          0. 2swap >number ( -- hh. addr len )
-          over c@ [char] : <> if 2drop 2drop r:fail exit then
+\ some factors.
+\ is the character a ':' ?
+: ':'? ( addr len -- addr+1 len-1 f ) 
+   over >r 1 /string r> c@ [char] : = ;
 
-          1 /string 0. 2swap >number ( -- hh. mm. addr len )
-          over c@ [char] : <> if 2drop 2drop 2drop r:fail exit then
-
-          2>r 2swap 60 1 m*/ d+ 2r>  \ -- (hh*60+mm). addr len
-
-          1 /string 0. 2swap >number \ -- (hh*60+mm). ss. addr len
-
-          \ len must now be 0 or its not a time stamp
-          if drop 2drop 2drop r:fail exit then
-          drop 2swap 60 1 m*/ d+ 
-          r:intdnum
+\ extract a number from the current string
+: get-number ( addr len -- d addr' len' )
+  0. 2swap >number
 ;
+
+\ (hours*60+minutes)*60+seconds, factor during calculation
+: a+60b 2swap 60 1 m*/ d+ ;
+
+: rec:h:m:s ( c-addr u -- d r:dnum | r:fail )
+          get-number ( -- hh. addr len )
+          ':'? 0= if 2drop 2drop r:fail exit then
+
+          get-number ( -- hh. mm. addr+1 len-1 )
+          \ add hours to minutes
+          2>r a+60b  2r>  
+          ':'? 0= if 2drop 2drop r:fail exit then
+
+          get-number \ -- (hh*60+mm). ss. addr len
+          \ len must now be 0 or its not a time stamp
+          if drop 2drop 2drop r:fail exit then drop 
+          \ add minutes to seconds and finish
+          a+60b  r:dnum
+;
+
+' rec:h:m:s get-recognizer 1+ set-recognizer
 
 \ wishlist: 
 \ validate the values for minutes and seconds (between 0 and 59)

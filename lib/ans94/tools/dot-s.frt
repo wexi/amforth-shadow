@@ -1,7 +1,3 @@
-\ very simple, see core/words for a compile time variant
-: .s
-   sp0 sp@ cell+
-   ?do
-     i @ u.
-   2 +loop
-;
+
+\ a .s with the TOS printed *last*
+: .s depth 0 ?do depth i - 1- pick . loop ;

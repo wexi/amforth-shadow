@@ -15,6 +15,11 @@
 ; turnkey is always needed and application specific
 .include "words/applturnkey.asm"
 
+; the command .s has many flavors. the one in the
+; core directory prints the TOS on the *left* hand side.
+; lib/tools/dot-s.frt has a .s for the opposite.
+.include "words/dot-s.asm"
+
 ; print the date and time the amforth hex files are created
 ; comment the next line if not needed.
 .include "words/built.asm"

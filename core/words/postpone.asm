@@ -10,7 +10,7 @@ XT_POSTPONE:
     .dw DO_COLON
 PFA_POSTPONE:
     .dw XT_PARSENAME
-    .dw XT_DORECOGNIZERS
+    .dw XT_DORECOGNIZER
     .dw XT_CELLPLUS ; skip to postpone action, beware, this is dangerous code
     .dw XT_FETCHI
     .dw XT_EXECUTE

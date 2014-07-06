@@ -133,6 +133,7 @@
 .include "words/rp0.asm"
 .include "words/depth.asm"
 .include "words/interpret.asm"
+.include "words/do-recognizer.asm"
 .include "words/r-intnumber.asm"
 .include "words/r-find.asm"
 .include "words/r-fail.asm"

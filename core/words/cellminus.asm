@@ -6,6 +6,17 @@ VE_CELLMINUS:
     .db "cell-",0
     .dw VE_HEAD
     .set VE_HEAD = VE_CELLMINUS
-XT_CELLMINUS: .dw pc + 1
+XT_CELLMINUS:
+    .dw PFA_CELLMINUS
+;
+VE_TWOMINUS:
+    .dw $ff02
+    .db "2-"
+    .dw VE_HEAD
+    .set VE_HEAD = VE_TWOMINUS
+XT_TWOMINUS:
+    _pfa_
+;
+PFA_CELLMINUS:	
   sbiw	tosl, CELLSIZE
   jmp_	DO_NEXT

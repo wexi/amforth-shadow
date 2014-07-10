@@ -203,7 +203,9 @@ implementation.
 
 - -rot  ( n1 n2 n3 -- n3 n1 n2 ) :: [ASM] "not-rote".
 
-- cell- :: [ASM] Cell size address subtraction.
+- cell+:: [ASM] Cell size address addition (aka 2+).
+
+- cell- :: [ASM] Cell size address subtraction (aka 2-).
 
 - du256* ( ud -- ud*256 ) :: double unsigned multiplication by 256.  
 

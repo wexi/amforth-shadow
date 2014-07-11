@@ -1,12 +1,13 @@
-\ basic twi/I2C operations
+\ basic twi/I2C operations, uses 7bit bus addresses
 
 \ requires
 \   in the application master file
 \  .set WANT_TWI = 1
+\ or use of the amforth shell
 \
 \ provides
 \  twi.init          -- initialize TWI subsystem
-\  twi.init.default -- some default settings
+\  twi.init.default  -- some default settings
 \  twi.off           -- turns off TWI subsystem
 \
 \  twi.wait          -- wait for the current TWI transaction
@@ -16,9 +17,9 @@
 \  twi.rx            -- receive one byte with ACK
 \  twi.rxn           .. receive one byte with NACK
 \  twi.status        -- get the last TWI status
-\  twi.is-status?    -- compares the status with preset
+\  twi.wr            -- convert addr to sendable byte for writing
+\  twi.rd            -- convert addr to sendable byte for reading
 \  twi.ping?         -- checks if addr is a device
-\  twi.scan          -- prints a small list of devices
 \
 \ TWI (SCL) clock speed = CPU_clock/(16 + 2*bitrateregister*(4^prescaler))
 \ following the SCL clock speed in Hz for an 8Mhz device
@@ -32,25 +33,48 @@
 \      3     15.152  7.692   3.876   1.946     975     488     245
 \
 \
-\ enable twi
-: twi.init ( prescaler bitrate  -- )
-    0 TWCR c! \ stop TWI
-    TWBR c!   \ set bitrate register
-    03 and TWSR c! \ the prescaler has only 2 bits
-;
 
-\ some random initialization.
-: twi.init.default
-    3 3 twi.init ;
+-4000 constant twi.timeout  \ exception number for timeout
+10000 Evalue   twi.maxticks \ # of checks until timeout is reached
+variable twi.loop           \ timeout counter
+: twi.timeout?
+    twi.loop @ 1- dup twi.loop ! 0=
+;
 
 \ turn off twi
 : twi.off ( -- )
     0 TWCR c!
 ;
+
+0 constant twi.prescaler/1
+1 constant twi.prescaler/4
+2 constant twi.prescaler/16
+3 constant twi.prescaler/64
+TWSR $3 bitmask: twi.conf.prescaler
+
+TWCR 7 portpin: twi.int
+TWCR 6 portpin: twi.ea
+TWCR 5 portpin: twi.sta
+
+\ enable twi
+: twi.init ( prescaler bitrate  -- )
+    twi.off   \ stop TWI, just to be sure
+    TWBR c!   \ set bitrate register
+    twi.conf.prescaler pin! \ the prescaler has only 2 bits
+;
+
+\ a very low speed initialization.
+: twi.init.default
+    twi.prescaler/64 3 twi.init 
+;
+
 \ wait for twi finish
 : twi.wait ( -- )
+    twi.maxticks twi.loop !
     begin
-       pause TWCR c@ $80 and
+       pause \ or 1ms?
+       twi.int is_high?
+       twi.timeout? if twi.timeout throw then
     until
 ;
 
@@ -96,24 +120,18 @@
     $f8 and
 ;
 
+\ convert the bus address into a sendable byte
+\ the address bits are the upper 7 ones,
+\ the LSB is the read/write bit.
+
+: twi.wr 2* ;
+: twi.rd 2* 1+ ;
+
+
 \ detect presence of a device on the bus
 : twi.ping?   ( addr -- f )
     twi.start 
-    twi.tx
+    twi.wr twi.tx
     twi.status $18 =
     twi.stop 
-;
-
-\ detect presence of all possible devices on I2C bus
-\ only the 7 bit address schema is supported
-: twi.scan   ( -- )
-    $ff 0 do
-      i dup          \ Test even addressess: write action only.
-      twi.ping? if            \ does device respond?
-            u. ."   found" cr
-      else
-        drop 
-      then
-    2
-    +loop 
 ;

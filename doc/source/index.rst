@@ -30,10 +30,10 @@ The whole documentation is available as `PDF <amforth.pdf>`_
 and `EPUB <AmForth.epub>`_.
 
 .. raw:: html
-  :file: leon-video.html
+  :file: html/leon-video.html
 
 .. raw:: html
-  :file: recognizers.html
+  :file: html/recognizers.html
 
 Work In Progress
 ................
@@ -43,6 +43,7 @@ released but will be part of the next release.
 See the code section at Sourceforge to get the
 `most recent sources <http://sourceforge.net/p/amforth/code/HEAD/tree/trunk/>`__
 
+* lib: renamed TWI to I2C, added many tools for it.
 * recipes: `Test Driven Development <http://en.wikipedia.org/wiki/Test-driven_development>`_ 
   with :ref:`Amforth <Testing>`.
 * lib: Fully support the ANS94 String wordset. With a little help from gforth.

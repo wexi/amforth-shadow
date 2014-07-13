@@ -1,0 +1,31 @@
+<h2>Recognizers</h2>
+
+The goal of a recognizer is to dynamically extent the Forth 
+command interpreter and make it understand and handle new data 
+formats as well as new synatax's. The present, 2nd generation
+recognizers achieve this by generalizing the classic interpreter 
+with an API to factor the components. Recognizers are portable 
+across different forth's.
+
+Recognizers are not a new concept for forth. They have been
+discussed earlier.
+<ol>
+<li><a href="http://compgroups.net/comp.lang.forth/additional-recognizers/734676">
+compgroups.net/comp.lang.forth/additional-recognizers/734676</a> in 2003.
+<li><a href="https://groups.google.com/d/msg/comp.lang.forth/r7Vp3w1xNus/Wre1BaKeCvcJ">
+Number Parsing Hooks</a> in 2007.
+<li>Recent developments were presented 
+<a href="http://www.complang.tuwien.ac.at/anton/euroforth/ef12/papers/paysan-recognizers-ho.pdf">
+at the Euroforth conference 2012</a>.
+</ol>
+
+There is an <a href="/pr/Recognizer-rfc.pdf">informal RFC draft</a> (30.6.2014) available.
+It has what may become a formal specification for Forth 201x (later than Forth 2012).
+
+The papers linked below give some background information and
+describe the concept. Examples can be found in the code base.
+<ol>
+<li><a href="/pr/Recognizer-en.pdf">First Generation</a> is an all in one implementation.
+<li><a href="/pr/Recognizer2-en.pdf">Second Generation</a> describes the factored component 
+ approach.
+</ol>

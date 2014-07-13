@@ -48,7 +48,7 @@ of the SOURCE buffer only, a ``refill`` will change the content.
 .. code-block:: forth
 
      ' noop 
-     ' sliteral 
+     ' sliteral
      :noname type -48 throw ; 
    recognizer: r:string
 
@@ -60,7 +60,7 @@ of the SOURCE buffer only, a ``refill`` will change the content.
       r:string
    ;
 
-   ' rec:string place-rec
+   ' rec:string get-recognizer 1+ set-recognizer
 
 The first line is simply the method table definition. The first two methods
 are already defined in amforth so nothing special here. The third method is

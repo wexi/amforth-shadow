@@ -12,8 +12,8 @@ system and can address 128KB of
 flash memory.
 
 The ATtiny micro controllers and a a few ATmega types lack
-the minimum flash capacity. The ATtiny's some machine instructions
-as well.
+the minimum flash capacity. The ATtiny's lack
+some machine instructions as well.
 
 Bootloader Support
 ------------------
@@ -24,8 +24,8 @@ single flash cell. The default setup will thus replace any
 bootloader found with some core routines.
 
 It is possible to change the word
-``!i`` to use an API and work
-with existing bootloaders. ``!i``
+:command:`!i` to use an API and work
+with existing bootloaders. :command:`!i`
 is a deferred word that can be re-targeted
 to more advanced words that may do address range
 checks, write success checks or simply turn
@@ -51,4 +51,3 @@ External Modules
 ----------------
 
 Most external modules are accessed with library modules.
-h library modules.

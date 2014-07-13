@@ -108,7 +108,7 @@ for the wordlist management
     \ minor housekeeping
    ;
 
-``smudge`` is the address of a 4 byte RAM location, that buffers the access information.
+:command:`smudge` is the address of a 4 byte RAM location, that buffers the access information.
 Why not not all words are immediately visible  is something, that the forth standard
 requires. The command :command:`reveal` un-hides the new entry by adjusting the content
 of the wordlist identifier to the address of the new entry:
@@ -137,7 +137,7 @@ Compiler
 --------
 
 The Amforth Compiler is based upon immediate words. They are always
-executed, regardless of the value in the ``state`` variable. All
+executed, regardless of the value in the :command:`state` variable. All
 non-immediate words get compiled verbatim with their respective
 execution token. It is simply appended to the current DP location.
 
@@ -197,8 +197,8 @@ assembly. A equivalent forth implementation would be
 
 Note the chicken-and-egg problem with the conditional branch operation.
 
-The ``mark`` words put the jump destination onto the data stack. This
-information is used by the ``resolve`` words to actually complete the
+The :command:`mark` words put the jump destination onto the data stack. This
+information is used by the :command:`resolve` words to actually complete the
 operation. The :command:`<mark` additionally reserves one flash cell.
 The :command:`<resolve` stores the information for the backward jump
 at the current location of the dictionary pointer, the :command:`>resolve`
@@ -284,7 +284,10 @@ command they compile:
 The other loop construct starts with :command:`begin` too. The
 control flow is further organized with :command:`while` and
 :command:`repeat`. :command:`while` checks wether a flag is true
-and leaves the loop while repeat unconditionally repeats it.
+and leaves the loop while :command:`repeat` unconditionally repeats 
+it. Multiple :command:`while` 's  are possible, they have to be
+terminated properly with a :command:`then` for each of them (except
+the one, which is terminated with the :command:`repeat`.
 
 .. code-block:: forth
 
@@ -336,28 +339,31 @@ Standard Wordlists
 ANS94 Words
 -----------
 
-
-
-amforth implements most or all words from the ANS word
-sets CORE, CORE EXT, EXCEPTION and DOUBLE NUMBERS. A loadable
-floating point library that contains the basic routines is
-available. Words from the word sets LOCALS and FILE-ACCESS
-are dropped completely. The others are partially implemented.
+amforth implements most or all words from the ANS94 word
+sets. Most words are already included in the standard
+setup, others are loadable from files in the :file:`lib/ans94`
+directory. A floating point library is available from the
+community repository. Words from the word set FILE-ACCESS
+are dropped completely. The others are at least partially 
+implemented.
 
 Core and Core EXT
 .................
 
-Al words from the CORE word set are available. CORE EXT drops
-the words C", CONVERT, EXPECT, SPAN, and  ROLL.
+All words from the CORE word set are available. CORE EXT drops
+the (deprecated) words :command:`C"`, :command:`CONVERT`, 
+:command:`EXPECT`, :command:`SPAN` and  :command:`ROLL`.
 
 Loop counters are checked on signed compares.
 
 Block
 .....
 
-amforth has limited block support to work
+Amforth has limited block support to work
 with the flash memory and I2C/SPI eeprom
 devices.
+
+Since version 5.4.
 
 Double Number
 .............
@@ -374,9 +380,6 @@ Exceptions are fully supported. The words
 :command:`ABORT` and :command:`ABORT"`
 use them internally.
 
-The :command:`THROW` codes -1, -2 and -13 work as
-specified.
-
 The implementation is based upon a variable HANDLER
 which holds the current return stack pointer
 position. This variable is a USER variable.
@@ -389,12 +392,13 @@ and :command:`EMIT?` words as deferred words
 in the USER area.
 
 The word :command:`MS` is implemented with the word
-:command:`1MS` which busy waits almost exactly 1 millisecond.
+:command:`1MS` that busy waits almost exactly 1 millisecond.
 The calculation is based upon the frequency specified at
-compile time.
+compile time. There are variants which are multitasking
+friendly but less accurate.
 
-The words :command:`TIME&DATE`, :command:`EKEY`,
-:command:`EKEY>CHAR` are not implemented.
+The words :command:`EKEY` and :command:`EKEY>CHAR` 
+are not implemented.
 
 To control a VT100 terminal the words
 :command:`AT-XY` and :command:`PAGE`
@@ -423,6 +427,8 @@ The locals support offers a single local value
 with the name X. It can easily expanded to
 support more by the user.
 
+From version 5.4.
+
 Memory Allocation
 .................
 
@@ -432,27 +438,21 @@ allocation word set.
 Programming Tools
 .................
 
-Variants of the words
-:command:`.S`, :command:`?`
-and :command:`DUMP`
-are implemented or can easily be done. The word
-:command:`SEE` is available as well.
+Variants of the words :command:`.S`, :command:`?`
+and :command:`DUMP` are implemented or can easily
+be done. The word :command:`SEE` is available as well.
 
 :command:`STATE` works as specified.
 
-The word :command:`WORDS`
-does not sort the word list and does not take care
-of screen sizes.
+The word :command:`WORDS` does not sort the word list 
+and does not take care of screen sizes.
 
-The words :command:`;CODE`
-and :command:`ASSEMBLER`
+The words :command:`;CODE` and :command:`ASSEMBLER`
 are not supported. amforth has a loadable assembler
-which can be used with the words
-:command:`CODE` and :command:`END-CODE`
-.
+which can be used with the words :command:`CODE` 
+and :command:`END-CODE`.
 
-The control stack commands
-:command:`CS-ROLL` , and ,
+The control stack commands :command:`CS-ROLL` and
 :command:`CS-PICK` are not implemented. The
 compiler words operate with the more traditional
 :command:`MARK` / :command:`RESOLVE` word pairs.
@@ -485,7 +485,7 @@ there is library code available that uses the old fashioned vocabulary.
 Strings
 .......
 
-All words from the strings word set are supported.
+All words from the strings word set are supported since version 5.4.
 
 Forth 2012
 ----------
@@ -493,29 +493,39 @@ Forth 2012
 amforth provides the following extensions from the
 forth 2012 standard
 
-Defer and IS
-  :command:`defer` give the possibility of vectored execution. Amforth
+`Defer and IS <http://www.forth200x.org/deferred.html>`_
+  :command:`defer` gives the possibility of vectored execution. Amforth
   has 3 different kind of such vectors, varying in how they are stored: EEPROM, RAM
   or the USER area. The EEPROM makes it possible to save the settings permanently,
   the RAM enables frequent changes. Finally the user area is for multitasking.
 
-Buffer:
+`Buffer: <http://www.forth200x.org/buffer.html>`_
   The buffer allocates a named memory (RAM) region. It is superior to
   the usual create foo xx allot since amforth has a non-unified
   memory model and the code snippet does not the same as an unified memory
   model forth (with the dictionary being at the same memory as the allot
   command works).
 
-Structures
+`Parse-Name <http://www.forth200x.org/parse-name.html>`_
+  Fully supported
+
+`n>r and nr> <http://www.forth200x.org/n-to-r.html>`_
+  Fully supported
+
+`Number Prefixes <http://www.forth200x.org/number-prefixes.html>`_
+  The number base can be specified by prepending the $, # or % signs.
+  Single characters as 'a' are not supported.
+
+`Structures <http://www.forth200x.org/structures.html>`_
   Fully supported
 
 `Synonyms <http://www.forth200x.org/synonym.htmlSynynom>`_
   Fully supported
 
-Traverse-wordlist
+`Traverse-wordlist <http://www.forth200x.org/traverse-wordlist.html>`_
   Iterating over a wordlist works. The name>xy words are not supported.
 
-Values
+`Values <http://www.forth200x.org/2value.html>`_
   The additional value definitions are supported. A way to implement
   own value data items is provided.
 
@@ -541,12 +551,12 @@ for later use as well.
 WARM
 ....
 
-The word WARM is the high level part of the
+The word :command:`WARM` is the high level part of the
 forth VM initialization. When called from
 within forth it is the equivalent to a RESET.
-WARM initializes the PAUSE
+:command:`WARM` initializes the :command:`PAUSE`
 deferred word to do nothing, calls the application defined
-TURNKEY action and finally hands over to QUIT.
+TURNKEY action and finally hands over to :command:`QUIT`.
 
 TURNKEY
 .......
@@ -563,7 +573,7 @@ character IO deferred words (KEY, EMIT etc).
 QUIT
 ....
 
-QUIT initializes both data and return stack pointers by reading
+:command:`QUIT` initializes both data and return stack pointers by reading
 them from the user area and enters the traditional ACCEPT -- INTERPRET
 loop that never ends. It provides the topmost exception catcher as
 well. Depending on the exception thrown, it prints an error message
@@ -594,19 +604,17 @@ Memories
 ........
 
 Atmega micro controller have three different types of
-memory. RAM, EEPROM and Flash. The words
-:command:`@` and :command:`!`
-work on the RAM address space (which includes IO
-Ports and the CPU register), the words
-:command:`@e` and :command:`!e`
-operate on the EEPROM and
-:command:`@i` and :command:`!i`
-deal with the flash memory. All these words transfer
-one cell (2 bytes) between the memory and the data
-stack. The address is always the native address of
-the target storage: byte-based for EEPROM and RAM,
-word-based for flash. Therefore the flash addresses
-64 KWords or 128 KBytes address space.
+memory. RAM, EEPROM and Flash. The words :command:`@` 
+and :command:`!` work on the RAM address space (which 
+includes IO Ports and the CPU register), the words
+:command:`@e` and :command:`!e` operate on the EEPROM and
+:command:`@i` and :command:`!i` deal with the flash 
+memory. All these words transfer one cell (2 bytes) 
+between the memory and the data stack. The address 
+is always the native address of the target storage: 
+byte-based for EEPROM and RAM, word-based for flash. 
+Therefore the flash addresses 64 KWords or 128 KBytes 
+address space.
 
 External RAM shares the normal RAM address space
 after initialization (which can be done in the
@@ -614,9 +622,9 @@ turnkey action). It is accessible without further
 changes.
 
 For RAM only there is the special word pair
-:command:`c@`/:command:`c!`
-which operate with the lower half of a stack cell.
-The upper byte is either ignored or set to 0 (zero).
+:command:`c@`/:command:`c!` which operate with 
+the lower half of a stack cell. The upper byte 
+is either ignored or set to 0 (zero).
 
 All other types of external memory need special
 handling, which may be masked with the block word
@@ -636,42 +644,6 @@ and can be changed with the :command:`IS` command.
 The predefined words use an interrupt driven IO with
 a buffer for input and output. They do not implement
 a handshake procedure (XON/XOFF or CTS/RTS). The
-default terminal device is selected at compile time.
-
-These basic words include a call to the
-:command:`PAUSE`
-command to enable the use of multitasking.
-
-Other IO depend on the hardware connected to the
-micro controller. Code exists to use LCD and TV
-devices. CAN, USB or I2C are possible as well.
-Another use of the redirect feature is the
-following: consider some input data in external
-EEPROM (or SD-Cards). To read it, the words
-:command:`KEY`
-and
-:command:`KEY?`
-can be redirected to fetch the data from them.
-
-Strings
-.......
-
-Strings can be stored in two areas: RAM and FLASH.
-It is not possible to distinguish between the
-storage areas based on the addresses found on the
-data stack, it's up to the developer to keep track.
-
-Strings are stored as counted strings with a 16 bit
-counter value (1 flash cell)
-Strings in flash are compressed: two consecutive
-characters (bytes) are placed into one flash cell. The standard
-word
-:command:`S"`
-copies the string from the RAM into flash using the
-word
-:command:`S,`
-.
-. The
 default terminal device is selected at compile time.
 
 These basic words include a call to the

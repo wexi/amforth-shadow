@@ -32,6 +32,9 @@ clean:
 htdocs:
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) source $(BUILDDIR)/htdocs
 
+sitemap:
+	./rst2sitemap > build/htdocs/TG/sitemap.xml
+
 books:
 	$(SPHINXBUILD) -b epub $(ALLSPHINXOPTS) \
            -D master_doc=book    \
@@ -46,7 +49,7 @@ books:
 	@echo
 	@echo "Build finished."
 
-all: images books htdocs
+all: images htdocs books sitemap
 	mv build/books/epub/AmForth.epub build/htdocs
 	mv build/books/latex/amforth.pdf build/htdocs
 
@@ -57,6 +60,7 @@ IMAGEDIRS      = images
 # SVG to PDF conversion
 DIA2PDF       = dia
 DIA2SVG       = dia
+DIA2EPS       = dia
 
 # Pattern rule for converting SVG to PDF
 %.pdf : %.dia
@@ -65,9 +69,13 @@ DIA2SVG       = dia
 %.svg : %.dia
 	$(DIA2PDF) -e $@ -t svg $<
 
+%.eps : %.dia
+	$(DIA2EPS) -e $@ -t eps $<
+
 # Build a list of SVG files to convert to PDFs
 PDFs := $(foreach dir, $(IMAGEDIRS), $(patsubst %.dia,%.pdf,$(wildcard $(SOURCEDIR)/TG/$(dir)/*.dia)))
+EPSs := $(foreach dir, $(IMAGEDIRS), $(patsubst %.dia,%.eps,$(wildcard $(SOURCEDIR)/TG/$(dir)/*.dia)))
 SVGs := $(foreach dir, $(IMAGEDIRS), $(patsubst %.dia,%.svg,$(wildcard $(SOURCEDIR)/TG/$(dir)/*.dia)))
 # Make a rule to build the PDFs
-images: $(PDFs) $(SVGs)
+images: $(EPSs) $(SVGs)
 

@@ -236,7 +236,7 @@ The 2nd method is responsible to perform the compile
 time semantics. That usually means to write it into
 the dictioanary or to execute immediate words.
 
-The third method is used by ``postpone`` to compile the
+The third method is used by :command`postpone` to compile the
 compilation semantics. It honors the immediate flags as well.
 
 A recognizer consists of a few words that work together.
@@ -249,7 +249,7 @@ Recognizer List
 ~~~~~~~~~~~~~~~
 
 The interpreter uses a list of recognizers. They are managed
-with the words ``get-recognizer`` and ``set-recognizer``.
+with the words :command:`get-recognizer` and :command:`set-recognizer`.
 
 .. code-block:: forth
 
@@ -262,8 +262,8 @@ with the words ``get-recognizer`` and ``set-recognizer``.
    ' rec:foo place-rec
 
 The entries in the list are called in order until the first 
-one returns a different result but ``r:fail``. If the list
-is exhausted and no one succeeds, the ``r:fail`` is delivered
+one returns a different result but :command:`r:fail`. If the list
+is exhausted and no one succeeds, the :command:`r:fail` is delivered
 nevertheless and leads to the error reactions.
 
 The standard recognizer list is defined as follows
@@ -275,7 +275,7 @@ The standard recognizer list is defined as follows
      2 set-recognizer
    ;
 
-The standard word ``marker`` resets the recognizer list as well.
+The standard word :command:`marker` resets the recognizer list as well.
 
 INTERPRET
 ~~~~~~~~~
@@ -294,8 +294,8 @@ and to call the recognizers. It also maintains the state.
      again
    ;
 
-``do-recognizer`` always returns a valid method table. If no
-recognizer succeeds, the ``r:fail`` is returned with the addr/len
+:command:`do-recognizer` always returns a valid method table. If no
+recognizer succeeds, the :command:`r:fail` is returned with the addr/len
 of the unknown-to-handle word.
 
 
@@ -316,25 +316,25 @@ data inside the forth interpreter and a word to parse a word.
 
    : rec:foo ( addr len -- i*x r:foo | r:fail ) ... ;
 
-The word ``rec:foo`` is the actual recognizer. It analyzes the
+The word :command:`rec:foo` is the actual recognizer. It analyzes the
 string it gets. There are two results possible: Either the word
 is recognized and the address of the method table is returned
 or a failure information is generated which is actually a predefined
-method table named ``r:fail``.
+method table named :command:`r:fail`.
 
-The calling parameters to ``rec:foo`` are the address and the length 
+The calling parameters to :command:`rec:foo` are the address and the length 
 of a word in RAM. The recognizer must not change it. The result 
 (i*x) is the parsed and converted data and the method table to 
 deal with it.
 
 There is a standard method table that does not require
 additional data (i*x is empty) and which is used to communicate
-the "not-recognized" information: ``r:fail``. Its method
+the "not-recognized" information: :command:`r:fail`. Its method
 table entries throw the exception -13 if called.
 
-Other pre-defined method tables are ``r:intnum`` to deal with single 
-cell numeric data, ``r:intdnum`` to work with double cell numerics and 
-``r:find`` to execute, compile and postpone execution tokens from the 
+Other pre-defined method tables are :command:`r:intnum` to deal with single 
+cell numeric data, :command:`r:intdnum` to work with double cell numerics and 
+:command:`r:find` to execute, compile and postpone execution tokens from the 
 dictionary.
 
 The words in the method tables get the output of the recognizer as input 
@@ -350,7 +350,7 @@ actions. Its methods get the addr/len of a single
 word. They consume it by printing the string and 
 throwing an exception when called. The effect is 
 to get back to the command prompt if catched 
-inside the ``quit`` loop.
+inside the :command:`quit` loop.
 
 .. code-block:: forth
 
@@ -378,19 +378,20 @@ printed and an exception is thrown.
    ' noop
    ' literal
    :noname . -48 throw ;
-   recognizer: r:intnum
+   recognizer: r:num
 
    ' noop
    ' 2literal
    :noname d. -48 throw ;
-   recognizer: r:intdnum
+   recognizer: r:dnum
 
-   : rec:intnum ( addr len -- n r:intnum | d r:intdnum | r:fail )
+   : rec:intnum ( addr len -- n r:num | d r:dnum | r:fail )
      number if
-      1 = if r:intnum exit then
-      r:intdnum exit
+      1 = if r:num then
+      r:dnum 
+     else 
+       r:fail
      then
-     r:fail
    ;
 
 
@@ -408,13 +409,14 @@ immediate words for compiling and postponing.
    :noname drop execute ; 
    :noname 0> if compile, else execute then ; 
    :noname 0> if postpone [compile] then , ; 
-   recognizer: r:find
+   recognizer: r:word
 
-   : rec:find ( addr len -- XT flags r:find | r:fail )
+   : rec:find ( addr len -- XT flags r:word | r:fail )
      find-name ?dup if
-       r:find exit
-     then 
-     r:fail 
+       r:word
+     else
+       r:fail 
+     then
    ;
   
 Stacks
@@ -909,8 +911,5 @@ into the new word (con) but executed. This compile time action creates
 a small data structure similar to the wordlist entry for a noname: word.
 The address of this data structure is an execution token. This execution
 token replaces the standard XT that :command:`create` has already
-written for words that are defined using :command:`con`. This
-leads inevitably to a flash erase cycle.
-already
 written for words that are defined using :command:`con`. This
 leads inevitably to a flash erase cycle.

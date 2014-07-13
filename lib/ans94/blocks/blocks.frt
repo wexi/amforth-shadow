@@ -6,17 +6,20 @@
 \ use flash-block.frt to turn flash into block storage
 \
 \ list requires dump.frt
-\ requires defer.frt
-\ requires buffer.frt
-\
+
+#require dump.frt
+#require defer.frt
+#require buffer.frt
+
+\ high level blocksize, ANS94 says 1024 bytes
 #64 constant blocksize
+Rdefer load-buffer ( buf-addr u -- )
+Rdefer save-buffer ( buf-addr u -- )
 
 variable blk1 
 variable blk1-dirty
 blocksize buffer: blk-buffer1
 
-Rdefer load-buffer ( u buf-addr -- )
-Rdefer save-buffer ( u buf-addr -- )
 
 \ for turnkey
 : block:init
@@ -25,7 +28,7 @@ Rdefer save-buffer ( u buf-addr -- )
 ;
 
 : block ( u -- a-addr )
-   dup blk1 ! blk-buffer1 load-buffer
+   blk-buffer1 swap dup blk1 ! load-buffer
    0 blk1-dirty !
    blk-buffer1
 ;
@@ -34,14 +37,14 @@ Rdefer save-buffer ( u buf-addr -- )
 
 : buffer ( u -- a-addr )
   blk1-dirty @ if
-    blk1 @ blk-buffer1 save-buffer
+    blk-buffer1 blk1 @ save-buffer
   then
   block
 ;
 
 : save-buffers
   blk1-dirty @ if
-    blk1 @ blk-buffer1 save-buffer
+    blk-buffer1 blk1 @  save-buffer
   then
   0 blk1-dirty !
 ;

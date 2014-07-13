@@ -3,48 +3,61 @@
 \ single buffer management.
 \ non-standard block size (to save RAM).
 \ only basic routines. No hardware access
-\ use flash-block.frt to turn flash into block storage
 \
-\ list requires dump.frt
 
-#require dump.frt
 #require defer.frt
 #require buffer.frt
 
 \ high level blocksize, ANS94 says 1024 bytes
 #64 constant blocksize
+variable scr
+
+\ API for low level drivers. They get the 
+\ buffer address in RAM and the block number.
 Rdefer load-buffer ( buf-addr u -- )
 Rdefer save-buffer ( buf-addr u -- )
 
+\ single buffer blocks. 
 variable blk1 
 variable blk1-dirty
-blocksize buffer: blk-buffer1
-
+blocksize buffer: blk1-buffer
 
 \ for turnkey
 : block:init
-  0 blk1 !
+  -1 blk1 !
   0 blk1-dirty !
 ;
 
+\ reloads the block only if the blocknumber differs
 : block ( u -- a-addr )
-   blk-buffer1 swap dup blk1 ! load-buffer
-   0 blk1-dirty !
-   blk-buffer1
+   dup blk1 @ = if drop else
+     blk1-buffer swap dup blk1 ! load-buffer
+     0 blk1-dirty !
+   then
+   blk1-buffer
 ;
 
 : update -1 blk1-dirty ! ;
+: updated? ( u -- f ) 
+  blk1 @ = if
+    blk1-dirty @ 
+  else
+    0 
+  then
+;
 
 : buffer ( u -- a-addr )
-  blk1-dirty @ if
-    blk-buffer1 blk1 @ save-buffer
+  dup blk1 @ <> if
+    blk1 @ updated? if
+      blk1-buffer blk1 @ save-buffer
+    then
   then
   block
 ;
 
 : save-buffers
-  blk1-dirty @ if
-    blk-buffer1 blk1 @  save-buffer
+  blk1 @ updated? if
+    blk1-buffer blk1 @ save-buffer
   then
   0 blk1-dirty !
 ;
@@ -56,6 +69,3 @@ blocksize buffer: blk-buffer1
 
 : flush save-buffers empty-buffers ;
 
-variable scr
-
-: list dup scr ! buffer blocksize dump ;

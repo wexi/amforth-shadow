@@ -28,15 +28,6 @@ blocksize buffer: blk1-buffer
   0 blk1-dirty !
 ;
 
-\ reloads the block only if the blocknumber differs
-: block ( u -- a-addr )
-   dup blk1 @ = if drop else
-     blk1-buffer swap dup blk1 ! load-buffer
-     0 blk1-dirty !
-   then
-   blk1-buffer
-;
-
 : update -1 blk1-dirty ! ;
 : updated? ( u -- f ) 
   blk1 @ = if
@@ -46,14 +37,20 @@ blocksize buffer: blk1-buffer
   then
 ;
 
-: buffer ( u -- a-addr )
-  dup blk1 @ <> if
-    blk1 @ updated? if
+\ reloads the block only if the blocknumber differs
+: block ( u -- a-addr )
+   dup blk1 @ = if drop else
+     blk1 @ updated? if
       blk1-buffer blk1 @ save-buffer
-    then
-  then
-  block
+     then
+     blk1-buffer swap dup blk1 ! load-buffer
+     0 blk1-dirty !
+   then
+   blk1-buffer
 ;
+
+\ a buffer is an un-initialized block.
+: buffer ( u -- a-addr )  block ;
 
 : save-buffers
   blk1 @ updated? if

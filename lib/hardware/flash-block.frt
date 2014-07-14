@@ -18,12 +18,12 @@ variable flash.base-addr
 \ remember a flash cell contains 2 bytes
 
 : flash.load-buffer ( a-addr u -- )
-   blocksize 2/ * flash.base-addr @ +
+   1- blocksize 2/ * flash.base-addr @ +
    blocksize 2/  bounds ?do i @i over ! cell+ loop drop
 ;
 
 : flash.save-buffer ( a-addr u -- )
-   blocksize 2/ * flash.base-addr @ +
+   1- blocksize 2/ * flash.base-addr @ +
    ." still debugging. no actual flash write!" 
    blocksize 2/ bounds ?do dup @ i 2drop ( !i) cell+ loop drop
 ;

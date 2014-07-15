@@ -50,7 +50,7 @@
 
 : i2c.ee.load-buffer ( a-addr u -- )
   \ ." loading buffer " dup . cr .s cr
-   i2c.ee.pages/block * \ start address
+   1- i2c.ee.pages/block * \ start address
    i2c.ee.pages/block bounds ?do
      dup i2c.ee.pagesize i i2c.ee.read-page
      i2c.ee.pagesize +
@@ -65,7 +65,7 @@
 ;
 
 : i2c.ee.save-buffer ( a-addr u -- )
-   i2c.ee.pages/block * \ start address
+   1- i2c.ee.pages/block * \ start address
    i2c.ee.pages/block bounds ?do
      dup i2c.ee.pagesize i i2c.ee.write-page
      i2c.ee.pagesize +

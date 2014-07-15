@@ -73,9 +73,9 @@
 ;
 
 \ for turnkey
+\ does not initialize TWI/I2C interface! (i2c.init.default)
 : i2c.ee.init ( -- )
    block:init
-   i2c.init.default
    ['] i2c.ee.load-buffer is load-buffer
    ['] i2c.ee.save-buffer is save-buffer
 ;

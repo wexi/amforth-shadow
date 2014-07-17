@@ -211,6 +211,8 @@ implementation.
 
 - du256/ ( ud -- ud/256 ) :: double unsigned division by 256.  
 
+- d0= ( d -- f ) :: flag is true if double equals zero.
+
 - du<  (ud1 ud2 -- flag ) :: [ASM] is ud1 less than ud2 ?
 
 - d@ d! :: [ASM] double precision fetch and store.

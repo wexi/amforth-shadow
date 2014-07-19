@@ -8,8 +8,8 @@
 #require defer.frt
 #require buffer.frt
 
-\ high level blocksize, ANS94 says 1024 bytes
-#64 constant blocksize
+\ high level blocksize, ANS94 says 1024 bytes, SD Cards have 512
+#512 constant blocksize
 variable scr
 
 \ API for low level drivers. They get the 

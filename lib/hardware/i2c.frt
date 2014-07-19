@@ -34,6 +34,8 @@
 -4000 constant i2c.timeout  \ exception number for timeout
 10000 Evalue   i2c.maxticks \ # of checks until timeout is reached
 variable i2c.loop           \ timeout counter
+variable i2c.current        \ current hwid if <> 0
+
 : i2c.timeout?
     i2c.loop @ 1- dup i2c.loop ! 0=
 ;
@@ -41,6 +43,7 @@ variable i2c.loop           \ timeout counter
 \ turn off i2c
 : i2c.off ( -- )
     0 TWCR c!
+    0 i2c.current !
 ;
 
 0 constant i2c.prescaler/1
@@ -65,6 +68,13 @@ TWCR 5 portpin: i2c.sta
     i2c.prescaler/64 3 i2c.init 
 ;
 
+\ convert the bus address into a sendable byte
+\ the address bits are the upper 7 ones,
+\ the LSB is the read/write bit.
+
+: i2c.wr 2* ;
+: i2c.rd 2* 1+ ;
+
 \ wait for i2c finish
 : i2c.wait ( -- )
     i2c.maxticks i2c.loop !
@@ -86,6 +96,9 @@ TWCR 5 portpin: i2c.sta
     %10010100 TWCR c!
     \ no wait for completion.
 ;
+
+
+
 \ process the data
 : i2c.action
     %10000100 or TWCR c! \ _BV(i2cNT)|_BV(TWEN)
@@ -117,18 +130,21 @@ TWCR 5 portpin: i2c.sta
     $f8 and
 ;
 
-\ convert the bus address into a sendable byte
-\ the address bits are the upper 7 ones,
-\ the LSB is the read/write bit.
-
-: i2c.wr 2* ;
-: i2c.rd 2* 1+ ;
-
+\ aquire the bus and select a device
+: i2c.begin ( hwid -- )
+  dup i2c.current !
+  i2c.start i2c.wr i2c.tx
+;
+\ release the bus and deselect the device
+: i2c.end ( -- )
+  i2c.stop
+  0 i2c.current !
+;
 
 \ detect presence of a device on the bus
 : i2c.ping?   ( addr -- f )
     i2c.start 
     i2c.wr i2c.tx
     i2c.status $18 =
-    i2c.stop 
+    i2c.stop
 ;

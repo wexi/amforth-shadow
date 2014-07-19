@@ -28,7 +28,7 @@
 #32 Evalue i2c.ee.pagesize
 
 \ use i2c.ee.setpagesize to change this number
- #2 Evalue i2c.ee.pages/block
+#16 Evalue i2c.ee.pages/block
 
 \ adjust the page size and update the #pages per block buffer
 : i2c.ee.setpagesize ( 24cxx -- )
@@ -43,7 +43,7 @@
   i2c.ee.hwid i2c.rd i2c.tx 
   1- bounds over >r ?do i2c.rx i c! loop
   i2c.rxn r> c! \ last byte
-  i2c.stop
+  i2c.end
 ;
 
 \ loads a buffer from eeprom to a-addr
@@ -61,7 +61,7 @@
   \ ." writing page " dup . cr .s cr
   i2c.ee.pagesize * i2c.ee.send-addr
   bounds ?do i c@ i2c.tx loop
-  i2c.stop 5 ms \ make sure the eeprom gets ready again
+  i2c.end 5 ms \ make sure the eeprom gets ready again
 ;
 
 : i2c.ee.save-buffer ( a-addr u -- )

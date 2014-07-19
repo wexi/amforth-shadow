@@ -27,7 +27,7 @@ variable VERBOSE
 variable ACTUAL-DEPTH			\ STACK RECORD
 variable ACTUAL-RESULTS 20 cells allot  \ reserve space in RAM
 
-: {		\ ( -- ) SYNTACTIC SUGAR.
+: t{		\ ( -- ) SYNTACTIC SUGAR.
    ;
 
 : ->		\ ( ... -- ) RECORD DEPTH AND CONTENT OF STACK.
@@ -36,7 +36,7 @@ variable ACTUAL-RESULTS 20 cells allot  \ reserve space in RAM
       0 do ACTUAL-RESULTS i cells + ! loop \ SAVE THEM
    then ;
 
-: }		\ ( ... -- ) COMPARE STACK (EXPECTED) CONTENTS WITH SAVED
+: }t		\ ( ... -- ) COMPARE STACK (EXPECTED) CONTENTS WITH SAVED
 		\ (ACTUAL) CONTENTS.
    depth ACTUAL-DEPTH @ = if		\ IF DEPTHS MATCH
       depth ?dup if			\ IF THERE IS SOMETHING ON THE STACK

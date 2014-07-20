@@ -43,13 +43,15 @@ released but will be part of the next release.
 See the code section at Sourceforge to get the
 `most recent sources <http://sourceforge.net/p/amforth/code/HEAD/tree/trunk/>`__
 
-* lib: renamed TWI to I2C, added many tools for it.
+* lib: Almost complete :ref:`Blocks` wordset support. Only a few dark corners behave differently.
+* lib: renamed TWI to I2C, added many tools for it :ref:`I2C Values`, :ref:`I2C EEPROM Blocks` and 
+  a few more.
 * recipes: `Test Driven Development <http://en.wikipedia.org/wiki/Test-driven_development>`_ 
-  with :ref:`Amforth <Testing>`.
-* lib: Fully support the ANS94 String wordset. With a little help from gforth.
+  with :ref:`Amforth <Testing>`, :ref:`Conditional Interpret`
+* lib: Fully support the ANS94 String wordset.
 * core: Double cell return stack access words (:command:`2>r` and 
   :command:`2r>`) missed the internal swap's. Added new :command:`2r@`.
-* misc: limited locals and blocks support.
+* lib: Limited LOCALs
 
 7.5.2013: release 5.3
 ......................

@@ -2,9 +2,10 @@ General Code Examples
 ---------------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    Arrays
+   Blocks
    Create-Does
    Deferred-Words
    Disable-Echo

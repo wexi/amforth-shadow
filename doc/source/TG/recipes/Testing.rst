@@ -32,14 +32,14 @@ The tester uses 4 words:
 :command:`TESTING` add your comment here
   is a "talking comment" to make the output somehow look nice.
 
-:command:`{`
+:command:`t{`
   starts a new test. Prepare the stack and call your function, then
 
 :command:`->`
   indicates that the test code is complete. Add the remaining stack after
   this word.
 
-:command:`}`
+:command:`}t`
   completes the test by comparing the stack with the expected stack. If
   everything is well, the ok prompt will appear.
 
@@ -68,12 +68,12 @@ Then write the test cases, e.g.
    \ run the tests
    TESTING the tester -----------------------------------------
   
-   { 1 1 +    -> 2 }
-   { 1 1 plus -> 2 }
-   { 1 1 plus -> 3 } \ incorrect
-   { 1 2 plus -> 3 } \ tester contiues
-   { $FFFF 1 plus -> 0 }
-   { 1 2 3 4 plus -> 1 2 7 }
+   t{ 1 1 +    -> 2 }t
+   t{ 1 1 plus -> 2 }t
+   t{ 1 1 plus -> 3 }t \ incorrect
+   t{ 1 2 plus -> 3 }t \ tester contiues
+   t{ $FFFF 1 plus -> 0 }t
+   t{ 1 2 3 4 plus -> 1 2 7 }t
 
 Now load the file :file:`function-test.frt` to the controller and watch
 the show.
@@ -82,16 +82,16 @@ the show.
 
    TESTING the tester -----------------------------------------
     ok
-   > { 1 1 +    -> 2 }
+   > t{ 1 1 +    -> 2 }t
     ok
-   > { 1 1 plus -> 2 }
+   > t{ 1 1 plus -> 2 }t
     ok
-   > { 1 1 plus -> 3 }
-   INCORRECT RESULT: { 1 1 plus -> 3 }
+   > t{ 1 1 plus -> 3 }t
+   INCORRECT RESULT: t{ 1 1 plus -> 3 }t
     ok
-   > { 1 2 plus -> 3 }
+   > t{ 1 2 plus -> 3 }t
     ok
-   > { $FFFF 1 plus -> 0 }
+   > t{ $FFFF 1 plus -> 0 }t
     ok
 
 With the command ``-ans-tester`` everythings gets unloaded and is ready for

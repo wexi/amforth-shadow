@@ -2,10 +2,11 @@ Programming and Debugging
 -------------------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    Assembler
    Build-Timestamp
+   Conditional-Interpret
    Coroutines
    Ctrl-C
    Customize

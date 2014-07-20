@@ -2,12 +2,16 @@ Hardware Modules
 ----------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    1wire
    Digital-Ports
    EEPROM
    Efficient-Bitmanipulation
+   I2C-Blocks
+   I2C-Detect
+   I2C-EEPROM
+   I2C-Values
    Interrupt-ISR
    Interrupt-Critical-Section
    NRWW

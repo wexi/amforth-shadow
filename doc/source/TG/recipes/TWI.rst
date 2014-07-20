@@ -67,4 +67,5 @@ sends the I2C STOP condition. Thereafter the next bus cycle can
 start.
 
 
-.. seealso: :ref:`I2C Bus Scanner`, :ref:`I2C Values`, and :ref:`I2C EEPROM Blocks`
+.. seealso:: :ref:`I2C Detect`, :ref:`I2C Values`, :ref:`I2C EEPROM` 
+   and :ref:`I2C EEPROM Blocks`

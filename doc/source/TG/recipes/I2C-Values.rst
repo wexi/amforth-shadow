@@ -1,12 +1,12 @@
 .. _I2C Values:
 
-I2C VALUEs
-----------
+I2C EEPROM VALUE
+================
 
 A nice feature of the VALUE concept is that the storage where
 the data is actually kept is not disclosed. That makes it easy
 to create a VALUE that behaves exactly like any other VALUE
-and keeps the data in an external i2C eeprom.
+and keeps the data in an external I2C eeprom.
 
 
 .. code-block:: forth
@@ -16,15 +16,15 @@ and keeps the data in an external i2C eeprom.
    #require ms.frt
    #require i2c-eeprom.frt
 
-   \ initial addr ...
-   \ 17      0    i2c.value "name"
-   : i2c.value ( n addr -- )
+   \ 17      0    $50  i2c.value "name"
+   : i2c.ee.value ( n addr hwid -- )
      (value)
-     dup ,
-     [: @i @i2c.ee ;] , 
-     [: @i !i2c.ee 5 ms ;] ,
-     !i2c.ee
-   ; 
+     over ,   \ store the addr
+     [: dup @i ( addr ) swap 3 + @i ( hwid) @i2c.ee ;] , 
+     [: dup @i ( addr ) swap 3 + @i ( hwid) !i2c.ee 5 ms ;] ,
+     dup ,    \ store hwid
+     !i2c.ee  \ store inital data
+   ;
 
 The #require directives are processed by the amforth-shell, of you don't use
 it, comment them out and make sure that the files and their further dependencies
@@ -38,7 +38,7 @@ eeprom, the location of the data is given explicitly when creating the value (0)
 
 .. code-block:: console
 
-   (ATmega16)> $beef 0 i2c.value answer
+   (ATmega16)> $beef 0 $50 i2c.ee.value answer
      ok
    (ATmega16)> answer hex u.
     BEEF  ok
@@ -49,7 +49,5 @@ eeprom, the location of the data is given explicitly when creating the value (0)
    (ATmega16)>
 
 Dont forget to initialize the I2C hardware before use (e.g. in ``turnkey``). 
-The full details are in :ref:`I2C EEPROM`. Including how to change the
-I2C hardware identifier of the serial eeprom (default $50).
 
-.. seealso:: :ref:`I2C EEPROM Blocks`,:ref:`TWI`, and :ref:`Values`
+.. seealso:: :ref:`I2C EEPROM`, :ref:`TWI`, and :ref:`Values`

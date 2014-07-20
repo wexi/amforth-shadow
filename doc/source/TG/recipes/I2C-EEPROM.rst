@@ -32,26 +32,13 @@ amforth-shell to upload the file sind it automatically resolves all dependencies
 Runtime 
 -------
 
-Using the eeprom requires the setup of the TWI module of the controller and
-selecting a chip hardware id.
+Using the eeprom requires the setup of the TWI module of the controller.
 
 .. code-block:: console
 
    (ATmega16)> i2c.init.default  \ initialize TWI hardware module in slow speed
     ok
-   (ATmega16)> i2c.ee.hwid hex .
-    50 ok
    (ATmega16)>
-
-If your hardware uses a different hwid, change it:
-
-.. code-block:: console
-
-    (ATmega16)> $54 to i2c.ee.hwid
-     ok
-    (ATmega16)>
-
-This number is kept in the controller EEPROM (an Evalue) and is permanently stored.
 
 When the I2C system works (check with ``i2c.detect`` from :ref:`I2C Detect`)
 everything is ready to store data. A more convenient method to handle more
@@ -60,24 +47,25 @@ data is what the :ref:`I2C EEPROM Blocks` provide.
 Access
 ------
 
-There are words for 1 byte data and cell sized (2 bytes) data. They follow the usual
-name pattern: 
+There are words for 1 byte data and cell sized (2 bytes) data. They need two
+address information: the hardware id (usually $50) and the address within
+the selected device.
 
-``c@i2c.ee`` ( addr - c )
-  Fetch a byte from addr using the I2C module identified with i2c.ee.hwid
+``c@i2c.ee`` ( addr hwid - c )
+  Fetch a byte from addr using the I2C module identified with hwid
 
-``c!i2c.ee`` ( c addr -- )
-  Store a byte at addr using the I2C module identified with i2c.ee.hwid
+``c!i2c.ee`` ( c addr hwid -- )
+  Store a byte at addr using the I2C module identified with hwid
 
-``@i2c.ee`` ( addr - n )
-  fetch a cell from addr using the I2C module identified with i2c.ee.hwid
+``@i2c.ee`` ( addr hwid - n )
+  fetch a cell from addr using the I2C module identified with hwid
 
-``!i2c.ee`` ( n addr -- )
-  Store a cell at addr using the I2C module identified with i2c.ee.hwid
+``!i2c.ee`` ( n addr hwid -- )
+  Store a cell at addr using the I2C module identified with hwid
 
-Note that the write operations *do not* wait. Most (but not all)
-I2C eeproms require a 5 millisecond delay after a write before 
-the next access can be made. Add this delay youself!
+.. warning:: Note that the write operations *do not* wait. Most (but not all)
+             I2C eeproms require a 5 millisecond delay after a write before 
+             the next access can be made. Add this delay youself!
 
 
 .. seealso:: :ref:`I2C EEPROM Blocks` and :ref:`I2C Values`

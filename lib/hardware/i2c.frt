@@ -1,6 +1,8 @@
 \ basic I2C operations, uses 7bit bus addresses
+\ uses the TWI module of the Atmega's.
 
 #require bitnames.frt
+#require value.frt
 
 \ provides
 \  i2c.init          -- initialize i2c subsystem
@@ -17,6 +19,9 @@
 \  i2c.wr            -- convert addr to sendable byte for writing
 \  i2c.rd            -- convert addr to sendable byte for reading
 \  i2c.ping?         -- checks if addr is a device
+
+\  i2c.begin         -- starts a I2C bus cycle
+\  i2c.end           -- ends a I2C bus cycle
 \
 \ i2c (SCL) clock speed = CPU_clock/(16 + 2*bitrateregister*(4^prescaler))
 \ following the SCL clock speed in Hz for an 8Mhz device

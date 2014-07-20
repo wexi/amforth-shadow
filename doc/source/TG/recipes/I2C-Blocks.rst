@@ -24,17 +24,20 @@ Runtime
 
 The I2C hardware drivers need two initialization steps. The
 first is the I2C/TWI hardware init (``i2c.init`` or simply
-``i2c.init.default``) and the block init as ``i2c.ee.init``.
-Only after these two commands, which need to run at turnkey,
-the I2C memory modules can be accessed.
+``i2c.init.default``) and the device init as ``i2c.ee.blockinit``.
+After these two commands, which need to run before use in 
+e.g. turnkey, the I2C memory modules can be accessed.
 
 .. code-block:: console
 
    > i2c.init.default  \ initialize TWI hardware module in slow speed
-   > i2c.ee.init       \ set up defers and pointers for the blocks
+   > 24c64 $50 i2c.ee.blockinit \ set up for block level access
 
 Place these two commands (or similiar ones) in the application
-turnkey word.
+turnkey word. The parameters to the ``i2c.ee.blockinit`` are the
+pagesize (there are some convenient constants, see below) and 
+the I2C hardware id ($50). All subsequent access to the device
+depend on these information. They can be changed any time.
 
 Now the words from the Block word set are ready to use.
 
@@ -65,7 +68,7 @@ action, 5 milliseconds have to pass before the next access can be
 made. The library takes care of this for every page written. It
 splits the the data transfer of the (possibly) larger buffer size
 to the actual page size of the controller too. To configure the
-page sizes, the command ``i2c.ee.setpagesize`` should be used. It
+page sizes, the command ``i2c.ee.setpagesize`` has to be used. It
 takes the page size in bytes as the parameter. To make the source
 code more readably, constant names like ``24c64`` are provided.
 
@@ -91,13 +94,6 @@ code more readably, constant names like ``24c64`` are provided.
 
 The code assumes 2byte addresses inside the memory and a single
 I2C hardware address (0x50). Modules which use multiple I2C
-addresses  work within the limits of a single address. This address
-can be changed any time.
-
-.. code-block:: forth
-
-   > $51 to i2c.ee.hwid
-    ok
-   >
+addresses  work within the limits of a single address.
 
 .. seealso:: :ref:`TWI` :ref:`I2C Values`

@@ -205,3 +205,4 @@ methods are embedded as quotations.
 
    This recipe requires amforth version 5.2 and newer.
 
+.. seealso:: :ref:`I2C Values`

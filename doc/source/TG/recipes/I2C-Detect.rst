@@ -12,7 +12,7 @@ a nicely formatted overview of all connected I2C devices.
      ok 
    (ATmega1280)> i2c.detect 
           0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F
-     0:           -- -- -- -- -- -- -- -- -- -- -- -- --
+     0:                       -- -- -- -- -- -- -- -- --
     10:  -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
     20:  -- -- -- -- -- -- -- 27 -- -- -- -- -- -- -- --
     30:  -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
@@ -31,4 +31,4 @@ I2C 7bit device addresses. They are not probed as well.
 
 A similiar command exists on Linux platforms.
 
-.. seealso:: :ref:`TWI`
+.. seealso:: :ref:`TWI`, :ref:`I2C Generic`

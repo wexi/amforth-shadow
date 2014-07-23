@@ -28,12 +28,6 @@ usart_rx_isr:
   push zh
 
   lds xh, USART_DATA
-  ; optional: check for certain character(s) (e.g. CTRL-C)
-  ; and trigger a soft interrupt instead of storing the
-  ; charater into the input queue.
-  cpi xh, 3
-  brne usart_rx_store
-  jmp 0
 usart_rx_store:
   lds xl, usart_rx_in
   ldi zl, low(usart_rx_data)

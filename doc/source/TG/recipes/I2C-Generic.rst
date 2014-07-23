@@ -3,7 +3,7 @@
 I2C Generic
 ===========
 
-The basic lowlevel words provide a rather raw access to the
+The basic low-level words provide a rather raw access to the
 I2C bus and its devices. Since the bus has some standard 
 actions, which are always the same, some combinations are useful
 factors.
@@ -17,7 +17,7 @@ factors.
 
 ``i2c.end`` ( -- )
   The communication ends with sending the I2C stop condition and the 
-  bus is released. The variable i2c.current is cleared.
+  bus is released. The variable ``i2c.current`` is cleared.
 
 With these commands an I2C transaction becomes
 
@@ -26,7 +26,7 @@ With these commands an I2C transaction becomes
    i2c.hw.id i2c.begin .... i2c.end
 
 Inside the begin/end scope, the basic I2C routines for
-writing (i2c.tx) and reading can be used. They work
+writing (``i2c.tx``) and reading can be used. They work
 with the device selected with ``i2c.begin``.
 
 Most I2C devices use rather small data packets they
@@ -60,7 +60,7 @@ This example communicates with an I2C compass sensor
 mmc2120 (memsic). The I2C address is fixed at $30.
 
 A measurement is triggered by putting the sensor in a
-stable state and triggering the measuremt. Finally 5
+stable state and triggering the measurement. Finally 5
 bytes are read back that contain the actual sensor data
 and a status information.
 
@@ -137,7 +137,7 @@ Big data means that a device sends or receives more data
 than the data stack can hold. In this case, the ``i2c.begin``
 and ``i2c.end`` in combination with the low level ``i2c.tx``, 
 ``i2c.rx`` etc should be used. One example is the I2C EEPROM 
-block driver. It transfers 512 bytes in one transcation and uses
+block driver. It transfers 512 bytes in one transaction and uses
 a RAM buffer to actually hold the data.
 
 .. seealso:: :ref:`I2C EEPROM`, :ref:`I2C Detect`,

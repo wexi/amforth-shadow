@@ -27,8 +27,8 @@ In this example, two devices are connected: a port expander
 (PCF 8574) and two EEPROMs (a 24c64 and a ST 4128 BWP).
 
 The missing addresses are excluded since they are not valid
-I2C 7bit device addresses. They are not probed as well.
+I2C 7-bit device addresses. They are not probed as well.
 
-A similiar command exists on Linux platforms.
+A similar command exists on Linux platforms.
 
 .. seealso:: :ref:`TWI`, :ref:`I2C Generic`

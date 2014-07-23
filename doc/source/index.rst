@@ -73,7 +73,7 @@ More To Read
 ----------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
 
    UG/amforth_user
    faq
@@ -81,5 +81,3 @@ More To Read
    TG/Cookbook
    TG/refcard
    history
-
-

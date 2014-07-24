@@ -9,7 +9,7 @@ Technical Documentation
 Contents:
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 4
 
    UG/amforth_user
    TG/Preface

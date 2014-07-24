@@ -359,11 +359,19 @@ Loop counters are checked on signed compares.
 Block
 .....
 
-Amforth has limited block support to work
-with the flash memory and I2C/SPI eeprom
-devices.
+Amforth has almost complete block support to work
+with the flash memory and I2C eeprom devices.
 
 Since version 5.4.
+
+To work with different back end systems, a layered
+structure is used. The low level hardware access words
+``load-buffer`` and ``save-buffer`` are deferred words
+that are called with a RAM buffer location (addr/len pair)
+and the block number. All thay have to do is to transfer 
+the buffer content from/to the back end storage. The
+highlevel words from the BLOCK wordset do the buffer
+management and provide the user visible API.
 
 Double Number
 .............

@@ -3,7 +3,7 @@
 I2C EEPROM Blocks
 =================
 
-Stores Blocks in I2C serial eeprom attached to TWI.
+Stores Blocks in I2C serial EEPROM attached to TWI.
 
 Code
 ----
@@ -33,9 +33,9 @@ e.g. turnkey, the I2C memory modules can be accessed.
    > i2c.init.default  \ initialize TWI hardware module in slow speed
    > 24c64 $50 i2c.ee.blockinit \ set up for block level access
 
-Place these two commands (or similiar ones) in the application
+Place these two commands (or similar ones) in the application
 turnkey word. The parameters to the ``i2c.ee.blockinit`` are the
-pagesize (there are some convenient constants, see below) and 
+page-size (there are some convenient constants, see below) and 
 the I2C hardware id ($50). All subsequent access to the device
 depend on these information. They can be changed any time.
 
@@ -92,7 +92,7 @@ code more readably, constant names like ``24c64`` are provided.
 | 24c1024      |128KB  | 256       | 
 +--------------+-------+-----------+
 
-The code assumes 2byte addresses inside the memory and a single
+The code assumes 2-byte addresses inside the memory and a single
 I2C hardware address (0x50). Modules which use multiple I2C
 addresses  work within the limits of a single address.
 

@@ -5,7 +5,6 @@
 \ for the BLOCK words. 
 
 #require blocks.frt
-#require bounds.frt
 #require i2c-eeprom.frt
 #require ms.frt
 

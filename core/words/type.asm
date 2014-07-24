@@ -9,9 +9,7 @@ VE_TYPE:
 XT_TYPE:
     .dw DO_COLON
 PFA_TYPE:
-    .dw XT_OVER
-    .dw XT_PLUS
-    .dW XT_SWAP
+    .dw XT_BOUNDS
     .dw XT_DOQDO
     .dw PFA_TYPE2
 PFA_TYPE1:

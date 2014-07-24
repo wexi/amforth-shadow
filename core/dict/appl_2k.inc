@@ -169,3 +169,4 @@
 .include "words/tib.asm"
 
 .include "words/init-user.asm"
+.include "words/bounds.asm"

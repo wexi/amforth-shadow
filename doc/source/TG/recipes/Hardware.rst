@@ -11,6 +11,7 @@ Hardware Modules
    I2C-Blocks
    I2C-Detect
    I2C-EEPROM
+   I2C-Generic
    I2C-Values
    Interrupt-ISR
    Interrupt-Critical-Section

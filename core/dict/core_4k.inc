@@ -95,3 +95,4 @@
 .include "words/to-lower.asm"
 
 .include "words/qstack.asm"
+.include "words/bounds.asm"

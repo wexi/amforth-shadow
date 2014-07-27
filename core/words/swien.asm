@@ -7,12 +7,9 @@ VE_SWIEN:
     .dw VE_HEAD
     .set VE_HEAD = VE_SWIEN
 XT_SWIEN:
-    .dw PFA_SWIEN
-PFA_SWIEN:
+    _pfa_
     sts intswi, zerol
     lds zl, intbuf
-    tst zl
-    breq PFA_SWIEN1
+    cpse zl, zerol
     set				; set soft interrupts flag
-PFA_SWIEN1:
-    jmp_ DO_NEXTT		;don't test for SWI
+    jmp_ DO_NEXTT		; don't test for SWI

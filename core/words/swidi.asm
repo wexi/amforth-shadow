@@ -7,8 +7,7 @@ VE_SWIDI:
     .dw VE_HEAD
     .set VE_HEAD = VE_SWIDI
 XT_SWIDI:
-    .dw PFA_SWIDI
-PFA_SWIDI:
+    _pfa_
     ldi zl, 255
     sts intswi, zl		; inhibit
     clt				; reset soft interrupts flag

@@ -36,33 +36,36 @@ the program.
 
 * <<SLIH>> Soft Interrupt Service
 
-One of AmForth features is the ability to write Interrupt Service
-Routines (ISR), aka Interrupt Handlers, in Forth. However, in the
-current implementation (SVN r1430) those ISRs should run with the
-hardware interrupt system disabled. This means that one has to keep ISRs
-short and defer long processing to the "main". The following changes to
-the kernel introduce an eight level soft interrupts queue, allowing the
-Forth code Second Level Interrupt Handlers (SLIH) to be interruptible
-and thus be as slow to execute as necessary. The new first level
-interrupt handling (FLIH) is suitable for type I interrupt sources,
-those acknowledged by execution of their interrupt vectors.
+One of AmForth features is the ability to write Interrupt Service Routines
+(ISR) in Forth. However, still in HQ's trunk@1650 those ISRs should run
+with the hardware interrupt system disabled. This means that one has to
+keep ISRs short and defer long processing to the "main".
 
-CAN interrupts, in the supported at90can32/64/128 \micro{}C's, are
-safely routed to the queue by CANGIE.ENIT auto disable. The Forth code
-should acknowledge the specific CAN interrupt cause before resetting
-ENIT.
+The following changes to the kernel introduce an eight level soft
+interrupts queue, allowing the Forth code Second Level Interrupt Handlers
+(SLIH) to be interruptible and thus be as slow to execute as necessary. The
+new first level interrupt handler (FLIH) that "feeds" the SLIH queue is
+suitable for type I interrupt sources only, those acknowledged by execution
+of their interrupt vectors. However, in addition, ...
+
+CAN interrupts, in the supported at90can32/64/128 \micro{}C's, are safely
+routed to the SLIH queue by CANGIE.ENIT auto disable with the only caveat
+being that the Forth code should acknowledge the specific CAN interrupt
+cause before resetting ENIT.
+
+In multitasking applications, that is, when using lib/multitasking.frt,
+SLIH routines always execute with the first user area resources selected
+("ram_user1").
 
 ** New words
 
 The following ("soft rear-end") words were added to the existing +int
 and -int ("hard front-end") which control SREG I-bit
 
-+ int+ ( -- ) "soft interrupts on" :: Enables soft interrupts. If ~int+~
-     is the ISR last instruction the ISR routine would return before the
-     next queued interrupt is served.
++ int+ ( -- ) "soft interrupts on" :: Enables soft interrupts.
 
-+ int- ( -- ) "soft interrupts off" :: Disables soft interrupts. If this
-     instruction is the ISR first the ISR will not be interrupted.
++ int- ( -- ) "soft interrupts off" :: Disables soft interrupts. If this is
+     the first SLIH routine word, the routine will not be interrupted.
 
 + int' ( -- addr ) "soft interrupts apostrophe" :: Returns the address
      of a system variable where the lower byte, if non zero, indicates
@@ -73,8 +76,7 @@ and -int ("hard front-end") which control SREG I-bit
 
 ** Compatibility
 
-As by default soft interrupts are enabled, existing code should not be
-impacted. ISRs should be regular Forth colon definitions!
+ISRs should be regular Forth colon definitions.
 
 ** Limitation
 

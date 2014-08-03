@@ -54,15 +54,20 @@ decimal
 : task>rp0  ( task -- rp0 )  2+  @i  ;
 : task>nfa  ( task -- nfa )  3 + @i  ;
 
-\ EXEC ≡ infinite loop code: xt = ' EXEC, task = faddr:
-: task-init  ( xt task -- )
-   up@ -rot 2 @u -rot  ( tid1 tid2 xt task )
+: task-init  ( itc task -- )
+\
+\ itc = endless code starting ip, task = dictionary stored task>parameters
+\ Simple example:
+\ :noname begin pause again ; 1+ constant itc
+\ 16 16 0 task: task
+\   
+   up@ -rot 2 @u -rot  ( tid1 tid2 itc task )
    dup task>tid up!
    init-user
    dup task>rp0 4 !u dup task>sp0 6 !u	\ set up stacks
    task>nfa 28 !u			\ dictionary name
 
-   1+ 4 @u 1- !				\ EXEC body IP to R stack
+   4 @u 1- !				\ IP to R stack
    4 @u 2- 6 @u 2- !			\ R pointer to D stack
    6 @u 2- 8 !u				\ D pointer to SP
 

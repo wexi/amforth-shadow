@@ -27,3 +27,21 @@ PFA_REVEAL:
     .dw XT_STORE
 PFA_REVEAL1:
     .dw XT_EXIT
+
+; ( -- wid )
+; Dictionary
+; A newly created word may need to know its word-list membership:
+VE_WILD:
+    .dw $ff04
+    .db "wild"
+    .dw VE_HEAD
+    .set VE_HEAD = VE_WILD
+XT_WILD:
+    .dw	PFA_WILD
+PFA_WILD:
+    savetos
+    ldiw z, COLON_SMUDGE+2
+    ld	tosl, z+
+    ld	tosh, z+
+    jmp_ DO_NEXT
+

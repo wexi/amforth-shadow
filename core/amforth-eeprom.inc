@@ -52,7 +52,9 @@ EE_INITUSER:
     .dw XT_RXQ ; USER_KEYQ
     .dw XT_SOURCETIB ; USER_SKEY
     .dw 0            ; USER_G_IN
-    .dw XT_REFILLTIB ; USER_REFILL  
+    .dw XT_REFILLTIB ; USER_REFILL
+
+    .dw VE_MAIN_FETCH; task NFA
 
 ; calculate baud rate error
 .equ UBRR_VAL   = ((F_CPU+BAUD*8)/(BAUD*16)-1)  ; smart round

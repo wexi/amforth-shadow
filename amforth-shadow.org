@@ -5,11 +5,11 @@
 #+OPTIONS: email:t
 #+STARTUP: indent
 
-[[https://github.com/wexi/amforth-shadow][AmForth-Shadow]] <<HQ>> is a sandbox for [[http://en.wikipedia.org/wiki/Atmel_AVR%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20][AVR8]] Forth development that is
-maintained by an experienced embedded systems programmer, yet a
-novice[fn:1] in Forth. It is hoped that the ideas that are presented here
-would be adopted by [[http://amforth.sourceforge.net/][AmForth]] headquarters (HQ). The following summarizes the
-Shadow changes to HQ's code.
+[[https://github.com/wexi/amforth-shadow][AmForth-Shadow]] is a sandbox for [[http://en.wikipedia.org/wiki/Atmel_AVR%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20][AVR8]] Forth development that is maintained
+by an experienced embedded systems programmer, yet a novice[fn:1] in
+Forth. It is hoped that the ideas that are presented here would be adopted
+by [[http://amforth.sourceforge.net/][AmForth]] headquarters (HQ). The following summarizes the Shadow changes
+to HQ's code.
 
 * Thoughts
 
@@ -53,9 +53,8 @@ routed to the SLIH queue by CANGIE.ENIT auto disable with the only caveat
 being that the Forth code should acknowledge the specific CAN interrupt
 cause before resetting ENIT.
 
-In multitasking applications, that is, when using lib/multitasking.frt,
-SLIH routines always execute with the first user area resources selected
-("ram_user1").
+In multitasking applications (when using [[tasks][lib/tasks.frt]]) SLIH routines
+always execute with the main user area resources selected.
 
 ** New words
 
@@ -88,6 +87,22 @@ interrupts off (~int-~) when compiling new code.
 1. core/drivers/generic-isr.asm: FLIH with 8 level queue.
 2. core/amforth-interpreter.asm: SLIH launcher.
 3. core/words/swi??.asm: Soft interrupts control words.
+
+* <<tasks>>lib/tasks.frt
+
+This is a rewrite ("clean-up") of lib/multitask.frt (trunk@1650) with minor
+improvements such as the addition of task names and simpler task
+invocation. Note that [[SLIH][soft interrupt routines]] use the main task user area
+and should not be counted when allocating memory to each task.
+
++ tasks-init :: initialize "main" as a running task. CALL FIRST!
++ task: ::  allocate task memory
++ task-init :: initialize task in memory
++ task-run :: enable task
++ task-stop :: disable task
++ tasks-off :: disable multitasking
++ tasks-on :: enable multitasking
++ tasks :: display tasks activity
 
 * USART tx/rx isr with RTS/CTS/DTR support <<handshake>>
 
@@ -234,10 +249,16 @@ implementation.
 
 - marker "name" :: A different implementation that backs up word lists
                    only.
+- wild :: [ASM] Returns the word-list of the last word created. This is
+          used by [[tasks][lib/tasks.frt]] to easily access the task name. As WLSCOPE
+          can place created words on different word-lists CREATE using WILD
+          can compile different code.
+
+- main :: [ASM] Returns the main task user area start.
 
 * Deviations from standard Forth
 
-Since the worlist order is kept on the EEPROM it is good practice to reduce
+Since wordlist order is kept on the EEPROM it is good practice to reduce
 the number of rewrites. Hence:
 
 + vocabulary <name> :: [ASM] creates a constant with a new wid (wordlist

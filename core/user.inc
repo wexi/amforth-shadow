@@ -26,5 +26,7 @@
 .set USER_G_IN    = 24
 .set USER_REFILL  = 26
 
-.set SYSUSERSIZE = 28
-; 
+; task dictionary name
+.set USER_NFA     = 28
+
+.set SYSUSERSIZE = 30

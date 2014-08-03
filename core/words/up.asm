@@ -1,5 +1,20 @@
 ; ( -- addr ) 
 ; System Variable
+; main user area
+VE_MAIN_FETCH:
+    .dw $ff04
+    .db "main"
+    .dw VE_HEAD
+    .set VE_HEAD = VE_MAIN_FETCH
+XT_MAIN_FETCH:
+    .dw PFA_MAIN_FETCH
+PFA_MAIN_FETCH:
+    savetos
+    ldiw tos, ram_user1
+    jmp_ DO_NEXT
+
+; ( -- addr ) 
+; System Variable
 ; get user area pointer
 VE_UP_FETCH:
     .dw $ff03

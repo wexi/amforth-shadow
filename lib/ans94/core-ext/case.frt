@@ -20,3 +20,10 @@
       postpone then
    loop
 ; immediate
+
+: end-case
+   \ which does not discard case value, as should be (The Shaodw)
+   0 ?do
+      postpone then
+   loop
+; immediate

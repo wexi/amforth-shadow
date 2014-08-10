@@ -53,28 +53,40 @@ out_cur:
 	ld	wl, z+		; ISR IP
 	ld	wh, z+
 
-; NOTE: If the ISR first word is INT- the ISR won't be (soft) interruptible!
-
 	push	xh		; save return IP
 	push	xl
-	push	uph		; save current user area
-	push	upl
-	ldiw	z, ram_user1
-	movw	uph:upl, zh:zl	; ISRs use default user rea
-	ldiw	x, DO_UP_RESTORE
-	push	xh
-	push	xl
-	movw	xh:xl, wh:wl
+	
+	ldiw	x, ram_user1
+	cp	upl, xl
+	cpc	uph, xh
+	breq	DO_ISR		;using main task?
+
+;	no, task-switch, tasks.frt will resume
+ 
+	savetos			; rp@
+	in	tosl, SPL
+	in	tosh, SPH
+	savetos			; sp@ 8 !u
+	movw	zh:zl, uph:upl
+	std	z+8, yl
+	std	z+9, yh
+
+;	task-resume (main task)
+	
+	movw	uph:upl, xh:xl
+	movw	zh:zl, xh:xl
+	ldd	tosl, z+8	; 8 @u
+	ldd	tosh, z+9
+	movw	yh:yl, tosh:tosl ; sp!
+	ld	tosl, y+
+	ld	tosh, y+
+	in	temp0, SREG
+	cli
+	out	SPL, tosl	; rp!
+	out	SPH, tosh
+	out	SREG, temp0
+	loadtos
+;
+DO_ISR:	movw	xh:xl, wh:wl
 	adiw	xh:xl, 1	; skip the ISR's DO_COLON
 	jmp_	DO_NEXTT	; see NOTE
-;
-DO_UP_RESTORE:
-	.dw	XT_IEXIT
-;
-XT_IEXIT:			; Interrupt EXIT
-	_pfa_
-	pop	upl		; restore user area
-	pop	uph
-	pop	xl
-	pop	xh
-	jmp_	DO_NEXT

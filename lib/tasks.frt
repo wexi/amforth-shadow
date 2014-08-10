@@ -22,20 +22,22 @@
 
 decimal
 
-:noname  ( tid1 -- tid2 ) 
-   cell+ @
-   dup @ >r				\ ">r ;" ≡ "execute"
-;  1+ constant task-bypass		\ DO_COLON unused
+dp ]
+cell+ @ dup @ >r exit
+[ constant task-bypass  ( tid1 -- tid2 )
 
-:noname  ( tid -- )  
-   up!
-   8 @u sp! rp!				\ restore stacks
-;  1+ constant task-resume
+dp ]
+int' @ >r int-  ( D₁: tid ) ( R₁: int-sys )
+up! 8 @u sp!	( D₂: rp ) ( R₁: int-sys )
+r> swap rp!     ( D₂: int-sys )
+$100 u<  if  int+  then
+exit					\ returns from a task-switch
+[ constant task-resume  ( tid -- )
 
 : task-switch  ( -- tid )     
-   rp@ sp@ 8 !u				\ save stacks
+   rp@ sp@ 8 !u				\ save stack pointers
    2 @u					\ next task user area
-   dup @ >r				\ bypass or resume
+   dup @ >r				\ task -bypass or -resume
 ;
 
 \ allocate task resouces
@@ -44,8 +46,8 @@ decimal
    here ,				\ tid
    [ s" /user" environment search-wordlist drop execute ] literal
    + allot				\ user area size
-   allot here ,				\ empty D stack pointer (pre-decrement)
-   allot here 1- ,			\ empty R stack pointer (post-decrement)
+   allot here ,				\ empty D stack pointer (save pre-decrement)
+   allot here 1- ,			\ empty R stack pointer (save post-decrement)
    wild @e ,				\ nfa
   does>					\ task (faddr)
 ;  
@@ -54,27 +56,23 @@ decimal
 : task>rp0  ( task -- rp0 )  2+  @i  ;
 : task>nfa  ( task -- nfa )  3 + @i  ;
 
-: task-init  ( itc task -- )
+: task-init  ( ITC TASK -- )
 \
-\ itc = endless code starting ip, task = dictionary stored task>parameters
+\ ITC = endless code starting ip, TASK = dictionary stored task>parameters
 \ Simple example:
-\ :noname begin pause again ; 1+ constant itc
-\ 16 16 0 task: task
+\ dp ] begin pause again [ constant ITC
+\ 16 16 0 task: TASK
 \   
-   up@ -rot 2 @u -rot  ( tid1 tid2 itc task )
-   dup task>tid up!
-   init-user
-   dup task>rp0 4 !u dup task>sp0 6 !u	\ set up stacks
-   task>nfa 28 !u			\ dictionary name
-
-   4 @u 1- !				\ IP to R stack
-   4 @u 2- 6 @u 2- !			\ R pointer to D stack
-   6 @u 2- 8 !u				\ D pointer to SP
-
-   task-bypass 0 !u			\ stopped status
-   2 !u					\ link new tid
-   up@ swap up!
-   2 !u
+   task-bypass over task>tid !		\ born inactive
+   2 @u over task>tid 2+ !		\ link this new task
+   dup task>tid 2 !u
+   dup task>rp0 over task>tid 4 + !	\ empty R stack pointer
+   dup task>sp0 over task>tid 6 + !	\ empty D stack pointer
+   swap over task>rp0 1- !		\ IP to R stack
+   dup task>rp0 2- over task>sp0 2- !	\ R pointer to D stack
+   dup task>sp0 2- over task>tid 8 + !	\ D pointer to SP
+   up@ 10 + over task>tid 10 + 18 cmove	\ inherit from calling task
+   dup task>nfa swap task>tid 28 + !	\ name pointer
 ;
 
 : tasks-init  ( -- )			\ must be called first!
@@ -113,10 +111,10 @@ decimal
       9 emit				\ HT
       dup u.
       dup @ case
-	 task-resume  of  ." running"   endof
+	 task-resume  of  ." running"  endof
 	 task-bypass  of  ." stopped"  endof
-	 drop true abort" ???"
-      endcase
+	 tdrop abort" ???"
+      end-case
       dup up@ <>  if
 	 ." @" dup 8 + @		\ saved D stack pointer
 	 @				\ stored R stack pointer

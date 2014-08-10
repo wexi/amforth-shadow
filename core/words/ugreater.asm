@@ -9,10 +9,13 @@ VE_UGREATER:
 XT_UGREATER:
     .dw PFA_UGREATER
 PFA_UGREATER:
-    ld temp2, Y+
-    ld temp3, Y+
-    cp temp2, tosl
-    cpc temp3, tosh
-    brlo PFA_ZERO1
-    brbs 1, PFA_ZERO1
-    rjmp PFA_TRUE1
+    ld temp0, Y+
+    ld temp1, Y+
+    cp	tosl, temp0
+    cpc tosh, temp1
+    movw tosh:tosl, zeroh:zerol
+    brsh PFA_UGREATER1		;u2 ≥ u1 ?
+    sbiw tosh:tosl, 1
+PFA_UGREATER1:
+    jmp_ DO_NEXT
+

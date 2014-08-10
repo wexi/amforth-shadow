@@ -53,8 +53,8 @@ routed to the SLIH queue by CANGIE.ENIT auto disable with the only caveat
 being that the Forth code should acknowledge the specific CAN interrupt
 cause before resetting ENIT.
 
-In multitasking applications (when using [[tasks][lib/tasks.frt]]) SLIH routines
-always execute with the main user area resources selected.
+In multitasking applications (using [[tasks][lib/tasks.frt]]) SLIH routines always
+execute with the main user area resources selected.
 
 ** New words
 
@@ -241,7 +241,9 @@ implementation.
 - 2rdrop  ( R: X1 X2 -- ) :: [ASM] Drop two cells from top of run-time
      stack.
 
-- 0drop  ( X -- 0 ) :: [ASM] Replace top of stack with zero.
+- fdrop  ( X -- 0 ) :: [ASM] Replace top of stack with 0 (false).
+
+- tdrop  ( X -- -1 ) :: [ASM] Replace top of stack with -1 (true).
 
 - reverse  ( X1 .. Xn n -- Xn .. X1 n ) :: LIFO made FIFO.
 

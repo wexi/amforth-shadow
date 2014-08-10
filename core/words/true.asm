@@ -1,6 +1,6 @@
 ; ( -- -1 ) 
 ; Arithmetics
-; leaves the value -1 (true) on TOS
+; push -1 (true) to TOS
 VE_TRUE:
     .dw $ff04
     .db "true"
@@ -8,6 +8,14 @@ VE_TRUE:
     .set VE_HEAD = VE_TRUE
 XT_TRUE:
     .dw PFA_TRUE
+
+VE_TDROP:
+    .dw $ff05
+    .db "tdrop",0
+    .dw VE_HEAD
+    .set VE_HEAD = VE_TDROP
+XT_TDROP:
+    .dw PFA_TRUE1
 	
 VE_NONE:
     .dw $ff02

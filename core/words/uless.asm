@@ -9,10 +9,12 @@ VE_ULESS:
 XT_ULESS:
     .dw PFA_ULESS
 PFA_ULESS:
-    ld temp2, Y+
-    ld temp3, Y+
-    cp tosl, temp2
-    cpc tosh, temp3
-    brlo PFA_ZERO1
-    brbs 1, PFA_ZERO1
-    jmp_ PFA_TRUE1
+    ld temp0, Y+
+    ld temp1, Y+
+    cp	temp0, tosl
+    cpc temp1, tosh
+    movw tosh:tosl, zeroh:zerol
+    brsh PFA_ULESS1		;u1 ≥ u2 ?
+    sbiw tosh:tosl, 1
+PFA_ULESS1:
+    jmp_ DO_NEXT

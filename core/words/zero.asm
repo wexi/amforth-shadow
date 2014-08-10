@@ -1,6 +1,6 @@
 ; ( -- 0 ) 
 ; Arithmetics
-; place a value 0 on TOS
+; push 0 (false) to TOS
 VE_FALSE:
     .dw $ff05
     .db "false",0
@@ -9,6 +9,14 @@ VE_FALSE:
 XT_FALSE:
     .dw PFA_ZERO
 ;
+VE_FDROP:
+    .dw $ff05
+    .db "fdrop",0
+    .dw VE_HEAD
+    .set VE_HEAD = VE_FDROP
+XT_FDROP:
+    .dw PFA_ZERO1
+;
 VE_ZERO:
     .dw $ff01
     .db "0",0
@@ -16,14 +24,6 @@ VE_ZERO:
     .set VE_HEAD = VE_ZERO
 XT_ZERO:
     .dw PFA_ZERO
-;
-VE_ZDROP:
-    .dw $ff05
-    .db "0drop",0
-    .dw VE_HEAD
-    .set VE_HEAD = VE_ZDROP
-XT_ZDROP:
-    .dw PFA_ZERO1
 ;
 PFA_ZERO:
     savetos

@@ -30,7 +30,7 @@ dp ]
 int' @ >r int-  ( D₁: tid ) ( R₁: int-sys )
 up! 8 @u sp!	( D₂: rp ) ( R₁: int-sys )
 r> swap rp!     ( D₂: int-sys )
-$100 u<  if  int+  then
+$100 u<  if  int+  then			\ restore int sys stat
 exit					\ returns from a task-switch
 [ constant task-resume  ( tid -- )
 
@@ -103,6 +103,7 @@ exit					\ returns from a task-switch
 
 \ list linked tasks
 : tasks ( -- )
+   cr
    main dup
    begin  ( tid tidₓ )
       dup up@ =  if  [char] *  else  bl  then
@@ -118,7 +119,13 @@ exit					\ returns from a task-switch
       dup up@ <>  if
 	 ." @" dup 8 + @		\ saved D stack pointer
 	 @				\ stored R stack pointer
-	 1+ @ u.			\ task IP
+	 1+ 				\ addr of R stack top
+	 begin
+	    dup @ @i ['] exit =
+	 while
+	    2+				\ skip exit chain
+	 repeat
+	 @ u.				\ show task return point
       then
       cr
       cell+ @  ( tid tidₓ₊₁ )
@@ -127,4 +134,5 @@ exit					\ returns from a task-switch
    2drop
    ." tasks: "
    ['] pause defer@ ['] noop =  if ." off " else  ." on"  then
+   cr
 ;

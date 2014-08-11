@@ -52,41 +52,40 @@ out_cur:
 	adc	zh, temp1
 	ld	wl, z+		; ISR IP
 	ld	wh, z+
-
-	push	xh		; save return IP
+	
+	push	xh		; interrupted task cont point
 	push	xl
 	
-	ldiw	x, ram_user1
-	cp	upl, xl
-	cpc	uph, xh
-	breq	DO_ISR		;using main task?
+	movw	zh:zl, uph:upl
+	cpi	zl, low(ram_user1)
+	brne	DO_SWT		; ISRs should run in main task
+	cpi	zh, high(ram_user1)
+	breq	DO_ISR
 
-;	no, task-switch, tasks.frt will resume
+;	task-switch, leave resume to lib/tasks.frt
  
-	savetos			; rp@
+DO_SWT:	savetos			; rp@
 	in	tosl, SPL
 	in	tosh, SPH
 	savetos			; sp@ 8 !u
-	movw	zh:zl, uph:upl
 	std	z+8, yl
 	std	z+9, yh
 
-;	task-resume (main task)
+;	task-resume main, exec ISR first
 	
-	movw	uph:upl, xh:xl
-	movw	zh:zl, xh:xl
+	ldiw	z, ram_user1
 	ldd	tosl, z+8	; 8 @u
 	ldd	tosh, z+9
 	movw	yh:yl, tosh:tosl ; sp!
-	ld	tosl, y+
-	ld	tosh, y+
-	in	temp0, SREG
+	loadtos
+	in	temp0, SREG	; rp!
 	cli
-	out	SPL, tosl	; rp!
+	out	SPL, tosl
 	out	SPH, tosh
 	out	SREG, temp0
 	loadtos
-;
+	movw	uph:upl, zh:zl
+
 DO_ISR:	movw	xh:xl, wh:wl
-	adiw	xh:xl, 1	; skip the ISR's DO_COLON
-	jmp_	DO_NEXTT	; see NOTE
+	adiw	xh:xl, 1	; skip ISR DO-COLON
+	jmp_	DO_NEXTT	; makes ISR first word uninterruptible

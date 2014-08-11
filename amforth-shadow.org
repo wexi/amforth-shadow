@@ -34,7 +34,7 @@ EESY ( -- ) to sync the EE pointer values with their RAM copies.  This
 is done automatically for you by tools/amforth-shell.py before leaving
 the program.
 
-* <<SLIH>> Soft Interrupt Service
+* <<SLIH>> Second Level Interrupt Handlers (SLIH), aka Soft Interrupts
 
 One of AmForth features is the ability to write Interrupt Service Routines
 (ISR) in Forth. However, still in HQ's trunk@1650 those ISRs should run
@@ -90,19 +90,42 @@ interrupts off (~int-~) when compiling new code.
 
 * <<tasks>>lib/tasks.frt
 
-This is a rewrite ("clean-up") of lib/multitask.frt (trunk@1650) with minor
-improvements such as the addition of task names and simpler task
-invocation. Note that [[SLIH][soft interrupt routines]] use the main task user area
-and should not be counted when allocating memory to each task.
+This is a major rewrite of lib/multitask.frt (as of trunk@1650) that is
+compatibile with AmForth-Shadow [[SLIH][Soft Interrupts]] (SLIH) and has some minor
+enhancements such as the addition of task names. NOTE: Since SLIH routines
+operate as (resume execution of) the main task, there is no need to
+intersperse PAUSE calls in a compute only task as any high frequency SLIH
+clock service would do so for you anyway.
 
-+ tasks-init :: initialize "main" as a running task. CALL FIRST!
-+ task: ::  allocate task memory
-+ task-init :: initialize task in memory
-+ task-run :: enable task
-+ task-stop :: disable task
-+ tasks-off :: disable multitasking
-+ tasks-on :: enable multitasking
-+ tasks :: display tasks activity
++ tasks-init ( -- ) :: initialize "main" as a running task. MUST BE CALLED
+     FIRST!
+
++ task: ( R-stack-bytes D-stack-bytes User-app-bytes "task-name" ) ::  allocate
+     task memory. Store task>parameters in dictionary.
+
++ task-init ( ITC TASK -- ) :: initialize task in memory: ITC is some
+     endless code with pauses. TASK is the task name. For example:
+#+BEGIN_EXAMPLE
+$20 $40 0 task: TASK
+dp ] begin pause again [ constant ITC
+ITC TASK task-init
+#+END_EXAMPLE
+
++ task-run ( TASK - ) :: enable TASK.
+
++ task-stop ( TASK - ) :: disable TASK
+
++ tasks-off ( - ) :: disable multitasking
+
++ tasks-on ( - ) :: enable multitasking
+
++ tasks ( - ) :: display all tasks. 
+#+BEGIN_EXAMPLE
+> tasks
+*main   559 running
+ TASK   757 stopped@7069 
+tasks: on  ok
+#+END_EXAMPLE
 
 * USART tx/rx isr with RTS/CTS/DTR support <<handshake>>
 

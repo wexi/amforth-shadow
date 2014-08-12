@@ -6,7 +6,7 @@
 \ time stamp
 
 \ append it to the recognizer stack with
-\ ' rec:h:m:s get-recognizer 1+ set-recognizer
+\ ' rec:h:m:s get-recognizers 1+ set-recognizers
 \ and than enter 02:00:00 to get 7200. (double 
 \ cell number) which is the number of seconds 
 \ 2 hours have.
@@ -42,7 +42,7 @@
           a+60b  r:dnum
 ;
 
-' rec:h:m:s get-recognizer 1+ set-recognizer
+' rec:h:m:s get-recognizers 1+ set-recognizers
 
 \ wishlist: 
 \ validate the values for minutes and seconds (between 0 and 59)

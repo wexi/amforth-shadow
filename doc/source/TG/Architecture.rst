@@ -249,14 +249,14 @@ Recognizer List
 ~~~~~~~~~~~~~~~
 
 The interpreter uses a list of recognizers. They are managed
-with the words :command:`get-recognizer` and :command:`set-recognizer`.
+with the words :command:`get-recognizers` and :command:`set-recognizers`.
 
 .. code-block:: forth
 
    \ place a recognizer as the last one
 
    : place-rec ( xt -- )
-      get-recognizer 1+ set-recognizer
+      get-recognizers 1+ set-recognizers
    ;
 
    ' rec:foo place-rec
@@ -272,7 +272,7 @@ The standard recognizer list is defined as follows
 
    : default-recs
      ['] rec:intnum ['] rec:find  
-     2 set-recognizer
+     2 set-recognizers
    ;
 
 The standard word :command:`marker` resets the recognizer list as well.

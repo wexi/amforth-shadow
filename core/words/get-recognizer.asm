@@ -2,8 +2,8 @@
 ; Interpreter
 ; Get the current recognizer list
 VE_GET_RECOGNIZER:
-    .dw $ff0e
-    .db "get-recognizer"
+    .dw $ff0f
+    .db "get-recognizers",0
     .dw VE_HEAD
     .set VE_HEAD = VE_GET_RECOGNIZER
 XT_GET_RECOGNIZER:

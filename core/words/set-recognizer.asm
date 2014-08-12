@@ -2,8 +2,8 @@
 ; Interpreter
 ; replace the recognizer list
 VE_SET_RECOGNIZER:
-    .dw $ff0e
-    .db "set-recognizer"
+    .dw $ff0f
+    .db "set-recognizers",0
     .dw VE_HEAD
     .set VE_HEAD = VE_SET_RECOGNIZER
 XT_SET_RECOGNIZER:

@@ -22,7 +22,7 @@ the data, the parsing word produces. These methods are used in interpret and
 compile state, and to postpone the data in colon definitions.
 
 Amforth has recognizers for dealing with numbers and words from the dictionary
-built-in. To create and manage more recognizers, the words ``get/set-recognizer``
+built-in. To create and manage more recognizers, the words ``get/set-recognizers``
 are used. They work similar to the ``get/set-order`` for word lists. 
 
 The word ``recognizer:`` takes three execution tokens and defines the method table.
@@ -60,7 +60,7 @@ of the SOURCE buffer only, a ``refill`` will change the content.
       r:string
    ;
 
-   ' rec:string get-recognizer 1+ set-recognizer
+   ' rec:string get-recognizers 1+ set-recognizers
 
 The first line is simply the method table definition. The first two methods
 are already defined in amforth so nothing special here. The third method is

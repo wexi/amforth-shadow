@@ -22,22 +22,21 @@
 
 decimal
 
-dp ]
+dp ]  ( tid1 -- tid2 )
 cell+ @ dup @ >r exit
-[ constant task-bypass  ( tid1 -- tid2 )
+[ constant task-bypass
 
-dp ]
-int' @ >r int-  ( D₁: tid ) ( R₁: int-sys )
-up! 8 @u sp!	( D₂: rp ) ( R₁: int-sys )
-r> swap rp!     ( D₂: int-sys )
-$100 u<  if  int+  then			\ restore int sys stat
+dp ]  ( tid -- )
+up! 8 @u sp! rp!			\ restore stack pointers
+int+
 exit					\ returns from a task-switch
-[ constant task-resume  ( tid -- )
+[ constant task-resume
 
 : task-switch  ( -- tid )     
+   int-
    rp@ sp@ 8 !u				\ save stack pointers
    2 @u					\ next task user area
-   dup @ >r				\ task -bypass or -resume
+   dup @ >r				\ continue as task-bypass or task-resume
 ;
 
 \ allocate task resouces

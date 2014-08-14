@@ -7,8 +7,11 @@ VE_SWIDI:
     .dw VE_HEAD
     .set VE_HEAD = VE_SWIDI
 XT_SWIDI:
-    _pfa_
-    ldi zl, 255
-    sts intswi, zl		; inhibit
+    .dw	PFA_SWIDI
+PFA_SWIDI:
+    ldiw z, intswi
+    ld	temp0, z
+    dec	temp0			; 0< indicates inhibit
+    st	z, temp0
     clt				; reset soft interrupts flag
     jmp_ DO_NEXTT		; no need to test for SWI

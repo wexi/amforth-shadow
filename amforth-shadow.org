@@ -61,7 +61,11 @@ execute with the main user area resources selected.
 The following ("soft rear-end") words were added to the existing +int
 and -int ("hard front-end") which control SREG I-bit
 
-+ int+ ( -- ) "soft interrupts on" :: Enables soft interrupts.
++ int+ ( -- ) "soft interrupts on" :: Enables soft interrupts if the number
+     of int+ calls is greater or equal than the number of preceding int-
+     calls. Thus, an int- int+ pair can enclose any piece of code that
+     needs to run with the soft interrupt system disabled irrespective of
+     the initial state of the soft interrupt system.
 
 + int- ( -- ) "soft interrupts off" :: Disables soft interrupts. If this is
      the first SLIH routine word, the routine will not be interrupted.

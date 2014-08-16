@@ -2,7 +2,6 @@
 \ uses the TWI module of the Atmega's.
 
 #require bitnames.frt
-#require value.frt
 
 \ low level driver words
 #require i2c-twi.frt

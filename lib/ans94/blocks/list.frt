@@ -5,8 +5,8 @@
 \ #16 constant #lines
 \ #64 constant #cols
 
- #4 constant #lines
-#16 constant #cols
+ #8 constant #lines
+#64 constant #cols
 
 : list      ( blk -- )                  \ list selected screen
    dup scr  !

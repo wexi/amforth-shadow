@@ -5,16 +5,16 @@
 #require value.frt
 
 \ provides public commands
-\  i2c.ping?         -- checks if addr is a device
-\  i2c.init          -- flexible configuration. see below
-\  i2c.init.default  -- generic slow speed 
-\  i2c.off           -- turn off I2C
+\  i2c.ping?         -- checks if addr is active
+\  i2c.init          -- flexible configuration setup. see below
+\  i2c.init.default  -- generic slow speed setup
+\  i2c.off           -- turns off I2C
 
 \ and more internal commands
 \  i2c.wait          -- wait for the current i2c transaction
 \  i2c.start         -- send start condition
 \  i2c.stop          -- send stop condition
-\  i2c.tx            -- send one byte
+\  i2c.tx            -- send one byte, wait for ACK
 \  i2c.rx            -- receive one byte with ACK
 \  i2c.rxn           .. receive one byte with NACK
 \  i2c.status        -- get the last i2c status
@@ -22,14 +22,13 @@
 \
 \ i2c (SCL) clock speed = CPU_clock/(16 + 2*bitrateregister*(4^prescaler))
 \ following the SCL clock speed in Hz for an 8Mhz device
-\                     f_cpu   8000000
 \      bitrate register (may be any value between 0 and 255)
 \               4      8       16      32      64      128    255
 \      prescaler                             
-\      0     333.333 250.000 166.667 100.000 55.556  29.412  15.209
-\      1     166.667 100.000 55.556  29.412  15.152  7.692   3.891
-\      2     55.556  29.412  15.152  7.692   3.876   1.946     978
-\      3     15.152  7.692   3.876   1.946     975     488     245
+\      /1    333.333 250.000 166.667 100.000  55.556  29.412  15.209
+\      /4    166.667 100.000  55.556  29.412  15.152   7.692   3.891
+\      /16    55.556  29.412  15.152   7.692   3.876   1.946     978
+\      /64    15.152   7.692   3.876   1.946     975     488     245
 \
 \
 

@@ -284,3 +284,4 @@ epub_tocdepth = 2
 
 # Allow duplicate toc entries.
 #epub_tocdup = True
+

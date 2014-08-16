@@ -15,12 +15,12 @@ A quick start with the amforth-shell is as follows
    (ATmega16)> #include i2c-eeprom-block.frt
    .... lots of files included, approx 1,5kB dictionary space
    ... for testing and inspekting
-   > #include list-dump.frt \ from lib/ans94/block
+   (ATmega16)> #include list-dump.frt \ from lib/ans94/block
    ... loading code and dependencies
     ok
 
-Runtime
--------
+Configuration
+-------------
 
 The I2C hardware drivers need two initialization steps. The
 first is the I2C/TWI hardware init (``i2c.init`` or simply
@@ -38,28 +38,6 @@ turnkey word. The parameters to the ``i2c.ee.blockinit`` are the
 page-size (there are some convenient constants, see below) and 
 the I2C hardware id ($50). All subsequent access to the device
 depend on these information. They can be changed any time.
-
-Now the words from the Block word set are ready to use.
-
-.. code-block:: forth
-
-   > hex 1 list
-    0143 FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF   ................
-    0153 FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF   ................
-    0163 FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF   ................
-    0173 FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF   ................
-    ....
-    not modified
-   > s" .( This is screen #1)" 1 block cmove update
-   > 1 list 
-    0143 2E 28 20 54 68 69 73 20 69 73 20 73 63 72 65 65   .( This is scree
-    0153 6E 20 23 31 29 FF FF FF FF FF FF FF FF FF FF FF   n #1)...........
-    0153 FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF   ................
-    0163 FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF   ................
-    0173 FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF   ................
-    ....
-    modified
-   > flush-buffers \ or load a different block to write back block 1
 
 More Information is in the recipe :ref:`Blocks`.
 

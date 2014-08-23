@@ -8,6 +8,31 @@ VE_SWIEN:
     .set VE_HEAD = VE_SWIEN
 XT_SWIEN:
     .dw	PFA_SWIEN
+
+; ( tid -- ) 
+; Stack
+; Restore stacks before returning to task, etc. A lib/tasks.frt helper.
+VE_TASKEN:
+    .dw $ff06
+    .db "..task"
+    .dw VE_HEAD
+    .set VE_HEAD = VE_TASKEN
+XT_TASKEN:
+    .dw PFA_TASKEN
+PFA_TASKEN:
+    movw zh:zl, tosh:tosl
+    ldd	tosl, z+8	; 8 @u
+    ldd	tosh, z+9
+    movw yh:yl, tosh:tosl ; sp!
+    loadtos
+    in	temp0, SREG	; rp!
+    cli
+    out	SPL, tosl
+    out	SPH, tosh
+    out	SREG, temp0
+    loadtos
+    movw uph:upl, zh:zl
+
 PFA_SWIEN:
     ldiw z, intswi
     ld	temp0, z

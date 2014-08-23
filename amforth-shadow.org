@@ -65,7 +65,7 @@ and -int ("hard front-end") which control SREG I-bit
      of int+ calls is greater or equal than the number of preceding int-
      calls. Thus, an int- int+ pair can enclose any piece of code that
      needs to run with the soft interrupt system disabled irrespective of
-     the initial state of the soft interrupt system.
+     the initial state of the soft interrupts, on or off.
 
 + int- ( -- ) "soft interrupts off" :: Disables soft interrupts. If this is
      the first SLIH routine word, the routine will not be interrupted.

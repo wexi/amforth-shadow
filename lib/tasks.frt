@@ -27,15 +27,15 @@ cell+ @ dup @ >r exit
 [ constant task-bypass
 
 dp ]  ( tid -- )
-up! 8 @u sp! rp!			\ restore stack pointers
-int+
+\ up! 8 @u sp! rp! int+			\ restore stack pointers:
+..task					\ asm implementation of
 exit					\ returns from a task-switch
 [ constant task-resume
 
 : task-switch  ( -- tid )     
-   int-
-   rp@ sp@ 8 !u				\ save stack pointers
-   2 @u					\ next task user area
+   \ int- rp@ sp@ 8 !u			\ save stack pointers
+   \ 2 @u				\ next task user area
+   task..				\ asm implementation of the above
    dup @ >r				\ continue as task-bypass or task-resume
 ;
 

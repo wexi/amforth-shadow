@@ -15,6 +15,7 @@ PFA_WARM:
     .dw XT_DOLITERAL
     .dw XT_PAUSE
     .dw XT_DEFERSTORE
+    .dw XT_LBRACKET
     .dw XT_TURNKEY
     .dw XT_QUIT
     .dw XT_EXIT

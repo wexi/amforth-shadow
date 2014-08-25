@@ -23,19 +23,19 @@
 decimal
 
 dp ]  ( tid1 -- tid2 )
-cell+ @ dup @ >r exit
+cell+ @ dup @ >r exit			\ no asm since rare
 [ constant task-bypass
 
 dp ]  ( tid -- )
 \ up! 8 @u sp! rp! int+			\ restore stack pointers:
-..task					\ asm implementation of
+..task					\ asm at core/words/swien.asm
 exit					\ returns from a task-switch
 [ constant task-resume
 
 : task-switch  ( -- tid )     
-   \ int- rp@ sp@ 8 !u			\ save stack pointers
-   \ 2 @u				\ next task user area
-   task..				\ asm implementation of the above
+   \ int- rp@ sp@ 8 !u			\ save stack pointers,
+   \ 2 @u				\ next task user area:
+   task..				\ asm at core/words/swidi.asm
    dup @ >r				\ continue as task-bypass or task-resume
 ;
 

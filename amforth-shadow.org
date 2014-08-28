@@ -96,10 +96,7 @@ interrupts off (~int-~) when compiling new code.
 
 This is a major rewrite of lib/multitask.frt (as of trunk@1650) that is
 compatibile with AmForth-Shadow [[SLIH][Soft Interrupts]] (SLIH) and has some minor
-enhancements such as the addition of task names. NOTE: Since SLIH routines
-operate as (resume execution of) the main task, there is no need to
-intersperse PAUSE calls in a compute only task as any high frequency SLIH
-clock service would do so for you anyway.
+enhancements such as the addition of task names.
 
 + tasks-init ( -- ) :: initialize "main" as a running task. MUST BE CALLED
      FIRST!
@@ -279,11 +276,13 @@ implementation.
 - marker "name" :: A different implementation that backs up word lists
                    only.
 - wild :: [ASM] Returns the word-list of the last word created. This is
-          used by [[tasks][lib/tasks.frt]] to easily access the task name. As WLSCOPE
-          can place created words on different word-lists CREATE using WILD
-          can compile different code.
+          used by [[tasks][lib/tasks.frt]] to easily access the task name. Another
+          possible use -- as WLSCOPE can place created words on different
+          word-lists CREATE followed by WILD can compile different code.
 
-- main :: [ASM] Returns the main task user area start.
+- main :: [ASM] Returns the address of the main task user area (main task
+          TID). Note, main ia not a real task name, that is, you cannot
+          call MAIN TASK>TID
 
 * Deviations from standard Forth
 

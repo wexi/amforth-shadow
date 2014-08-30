@@ -47,14 +47,15 @@ DO_INTERRUPT:
 
 out_cur:
 	out 	SREG, temp2	; restore I bit, T set if another swi pending
-	ldiw	z, intvec
-	add	zl, temp0
-	adc	zh, temp1
-	ld	wl, z+		; ISR IP
-	ld	wh, z+
 	
 	push	xh		; interrupted task cont point
 	push	xl
+	
+	ldiw	z, intvec
+	add	zl, temp0
+	adc	zh, temp1
+	ld	xl, z+		; ISR IP
+	ld	xh, z+
 	
 	movw	zh:zl, uph:upl
 	cpi	zl, low(ram_user1)
@@ -86,6 +87,5 @@ DO_SWT:	savetos			; rp@
 	loadtos
 	movw	uph:upl, zh:zl
 
-DO_ISR:	movw	xh:xl, wh:wl
-	adiw	xh:xl, 1	; skip ISR DO-COLON
+DO_ISR:	adiw	xh:xl, 1	; skip ISR DO-COLON
 	jmp_	DO_NEXTT	; makes ISR first word uninterruptible

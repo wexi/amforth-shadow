@@ -116,18 +116,24 @@ exit					\ returns from a task-switch
 	 tdrop abort" ???"
       end-case
       dup up@ <>  if
-	 ." @" dup 8 + @		\ saved D stack pointer
-	 @				\ stored R stack pointer
+	 ." @" dup 8 + @ dup		\ saved D stack pointer (two copies)
+	 @				\ saved R stack pointer
 	 1+ 				\ addr of R stack top
 	 begin
 	    dup @ @i ['] exit =
 	 while
 	    2+				\ skip exit chain
 	 repeat
-	 @ u.				\ show task return point
+	 @ u.				\ report task return point
+	 2+				\ ignore saved R stack pointer
+	 ( user-area Dstack )
+	 ." D#" over 6 + @ over - 2 u/mod u.  if  ." .5"  then
+	 over 6 + @ over 6 +		    \ list no more than 3 tomost values
+	 2dup u<  if  drop  else  nip  then \ unsigned minimum
+	 swap  ?do  i @ u. 2  +loop
       then
       cr
-      cell+ @  ( tid tidₓ₊₁ )
+      2+ @  ( tid tidₓ₊₁ )
       2dup =
    until
    2drop

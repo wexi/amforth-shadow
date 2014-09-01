@@ -103,6 +103,8 @@ exit					\ returns from a task-switch
 \ list linked tasks
 : tasks ( -- )
    cr
+   ['] pause defer@ ['] task-switch =	\ true if multi-tasking
+   tasks-off				\ say cheese
    main dup
    begin  ( tid tidₓ )
       dup up@ =  if  [char] *  else  bl  then
@@ -137,7 +139,6 @@ exit					\ returns from a task-switch
       2dup =
    until
    2drop
-   ." tasks: "
-   ['] pause defer@ ['] noop =  if ." off " else  ." on"  then
+   ." tasks: "  if  ." on" tasks-on  else  ." off"  then
    cr
 ;

@@ -5,6 +5,7 @@
 \ task-init -- initialize task in memory
 \ task-run -- enable task
 \ task-stop -- disable task
+\ task-run? -- is task running
 \ tasks-off -- disable multitasking
 \ tasks-on -- enable multitasking
 \ tasks -- display tasks activity
@@ -82,6 +83,10 @@ exit					\ returns from a task-switch
 : task-run  ( task -- )
    task>tid task-resume swap !
 ;
+
+: task-run?  ( task -- flag )
+   task>tid task-resume =
+;   
 
 : task-stop  ( task | 0 -- )		\ 0 for self
    ?dup  if

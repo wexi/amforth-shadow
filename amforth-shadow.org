@@ -114,6 +114,8 @@ ITC TASK task-init
 
 + task-run ( TASK - ) :: enable TASK.
 
++ task-run? ( TASK - flag ) :: is the task running?
+
 + task-stop ( TASK - ) :: disable TASK
 
 + tasks-off ( - ) :: disable multitasking

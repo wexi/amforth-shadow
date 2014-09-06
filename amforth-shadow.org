@@ -101,16 +101,11 @@ enhancements such as the addition of task names.
 + tasks-init ( -- ) :: initialize "main" as a running task. MUST BE CALLED
      FIRST!
 
-+ task: ( R-stack-bytes D-stack-bytes User-app-bytes "task-name" ) ::  allocate
++ task: ( R-stack-bytes D-stack-bytes User-app-bytes "task-name" -- ) ::  allocate
      task memory. Store task>parameters in dictionary.
 
 + task-init ( ITC TASK -- ) :: initialize task in memory: ITC is some
-     endless code with pauses. TASK is the task name. For example:
-#+BEGIN_EXAMPLE
-$20 $40 0 task: TASK
-dp ] begin pause again [ constant ITC
-ITC TASK task-init
-#+END_EXAMPLE
+     endless code with pauses. TASK is the task name.
 
 + task-run ( TASK - ) :: enable TASK.
 
@@ -123,12 +118,40 @@ ITC TASK task-init
 + tasks-on ( - ) :: enable multitasking
 
 + tasks ( - ) :: display all tasks. 
+
+Add a simple task:
+
 #+BEGIN_EXAMPLE
-> tasks
-*main   559 running
- TASK   757 stopped@7069 
-tasks: on  ok
+80 160 0 task: greet
+
+dp ]
+5 7 13 17
+begin
+   pause
+again
+[ constant hello
+
+hello greet task-init
+greet task-run
 #+END_EXAMPLE
+
+Examine tasks:
+
+#+BEGIN_EXAMPLE
+tasks
+
+*main   559 running
+ greet  1448 running@12762 D#4 17 13 7 
+ bkgd   1094 stopped@11348 D#0 
+tasks: on
+#+END_EXAMPLE
+
+"greet" is the newly created task name. This task inherits its definitions
+from the "main" task, its creator (i.e., it inherits the deferred words
+key, emit and so forth). "1448" is the starting address of the task memory
+(that is 30+160+80 bytes long). "12762" is the IP following
+"pause". "greet" has 4 numbers on its D-stack where the topmost 3 are
+displayed.
 
 * USART tx/rx isr with RTS/CTS/DTR support <<handshake>>
 

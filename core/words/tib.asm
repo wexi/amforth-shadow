@@ -35,6 +35,7 @@ PFA_REFILLTIB:
     .dw XT_G_IN
     .dw XT_STORE
     .dw XT_TRUE ; -1
+    .dw XT_CR
     .dw XT_EXIT
 
 ; ( -- addr n ) 

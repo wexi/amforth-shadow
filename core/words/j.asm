@@ -14,4 +14,10 @@ PFA_J:
     .dw 9
     .dw XT_PLUS
     .dw XT_FETCH
+    .dw XT_RP_FETCH
+    .dw XT_DOLITERAL
+    .dw 11
+    .dw XT_PLUS
+    .dw XT_FETCH
+    .dw XT_PLUS
     .dw XT_EXIT

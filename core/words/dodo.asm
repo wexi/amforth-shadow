@@ -1,4 +1,4 @@
-; ( limit counter -- ) (R: -- loop-sys )
+; ( limit start -- ) (R: -- loop-sys )
 ; System
 ; runtime of do
 ;VE_DODO:
@@ -16,13 +16,18 @@ PFA_DODO:
     adiw xl, 1    ; adjust to NEXT+1 = jump over <mark (for leave)
 
     ld temp2, Y+
-    ld temp3, Y+
+    ld temp3, Y+  ; limit
 PFA_DODO1:
+    ldi zl, $80
+    add temp3, zl
+    sub  tosl, temp2
+    sbc  tosh, temp3
+
     push temp1
-    push temp0
+    push temp0    ; exit-addr
     push temp3
-    push temp2
+    push temp2    ; limit  ( --> limit + $8000)
     push tosh
-    push tosl
+    push tosl     ; start -> index ( --> index - (limit - $8000)
     loadtos
     jmp_ DO_NEXT

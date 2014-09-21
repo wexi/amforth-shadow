@@ -7,5 +7,17 @@ VE_I:
     .dw VE_HEAD
     .set VE_HEAD = VE_I
 XT_I:
-    .dw PFA_R_FETCH
-
+    .dw PFA_I
+PFA_I:
+    savetos
+    pop tosl
+    pop tosh  ; index
+    pop zl
+    pop zh    ; limit
+    push zh
+    push zl
+    push tosh
+    push tosl
+    add tosl, zl
+    adc tosh, zh
+    jmp_ DO_NEXT

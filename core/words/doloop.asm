@@ -12,9 +12,5 @@ PFA_DOLOOP:
     pop zl
     pop zh
     adiw zl,1
-    pop temp2
-    pop temp3
-    cp zl, temp2
-    cpc zh, temp3
-    breq PFA_DOPLUSLOOP1
-    jmp_ PFA_DOPLUSLOOP3
+    brvs PFA_DOPLUSLOOP_LEAVE
+    jmp_ PFA_DOPLUSLOOP_NEXT

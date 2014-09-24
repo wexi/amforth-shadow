@@ -3,7 +3,7 @@
 \ ******************************************
 
 : ?throw ( f exc -- )
-   if throw then 
+   swap if throw then drop
 ;
   
 : ?comp  ( -- )

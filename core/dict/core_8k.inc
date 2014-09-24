@@ -65,9 +65,7 @@
 
 .include "words/turnkey.asm"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-.include "words/starslashmod.asm"
 .include "words/slashmod.asm"
-.include "words/starslash.asm"
 .include "words/uslashmod.asm"
 .include "words/negate.asm"
 .include "words/slash.asm"

@@ -239,6 +239,24 @@ the dictioanary or to execute immediate words.
 The third method is used by :command`postpone` to compile the
 compilation semantics. It honors the immediate flags as well.
 
+``Do Recognizer`` is an iteration over the recognizer
+stack until the first parsing methods returns something
+different than ``r:fail``. If the recognizer stack is
+exhausted without a match, the ``r:fail`` return value
+is generated. The string location that is passed to the 
+parse actions is preserved and is restored for every iteration
+cycle.
+
+.. digraph:: DoRecognizer
+   :inline:
+
+   "Get Recognizer Stack" -> "Rec-Stack Exhausted?"
+   "Rec-Stack Exhausted?" -> "R:FAIL"  [label="Yes"]
+   "Rec-Stack Exhausted?" -> "Call Parse Action"  [label="Consume Rec-TOS"]
+   "Call Parse Action" -> "Rec-Stack Exhausted?" [label="R:FAIL"]
+   "Call Parse Action" -> "End" [label="Success"]
+   "R:FAIL" -> "End"
+
 A recognizer consists of a few words that work together.
 To ease maintenance, a naming convention is used: The
 recognizer itself is named with the prefix ``rec:``. The

@@ -400,11 +400,14 @@ the following definition:
 For more information see tools/amforth-shell.py beginning comments.
 
 + #include vs. #install :: #include would skip uploading if the file has
-     already been uploaded in the shell session. #install is
-     unconditional. HQ now calls conditional file inclusion #require and
-     unconditional inclusion #include. This is influenced by gforth. The
-     Shadow (for now) will not follow suit for his deep rooted C
-     language habits.
+     already been uploaded in the current shell session. #install is
+     unconditional. To maintain compatibility with HQ's libraries #require
+     is a synonym for #include.
+
+HQ now calls conditional file inclusion #require and unconditional
+inclusion #include. This is influenced by gforth. The Shadow (for now) will
+not follow suit for his deep rooted C language habits. Pragma: To maintain
+compatibility with HQ #require
 
 + --create, -c :: <<create>> The argument of this option is a wordlist
                   whose words need to be captured into the file

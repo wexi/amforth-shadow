@@ -487,6 +487,8 @@ class AMForth(object):
         "EDITOR","STATE","[ELSE]","[IF]","[THEN]",
         # *** Wordset TOOLS-EXT-obsolescent
         "FORGET",
+        # *** Tester wordset 
+        "T{", "}T",
     ]
     def __init__(self, serial_port="/dev/amforth", rtscts=False, speed=38400):
         self.debug = False
@@ -502,6 +504,7 @@ class AMForth(object):
         self._filedirs = {}
         self._search_path = []
         self._uploaded = set()
+        self._update_uploaded = False
         self._amforth_words = []
         self._amforth_regs  = {}
         self._amforth_cpu = ""
@@ -779,6 +782,12 @@ additional definitions (e.g. register names)
                              str(e)))
                 self.progress_callback("Error", None, errmsg)
                 raise AMForthException(errmsg)
+        # update the included-wl on the controller
+        if self._update_uploaded:
+           self.send_line("get-current uploaded-wl set-current create " + filename + " set-current")
+        else:
+           self.progress_callback("Information", None, 
+              "Not updating files wordlist on controller, wordlist uploaded-wl missing.")
         return True
 
     def _send_file_contents(self, f):
@@ -918,7 +927,7 @@ additional definitions (e.g. register names)
                 continue
 
             if not in_delim_comment and not in_line_comment:
-                if w == "\\" and (iw == 0 or words[iw-1] != "postpone"):
+                if w == "\\" and (iw == 0 or words[iw-1].lower() != "postpone"):
                     in_line_comment = True
                     continue
 
@@ -1206,6 +1215,7 @@ additional definitions (e.g. register names)
             self._update_words()
             self._update_cpu()
             self._update_files()
+            self._update_uploaded_files()
             atexit.register(readline.write_history_file, histfn)
 
     def _update_words(self):
@@ -1257,6 +1267,17 @@ additional definitions (e.g. register names)
               if fpath: self._filedirs[f].append(fpathdir)
             else:
               self._filedirs[f]=[fpathdir]
+
+    def _update_uploaded_files(self):
+       self.progress_callback("Information", None, "getting filenames from the controller")
+       self.send_line("uploaded-wl show-wordlist")
+       files = self.read_response()
+       if files[-3:] != " ok":
+         return # Something went wrong, just silently ignore
+       for f in files.split(" "):
+         self._uploaded.add(f)
+       self.progress_callback("Information", None,  "already uploaded "+ ", ".join(self._uploaded)+" ")
+       self._update_uploaded = True
 
     def _rlcompleter(self, text, state):
         if state == 0:

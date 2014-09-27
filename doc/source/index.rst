@@ -43,6 +43,21 @@ released but will be part of the next release.
 See the code section at Sourceforge to get the
 `most recent sources <http://sourceforge.net/p/amforth/code/HEAD/tree/trunk/>`__
 
+* core: Bugfix in :command:`warm` to initialize the interpreter for 
+  :command:`turnkey`. Thanks to David.
+* core: bugfixes for handling some negative numbers in :command:`+loop` 
+  and :command:`*/`.
+* core: simplified assembly primitves for counted loops. They are
+  now faster except for :command:`i`. The return stack gets different
+  numbers now.
+* core: rewrite of :command:`accept`. The user visible change is that the final CR/LF
+  is no longer sent here. The forth text interpreter does it elsewhere thus
+  the user interface is unchanged.
+
+16.8.2014: release 5.4
+......................
+
+
 * lib: Almost complete :ref:`Blocks` wordset support. Only a few dark corners behave differently.
 * lib: renamed TWI to I2C, added many tools for it :ref:`I2C Values`, :ref:`I2C EEPROM Blocks` and 
   a few more.

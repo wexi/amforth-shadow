@@ -41,9 +41,6 @@
 .include "words/udotr.asm"
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-.include "words/starslashmod.asm"
-
-.include "words/starslash.asm"
 .include "words/uslashmod.asm"
 .include "words/negate.asm"
 .include "words/slash.asm"

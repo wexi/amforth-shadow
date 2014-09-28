@@ -1,6 +1,8 @@
 \ environment queries are placed in a
 \ separate wordlist.
 
+\ #require imove.frt
+
 \ we have to distinguish between interpreted (RAM)
 \ and compiled (Flash) strings. First the RAM
 \ strings

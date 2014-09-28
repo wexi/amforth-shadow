@@ -1,5 +1,5 @@
 
-\ #require fm-slash-mod.frt
+\ #require sm-slash-rem.frt
 
-: */mod >r m* r> fm/mod ;
+: */mod >r m* r> sm/rem ;
 : */ */mod nip ; 

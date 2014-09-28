@@ -3,6 +3,8 @@
 \ to string buffer. Return the the previous
 \ input source afterwards and continue
 
+\ #require imove.frt
+
 \ some helper words
 variable strlen
 variable str

@@ -1,4 +1,6 @@
 
+\ #require q-negate.frt
+
 : fm/mod ( d1 n1 -- n2 n3 )
   dup >r
   2dup xor >r
@@ -13,3 +15,9 @@
   then
   r> drop
 ;
+
+\ alternative solution
+\
+\ : FM/MOD  \ ( d m -- r q ) signed floored division
+\   DUP >R SM/REM 2DUP 0< AND IF 1- SWAP R> + SWAP ELSE R> DROP THEN ;
+\

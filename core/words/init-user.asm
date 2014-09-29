@@ -1,16 +1,3 @@
-; ( -- v) 
-; System Value
-; address of the default user area content in eeprom
-VE_EEUSER:
-  .dw $ff07
-  .db "ee-user",0
-  .dw VE_HEAD
-  .set VE_HEAD = VE_EEUSER
-XT_EEUSER:
-  .dw PFA_DOVARIABLE
-PFA_EEUSER:          ; ( -- )
-  .dw EE_INITUSER
-
 ; ( e-addr r-addr len -- ) 
 ; Tools
 ; copy len cells from eeprom to ram
@@ -52,7 +39,8 @@ VE_INITUSER:
 XT_INITUSER:
   .dw DO_COLON
 PFA_INITUSER:          ; ( -- )
-    .dw XT_EEUSER
+    .dw XT_DOLITERAL
+    .dw EE_INITUSER
     .dw XT_UP_FETCH
     .dw XT_DOLITERAL
     .dw SYSUSERSIZE

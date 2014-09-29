@@ -13,11 +13,13 @@
 \ postponing a compiled string is not yet
 \ supported.
 
+\ #require recognizer.frt
+
 ' noop 
-' sliteral 
+' sliteral
 :noname -48 throw ; recognizer: r:string
 
-: rec:string ( addr len -- )
+: rec:string ( addr len -- addr' len' r:string | r:fail )
   over c@ [char] " <> if 2drop r:fail exit then
   negate 1+ >in +! drop \ reset parse area to SOURCE
   [char] " parse  \ get trailing delimiter
@@ -25,4 +27,4 @@
   r:string
 ;
 
-' rec:string place-rec
+' rec:string get-recognizers 1+ set-recognizers

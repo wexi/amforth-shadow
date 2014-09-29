@@ -14,7 +14,7 @@ PFA_ULESS:
     cp	temp0, tosl
     cpc temp1, tosh
     movw tosh:tosl, zeroh:zerol
-    brsh PFA_ULESS1		;u1 ≥ u2 ?
+    brsh PFA_ULESS0		;u1 ≥ u2 ?
     sbiw tosh:tosl, 1
-PFA_ULESS1:
+PFA_ULESS0:
     jmp_ DO_NEXT

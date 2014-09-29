@@ -9,9 +9,12 @@ VE_NOTEQUAL:
 XT_NOTEQUAL:
     .dw PFA_NOTEQUAL
 PFA_NOTEQUAL:
-    ld temp2, Y+
-    ld temp3, Y+
-    cp tosl, temp2
-    cpc tosh, temp3
-    breq PFA_ZERO1
-    rjmp PFA_TRUE1
+    ld temp0, Y+
+    ld temp1, Y+
+    sub tosl, temp0
+    sbc tosh, temp1
+    breq PFA_NOTEQUAL0
+    ldiw tos, -1		;NZ is not "true"
+PFA_NOTEQUAL0:
+    jmp_ DO_NEXT
+

@@ -9,10 +9,12 @@
 XT_LESS:
     .dw PFA_LESS
 PFA_LESS:
-    ld temp2, Y+
-    ld temp3, Y+
-    cp temp2, tosl
-    cpc temp3, tosh
-PFA_LESSDONE:
-    brge PFA_ZERO1
-    rjmp PFA_TRUE1
+    ld temp0, Y+
+    ld temp1, Y+
+    cp	temp0, tosl
+    cpc temp1, tosh
+    movw tosh:tosl, zeroh:zerol
+    brge PFA_LESS0		;n1 ≥ n2 ?
+    sbiw tosh:tosl, 1
+PFA_LESS0:
+    jmp_ DO_NEXT

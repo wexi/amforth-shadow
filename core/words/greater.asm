@@ -9,11 +9,13 @@ VE_GREATER:
 XT_GREATER:
     .dw PFA_GREATER
 PFA_GREATER:
-    ld temp2, Y+
-    ld temp3, Y+
-    cp temp2, tosl
-    cpc temp3, tosh
-PFA_GREATERDONE:
-    brlt PFA_ZERO1
-    brbs 1, PFA_ZERO1
-    rjmp PFA_TRUE1
+    ld temp0, Y+
+    ld temp1, Y+
+    cp	tosl, temp0
+    cpc tosh, temp1
+    movw tosh:tosl, zeroh:zerol
+    brge PFA_GREATER0		;n2 ≥ n1 ?
+    sbiw tosh:tosl, 1		;n2 < n1
+PFA_GREATER0:
+    jmp_ DO_NEXT
+

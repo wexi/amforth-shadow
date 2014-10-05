@@ -67,5 +67,3 @@ EE_INITUSER:
 .endif
 EE_UBRRVAL:
     .dw UBRR_VAL     ; BAUDRATE
-EE_FCPU:
-    .dd F_CPU        ; CPU Clock

@@ -47,9 +47,6 @@
 .include "words/scomma.asm"
 .include "words/itype.asm"
 .include "words/icount.asm"
-.include "words/cr.asm"
-.include "words/space.asm"
-.include "words/spaces.asm"
 .include "words/type.asm"
 .include "words/tick.asm"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

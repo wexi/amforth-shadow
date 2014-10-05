@@ -168,3 +168,4 @@
 
 .include "words/init-user.asm"
 .include "words/bounds.asm"
+.include "words/s_to_d.asm"

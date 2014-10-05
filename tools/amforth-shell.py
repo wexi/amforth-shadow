@@ -785,9 +785,9 @@ additional definitions (e.g. register names)
         # update the included-wl on the controller
         if self._update_uploaded:
            self.send_line("get-current uploaded-wl set-current create " + filename + " set-current")
-        else:
-           self.progress_callback("Information", None, 
-              "Not updating files wordlist on controller, wordlist uploaded-wl missing.")
+#        else:
+#           self.progress_callback("Information", None, 
+#              "Not updating files wordlist on controller, wordlist uploaded-wl missing.")
         return True
 
     def _send_file_contents(self, f):

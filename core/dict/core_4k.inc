@@ -93,3 +93,7 @@
 
 .include "words/qstack.asm"
 .include "words/bounds.asm"
+.include "words/cr.asm"
+.include "words/space.asm"
+.include "words/spaces.asm"
+.include "words/s_to_d.asm"

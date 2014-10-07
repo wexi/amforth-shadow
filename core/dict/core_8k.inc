@@ -172,3 +172,4 @@
 .include "words/init-user.asm"
 .include "dict/compiler2.inc"
 .include "words/bounds.asm"
+.include "words/s_to_d.asm"

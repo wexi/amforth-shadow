@@ -1,6 +1,11 @@
 
-AmForth
-=======
+AmForth-Shadow (*)
+==================
+
+(*) Not really: The Shadow prefers org-mode over reStructured text. For
+this reason and others if you are looking for AmForth-Shadow specific
+documentation don't look here! Look for the amforth-shadow.org file at the
+root directory of this project.
 
 AmForth is an easily extendible command interpreter for the Atmel
 AVR8 Atmega micro controller family. It has a turnkey feature

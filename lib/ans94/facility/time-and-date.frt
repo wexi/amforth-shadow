@@ -27,7 +27,7 @@
 ;
 
 \ simple world. Every month has 30 days
-: time&date ( -- sec mon hour day month year )
+: time&date ( -- sec min hour day month year )
     date 2@ 365 um/mod 30 /mod ( -- day month year )
     time 2@ 24 um/mod 60 /mod ( -- sec min hour ) 
 ;

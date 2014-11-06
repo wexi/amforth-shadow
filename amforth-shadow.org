@@ -309,6 +309,8 @@ implementation.
           TID). Note, main ia not a real task name, that is, you cannot
           call MAIN TASK>TID
 
+- kernel :: [ASM] Returns the DP of the first compiled word.
+
 * Deviations from standard Forth
 
 Since wordlist order is kept on the EEPROM it is good practice to reduce

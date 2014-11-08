@@ -7,9 +7,10 @@ VE_NOTEQUALZERO:
     .dw VE_HEAD
     .set VE_HEAD = VE_NOTEQUALZERO
 XT_NOTEQUALZERO:
-    _pfa_
-    or tosh, tosl
-    breq PFA_NOTEQUALZERO
-    ldiw tos, -1
+    .dw PFA_NOTEQUALZERO
 PFA_NOTEQUALZERO:
+    or tosh, tosl
+    breq PFA_NOTEQUALZERO1
+    ldiw tos, -1
+PFA_NOTEQUALZERO1:
     jmp_ DO_NEXT	

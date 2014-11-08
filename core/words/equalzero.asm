@@ -7,8 +7,11 @@ VE_EQUALZERO:
     .dw VE_HEAD
     .set VE_HEAD = VE_EQUALZERO
 XT_EQUALZERO:
-    .dw PFA_EQUALZERO
-PFA_EQUALZERO:
+    _pfa_
     or tosh, tosl
-    brne PFA_ZERO1
-    rjmp PFA_TRUE1
+    breq PFA_EQUALZERO
+    movw tosh:tosl, zeroh:zerol
+    jmp_ DO_NEXT
+PFA_EQUALZERO:
+    sbiw tosh:tosl, 1
+    jmp_ DO_NEXT

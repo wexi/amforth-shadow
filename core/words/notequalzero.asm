@@ -7,8 +7,9 @@ VE_NOTEQUALZERO:
     .dw VE_HEAD
     .set VE_HEAD = VE_NOTEQUALZERO
 XT_NOTEQUALZERO:
-    .dw DO_COLON
+    _pfa_
+    or tosh, tosl
+    breq PFA_NOTEQUALZERO
+    ldiw tos, -1
 PFA_NOTEQUALZERO:
-    .dw XT_EQUALZERO
-    .dw XT_EQUALZERO
-    .dw XT_EXIT
+    jmp_ DO_NEXT	

@@ -33,6 +33,7 @@ DO_INTERRUPT:
 	breq 	out_cur
 .endmacro
 
+ON_INTERRUPT:
 	in temp2, SREG		; save unknown I-bit
 	cli			; no hard int-s when handling queue
 	out_buf 0,1

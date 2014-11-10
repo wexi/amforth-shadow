@@ -1,14 +1,35 @@
 ; ( --  )  
 ; Interrupt
-; soft interrupts enable
+; Soft interrupts enable
 VE_SWIEN:
     .dw $ff04
     .db "int+"
     .dw VE_HEAD
     .set VE_HEAD = VE_SWIEN
 XT_SWIEN:
-    .dw	PFA_SWIEN
+    .dw PFA_SWIEN
 
+; ( -- )
+; Interrupt
+; Process pending soft interrupts
+VE_SWIDO:
+    .dw $ff04
+    .db "int*"
+    .dw VE_HEAD
+    .set VE_HEAD = VE_SWIDO
+XT_SWIDO:
+    .dw PFA_SWIDO
+PFA_SWIDO:
+    lds temp0, intswi
+    cpi temp0, -1
+    brlt PFA_SWIDO1		; nested critical section?
+    ldiw z, intbuf
+    ld temp0, z
+    cpse temp0, zerol
+    jmp_ ON_INTERRUPT		; serve pending
+PFA_SWIDO1:
+    jmp_ DO_NEXTT    		; non pending
+	
 ; ( tid -- ) 
 ; Stack
 ; Restore stacks before returning to task, etc. A lib/tasks.frt helper.

@@ -5,11 +5,11 @@
 #+OPTIONS: email:t
 #+STARTUP: indent
 
-[[https://github.com/wexi/amforth-shadow][AmForth-Shadow]] is a sandbox for [[http://en.wikipedia.org/wiki/Atmel_AVR%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20][AVR8]] Forth development that is maintained
-by an experienced embedded systems programmer, yet a novice[fn:1] in
-Forth. It is hoped that the ideas that are presented here would be adopted
-by [[http://amforth.sourceforge.net/][AmForth]] headquarters (HQ). The following summarizes the Shadow changes
-to HQ's code.
+[[https://github.com/wexi/amforth-shadow][AmForth-Shadow]] is a sandbox for [[http://en.wikipedia.org/wiki/Atmel_AVR%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20][AVR8]] Forth development that has become an
+independent fork of [[http://amforth.sourceforge.net/][AmForth]] since its trunk@1687 (where AmForth has changed
+its license from GPLv2 to GPLv3). AmForth-Shadow is maintained by an
+experienced embedded systems programmer, yet a novice[fn:1] in Forth. The
+following summarizes the Shadow changes to AmForth's code.
 
 * Thoughts
 

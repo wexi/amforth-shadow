@@ -1,8 +1,15 @@
 ; ISR routines
+
+#ifdef	INTQUE
+.equ intsiz = INTQUE
+#else
+.equ intsiz = 8
+#endif
+
 .dseg
 intovf:	.byte 1			;int'→ lo: hard interrupts overflow (nz = prog addr)
 intswi:	.byte 1			;int'→ hi: soft interrupts inhibit  (nz = inhibited)
-intbuf:	.byte 9			;last byte (+8) always zero
+intbuf:	.byte intsiz+1		;last byte always zero
 intvec:	.byte INTVECTORS * CELLSIZE
 
 ; clear hard interrupts overflow mark: 0 int' c!
@@ -59,20 +66,17 @@ isr_join:			;temp0 = interrupt address
 ; crude yet efficient queue (input) if having low occupancy
 	
   st	-Y, temp1
+	
 .macro inp_buf
+.if @0
   ld	temp1, X+
   tst	temp1
   breq	inp_cur			;free Q place?
+  inp_buf (@0-1)
+.endif
 .endmacro
 
-  inp_buf
-  inp_buf
-  inp_buf
-  inp_buf
-  inp_buf
-  inp_buf
-  inp_buf
-  inp_buf
+  inp_buf intsiz
 	
   sts	intovf, temp0		;mark overflow with prog addr
   pop	xl			;ignore interrupt

@@ -97,7 +97,9 @@ interrupts off (~int-~) when compiling new code.
 
 ** Implementation
 
-1. core/drivers/generic-isr.asm: FLIH with 8 level queue.
+1. core/drivers/generic-isr.asm: FLIH with 8 level soft interrupts
+   queue. This queue length can be extended by a #define INTQUE in your
+   template.asm.
 2. core/amforth-interpreter.asm: SLIH launcher.
 3. core/words/swi??.asm: Soft interrupts control words.
 

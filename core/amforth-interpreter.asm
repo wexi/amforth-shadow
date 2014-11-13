@@ -27,24 +27,22 @@ DO_INTERRUPT:
 ; crude yet efficient queue (output) if having low occupancy
 	
 .macro	out_buf
-	ldd	temp1, z+@1
-	std	z+@0, temp1
+.if @0
+	ldd	temp1, z+(@1-@0+1)
+	std	z+(@1-@0), temp1
 	tst	temp1
 	breq 	out_cur
+.if	@0 == @1
+	ori	temp2, $40	; set T bit pos to interrupt forth
+.endif
+	out_buf (@0-1),@1
+.endif
 .endmacro
 
 ON_INTERRUPT:
 	in temp2, SREG		; save unknown I-bit
 	cli			; no hard int-s when handling queue
-	out_buf 0,1
-	ori	temp2, $40	; set T bit pos to interrupt forth
-	out_buf 1,2
-	out_buf 2,3
-	out_buf 3,4
-	out_buf 4,5
-	out_buf 5,6
-	out_buf 6,7
-	out_buf 7,8		; intbuf+8 always zero
+	out_buf intsiz,intsiz
 
 out_cur:
 	out 	SREG, temp2	; restore I bit, T set if another swi pending

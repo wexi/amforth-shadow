@@ -5,13 +5,18 @@
 #+OPTIONS: email:t
 #+STARTUP: indent
 
-[[https://github.com/wexi/amforth-shadow][AmForth-Shadow]] is a sandbox for [[http://en.wikipedia.org/wiki/Atmel_AVR%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20][AVR8]] Forth development that has become an
-independent fork of [[http://amforth.sourceforge.net/][AmForth]] since its trunk@1687 (where AmForth has changed
-its license from GPLv2 to GPLv3). AmForth-Shadow is maintained by an
-experienced embedded systems programmer, yet a novice[fn:1] in Forth. The
-following summarizes the Shadow changes to AmForth's code.
+[[https://github.com/wexi/amforth-shadow][AmForth-Shadow]] is a sandbox for [[http://en.wikipedia.org/wiki/Atmel_AVR%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20][AVR8]] [[http://en.wikipedia.org/wiki/Forth_(programming_language)][Forth]] development that has become an
+independent [[http://amforth.sourceforge.net/][AmForth]] project fork since its trunk@1687 decision, where
+AmForth has changed its software license from GPLv2 to GPLv3. Earlier to
+that fork the AmForth project was fondly called "HQ" as there was still
+some hope that AmForth would adopt some of AmForth-Shadow innovations.
 
-* Thoughts
+AmForth-Shadow is maintained by an experienced embedded systems programmer
+who considers himself yet a novice[fn:1] in Forth. 
+
+The following summarizes the Shadow changes to HQ's code.
+
+* (before the fork) Thoughts
 
 - [[http://sourceforge.net/users/mtrute][Matthias Trute]], AmForth creator, believes that its GPLv2 license means
   that users are entitled to receive the source of any code which the
@@ -41,12 +46,12 @@ One of AmForth features is the ability to write Interrupt Service Routines
 with the hardware interrupt system disabled. This means that one has to
 keep ISRs short and defer long processing to the "main".
 
-The following changes to the kernel introduce an eight level soft
-interrupts queue, allowing the Forth code Second Level Interrupt Handlers
-(SLIH) to be interruptible and thus be as slow to execute as necessary. The
-new first level interrupt handler (FLIH) that "feeds" the SLIH queue is
-suitable for type I interrupt sources only, those acknowledged by execution
-of their interrupt vectors. However, in addition, ...
+The following changes to the kernel introduce an INTQUE deep, 8 level by
+default, interrupt queue, allowing Forth code Second Level Interrupt
+Handlers (SLIH) to be launched that can be as slow to execute as
+necessary. The new first level interrupt handler (FLIH) that "feeds" the
+SLIH queue is suitable for type I interrupt sources only, those
+acknowledged by execution of their interrupt vectors. However, in addition:
 
 CAN interrupts, in the supported at90can32/64/128 \micro{}C's, are safely
 routed to the SLIH queue by CANGIE.ENIT auto disable with the only caveat

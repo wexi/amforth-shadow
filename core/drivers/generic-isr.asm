@@ -71,7 +71,7 @@ isr_join:			;TEMP0 = interrupt address
 	
 .macro	inp_buf
 .if	@0
-	ld	TEMP1, Z+1
+	ld	TEMP1, Z+
 	tst	TEMP1
 	breq	inp_cur		;free Q place?
 	inp_buf	(@0-1)

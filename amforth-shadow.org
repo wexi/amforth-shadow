@@ -6,10 +6,10 @@
 #+STARTUP: indent
 
 [[https://github.com/wexi/amforth-shadow][AmForth-Shadow]] is a sandbox for [[http://en.wikipedia.org/wiki/Atmel_AVR%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20][AVR8]] [[http://en.wikipedia.org/wiki/Forth_(programming_language)][Forth]] development that has become an
-independent [[http://amforth.sourceforge.net/][AmForth]] project fork since its trunk@1687 decision, where
-AmForth has changed its software license from GPLv2 to GPLv3. Earlier to
-that fork the AmForth project was fondly called "HQ" as there was still
-some hope that AmForth would adopt some of AmForth-Shadow innovations.
+independent fork of the [[http://amforth.sourceforge.net/][AmForth]] project since its trunk@1687 decision to
+change its license from GPLv2 to GPLv3. Earlier to that decision the
+AmForth project was fondly called "HQ" as there was still some hope that it
+would adopt some of AmForth-Shadow innovations.
 
 AmForth-Shadow is maintained by an experienced embedded systems programmer
 who considers himself yet a novice[fn:1] in Forth. 
@@ -278,6 +278,8 @@ implementation.
 - -! ( w addr -- ) :: [ASM] Subtracts w from addressed word.
 
 - +!@ ( w1 addr -- w2 ) :: [ASM] Adds w1 to addressed word and returns sum.
+
+- || ( HL -- L H ) :: [ASM] Split a word.
 
 - ++c ( addr -- b ) :: [ASM] increments addressed byte, returns new value.
 

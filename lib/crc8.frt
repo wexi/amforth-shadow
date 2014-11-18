@@ -1,7 +1,7 @@
 \ -*- Mode: Forth; Coding: utf-8 -*-
 
 \ Copyright (c) 2013 Energy Measurement & Control, NJ, USA.
-\ Software license: AmForth compliant, see http://amforth.sourceforge.net/
+\ Redistribution: FreeBSD License.
 \
 \ (crc8) is a configurable 8-bit table-driven CRC generator/checker. For usage
 \ see below (*). (crc8) was adapted from Linux/lib/crc8.c, See:

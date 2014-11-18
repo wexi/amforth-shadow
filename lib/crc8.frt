@@ -93,3 +93,7 @@ marker ->crc8
 : (crc8)  ( crc-byte data-byte -- crc-byte' )
    xor crc8tb@
 ;
+
+: crc8  ( data-byte crc-addr -- )
+   dup c@ rot (crc8) swap c!
+;

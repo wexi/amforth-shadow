@@ -70,21 +70,21 @@
 .endmacro
 
 .macro sbi_
-.if (@0 < $40)
+.if (@0 < $20)
   sbi @0,@1
 .else
   in_ @2,@0
-  ori @2,exp2(@1)
+  sbr @2,exp2(@1)
   out_ @0,@2
 .endif
 .endmacro
 
 .macro cbi_
-.if (@0 < $40)
+.if (@0 < $20)
   cbi @0,@1
 .else
   in_ @2,@0
-  andi @2,~(exp2(@1))
+  cbr @2,exp2(@1)
   out_ @0,@2
 .endif
 .endmacro

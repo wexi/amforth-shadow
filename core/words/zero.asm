@@ -17,6 +17,14 @@ VE_FDROP:
 XT_FDROP:
     .dw PFA_ZERO1
 ;
+VE_0DROP:
+    .dw $ff05
+    .db "0drop",0
+    .dw VE_HEAD
+    .set VE_HEAD = VE_0DROP
+XT_0DROP:
+    .dw PFA_ZERO1
+;
 VE_ZERO:
     .dw $ff01
     .db "0",0

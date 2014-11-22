@@ -32,16 +32,16 @@ PFA_QUIT4:
     .dw XT_QDUP
     .dw XT_DOCONDBRANCH
     .dw PFA_QUIT3
-	.dw XT_DUP
-	.dw XT_DOLITERAL
-	.dw -2
-	.dw XT_LESS
-	.dw XT_DOCONDBRANCH
-	.dw PFA_QUIT5
-	.dw XT_PROMPTERROR
+    .dw XT_DUP
+    .dw XT_DOLITERAL
+    .dw -2
+    .dw XT_LESS
+    .dw XT_DOCONDBRANCH
+    .dw PFA_QUIT5
+    .dw XT_PROMPTERROR
 PFA_QUIT5:
-	.dw XT_DOBRANCH
-	.dw PFA_QUIT
+    .dw XT_DOBRANCH
+    .dw PFA_QUIT
 PFA_QUIT3:
     .dw XT_PROMPTOK
     .dw XT_DOBRANCH

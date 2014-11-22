@@ -9,10 +9,10 @@ VE_RP_STORE:
 XT_RP_STORE:
     .dw PFA_RP_STORE
 PFA_RP_STORE:
-    in temp2, SREG
+    in_ temp0, SREG
     cli
-    out SPL, tosl
-    out SPH, tosh
-    out SREG, temp2
+    out_ SPL, tosl
+    out_ SPH, tosh
+    out_ SREG, temp0
     loadtos
     jmp_ DO_NEXT

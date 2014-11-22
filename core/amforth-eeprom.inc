@@ -39,7 +39,7 @@ EE_WLSCOPE:
 EE_INITUSER:
     .dw 0  ; USER_STATE
     .dw 0  ; USER_FOLLOWER
-    .dw rstackstart  ; USER_RP
+    .dw rstackstart  ; USER_RP0
     .dw stackstart   ; USER_SP0
     .dw stackstart   ; USER_SP
     

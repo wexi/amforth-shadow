@@ -6,7 +6,7 @@
 .set USER_FOLLOWER = 2
 
 ; stackpointer, used by mulitasker
-.set USER_RP      = 4
+.set USER_RP0     = 4
 .set USER_SP0     = 6
 .set USER_SP      = 8
 

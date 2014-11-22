@@ -9,6 +9,6 @@ VE_SP_STORE:
 XT_SP_STORE:
     .dw PFA_SP_STORE
 PFA_SP_STORE:
-    movw yl, tosl
+    movw yh:yl, tosh:tosl
     loadtos
     jmp_ DO_NEXT

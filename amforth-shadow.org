@@ -268,8 +268,6 @@ implementation.
 - @c :: [ASM] Like C@ but reads the byte as a signed 8 bit integer
         (i.e., extends sign).
 
-- cinvert :: [ASM] Complements a single byte.
-
 - ?= ( n1 n2 -- n1 false | true ) :: [ASM] twisted compare, true when n1
      equals n2.
 
@@ -307,8 +305,6 @@ implementation.
 
 - 2rdrop  ( R: X1 X2 -- ) :: [ASM] Drop two cells from top of run-time
      stack.
-
-- 0drop  ( X -- 0 ) :: [ASM] Replace top of stack with 0.
 
 - fdrop  ( X -- false ) :: [ASM] Replace top of stack with false (0).
 

@@ -285,10 +285,6 @@ implementation.
 
 - || ( HL -- L H ) :: [ASM] Split a word bytes.
 
-- ++c ( addr -- b ) :: [ASM] increments addressed byte, returns new value.
-
-- c++ ( addr -- b ) :: [ASM] increments addressed byte, returns original value.
-
 - -rot  ( n1 n2 n3 -- n3 n1 n2 ) :: [ASM] "not-rote".
 
 - cell+:: [ASM] Cell size address addition (aka 2+).

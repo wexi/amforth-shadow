@@ -10,9 +10,8 @@ XT_EQUALZERO:
     .dw PFA_EQUALZERO
 PFA_EQUALZERO:
     or tosh, tosl
-    breq PFA_EQUALZERO1
     movw tosh:tosl, zeroh:zerol
-    jmp_ DO_NEXT
-PFA_EQUALZERO1:
+    brne PFA_EQUALZERO1
     sbiw tosh:tosl, 1
+PFA_EQUALZERO1:
     jmp_ DO_NEXT

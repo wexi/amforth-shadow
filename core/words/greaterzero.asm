@@ -9,8 +9,10 @@ VE_GREATERZERO:
 XT_GREATERZERO:
     .dw PFA_GREATERZERO
 PFA_GREATERZERO:
-    cp tosl, zerol
-    cpc tosh, zeroh
-    brlt PFA_ZERO1
-    brbs 1, PFA_ZERO1
-    rjmp PFA_TRUE1
+    cp zerol, tosl
+    cpc zeroh, tosh
+    movw tosh:tosl, zeroh:zerol
+    brge PFA_GREATERZERO1   
+    sbiw tosh:tosl, 1
+PFA_GREATERZERO1:
+    jmp_ DO_NEXT

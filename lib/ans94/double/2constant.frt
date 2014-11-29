@@ -1,6 +1,5 @@
-
 : 2constant 
-    create , ,
+    create , ,				\ high low
     does>
-    dup @i swap 1+ @i swap
+    dup 1+ @i swap @i
 ;

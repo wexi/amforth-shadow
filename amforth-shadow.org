@@ -308,8 +308,6 @@ implementation.
 - 2rdrop  ( R: X1 X2 -- ) :: [ASM] Drop two cells from top of run-time
      stack.
 
-- 0drop  ( X -- 0 ) :: [ASM] Replace top of stack with 0.
-
 - fdrop  ( X -- false ) :: [ASM] Replace top of stack with false (0).
 
 - tdrop  ( X -- true ) :: [ASM] Replace top of stack with true (-1).

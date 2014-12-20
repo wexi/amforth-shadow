@@ -1,9 +1,9 @@
 ; ( --  ) 
 ; Compiler
-; enter compiler mode and compile a literal
+; equivalent to '] literal'
 VE_LIBRACKET:
-    .dw $ff01
-    .db "}",0
+    .dw $ff02
+    .db "]L"
     .dw VE_HEAD
     .set VE_HEAD = VE_LIBRACKET
 XT_LIBRACKET:

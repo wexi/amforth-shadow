@@ -3,7 +3,7 @@
 ; equivalent to '] literal'
 VE_LIBRACKET:
     .dw $ff02
-    .db "]L"
+    .db "]l"
     .dw VE_HEAD
     .set VE_HEAD = VE_LIBRACKET
 XT_LIBRACKET:

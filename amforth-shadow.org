@@ -265,7 +265,7 @@ implementation.
      word-lists. This command is used by amforth-shell to create the
      appl.dic file.
 
-- ]L :: Equivalent to '] literal'.
+- ]l :: Equivalent to '] literal'.
 
 - @c :: [ASM] Like C@ but reads the byte as a signed 8 bit integer
         (i.e., extends sign).

@@ -42,6 +42,7 @@
 .include "words/semicolon.asm"
 .include "words/rightbracket.asm"
 .include "words/leftbracket.asm"
+.include "words/literalbracket.asm"
 .include "words/variable.asm"
 .include "words/constant.asm"
 .include "words/user.asm"

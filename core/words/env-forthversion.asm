@@ -1,6 +1,6 @@
-; ( -- n )
+; ( -- faddr len )
 ; Environment
-; version number of amforth
+; Forth version
 VE_ENV_FORTHVERSION:
     .dw $ff07
     .db "version",0
@@ -9,6 +9,8 @@ VE_ENV_FORTHVERSION:
 XT_ENV_FORTHVERSION:
     .dw DO_COLON
 PFA_EN_FORTHVERSION:
-    .dw XT_DOLITERAL
-    .dw 09
+    .dw XT_DOSLITERAL
+    .dw 4
+    .db "V0.9"
     .dw XT_EXIT
+

@@ -1,6 +1,6 @@
 ; ( -- faddr len ) 
 ; Environment
-; flash address of the amforth name string
+; Forth name
 VE_ENV_FORTHNAME:
     .dw $ff0a
     .db "forth-name"
@@ -11,5 +11,5 @@ XT_ENV_FORTHNAME:
 PFA_EN_FORTHNAME:
     .dw XT_DOSLITERAL
     .dw 14
-    .db "amforth-shadow"
+    .db "AmForth-Shadow"
     .dw XT_EXIT

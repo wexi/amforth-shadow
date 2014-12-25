@@ -27,8 +27,8 @@
 .set APPUSERSIZE = 10  ; size of application specific user area in bytes
 
 ; addresses of various data segments
-.set rstackstart = RAMEND	; empty R stack pointer value (post-decrements)
-.set stackstart  = RAMEND - $63 ; empty D stack pointer value (pre-decrements)
+.set rstackstart = RAMEND      ; empty R stack pointer value (post-decrements)
+.set stackstart  = RAMEND - 79 ; empty D stack pointer value (pre-decrements)
 ; change only if you know what to you do
 .set NUMWORDLISTS = 8 ; number of word lists in the searh order, at least 8
 .set NUMRECOGNIZERS = 4 ; total number of recognizers, two are always used.

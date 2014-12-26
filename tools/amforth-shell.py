@@ -277,6 +277,7 @@ import serial
 import StringIO
 import subprocess
 import sys
+import fcntl
 import traceback
 
 class AMForthException(Exception):
@@ -748,8 +749,11 @@ additional definitions (e.g. register names)
                                              timeout, False,
                                              self.serial_rtscts,
                                              None, False)
+            fcntl.flock(self._serialconn.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
         except serial.SerialException, e:
             raise AMForthException("Serial port connect failure: %s" % str(e))
+        except IOError:
+            raise AMForthException("Serial port locking failure: %s" % str(self.serial_port))
 
     def serial_disconnect(self):
         """Disconnect the serial connection to AMForth

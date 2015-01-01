@@ -23,15 +23,12 @@
 
 decimal
 
-dp ]  ( tid1 -- tid2 )
-cell+ @ dup @ >r exit			\ no asm since rare
-[ constant task-bypass
+create task-bypass  ( tid1 -- tid2 )
+] cell+ @ dup @ >r exit [		\ no ASM since rare
 
-dp ]  ( tid -- )
-\ up! 8 @u sp! rp! int+			\ restore stack pointers:
-..task					\ asm at core/words/swien.asm
-exit					\ returns from a task-switch
-[ constant task-resume
+create task-resume  ( tid -- )
+\ ] up! 8 @u sp! rp! int+ [		\ ASM at core/words/swien.asm
+] ..task exit [				\ returns from a task-switch
 
 : task-switch  ( -- tid )     
    \ int- rp@ sp@ 8 !u			\ save stack pointers,
@@ -49,7 +46,6 @@ exit					\ returns from a task-switch
    allot here ,				\ empty D stack pointer (save pre-decrement)
    allot here 1- ,			\ empty R stack pointer (save post-decrement)
    wild @e ,				\ nfa
-  does>					\ task (faddr)
 ;  
 : task>tid  ( task -- tid )      @i  ;
 : task>sp0  ( task -- sp0 )  1+  @i  ;
@@ -60,7 +56,7 @@ exit					\ returns from a task-switch
 \
 \ ITC = endless code starting ip, TASK = dictionary stored task>parameters
 \ Simple example:
-\ dp ] begin pause again [ constant ITC
+\ create ITC ] begin pause again [
 \ 16 16 0 task: TASK
 \   
    task-bypass over task>tid !		\ born inactive

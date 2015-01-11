@@ -8,7 +8,7 @@ AmForth-Shadow is an independent fork of
 [AmForth](http://amforth.sourceforge.net/ "Once fondly called HQ") ever
 since the latter has changed its license from GPLv2 to GPLv3. See
 10/30/2014 message -
-[The Shadow May Have To Disengage From Its Body](wiki/AmForth-HQ-license-change-from-GPLv2-to-GPLv3.md).
+[The Shadow May Have To Disengage From Its Body](https://github.com/wexi/amforth-shadow/wiki/AmForth-HQ-license-change-from-GPLv2-to-GPLv3).
 AmForth-Shadow changes to AmForth trunk@1687, the forking point, are
 summarized in [amforth-shadow.org](amforth-shadow.org).
 

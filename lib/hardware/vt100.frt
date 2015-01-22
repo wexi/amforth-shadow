@@ -17,7 +17,7 @@ decimal
 
 \ clear page
 : page ( -- ) 
-  ESC[ ." 2J" 0 0 at-xy 
+  ESC[ ." 2J"
 ;
 
 \ more definitions based on gforth' ansi.fs
@@ -34,8 +34,12 @@ decimal
   ESC[ [char] 0 emit [char] m emit 
 ;
 
-: text_bold ( -- | set bold text )
+: text_bright ( -- | set bright text )
   ESC[ [char] 1 emit [char] m emit 
+;
+
+: text_dim ( -- | set dim text )
+  ESC[ [char] 2 emit [char] m emit 
 ;
 
 : text_underline ( -- | set underlined text )

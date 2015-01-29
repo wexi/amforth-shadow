@@ -8,18 +8,19 @@ VE_REBOOT:
     .set VE_HEAD = VE_REBOOT
 XT_REBOOT:
     .dw PFA_REBOOT
-	
+PFA_REBOOT:
+    cli
+    ldi temp0,(1<<WDCE)|(1<<WDE)
+    ldi temp1,(1<<WDE)
+    out_ WDTCR, temp0		; enable watchdog reset
+    out_ WDTCR, temp1		; with shortest delay
+PFA_REBOOT1:
+    rjmp PFA_REBOOT1
+;	
 COLD_START:
     clr zerol
     clr zeroh
-    rjmp clr_ints
-
-PFA_REBOOT:
-    cli
-    out_ MCUSR, zerol		; programmatic restart
-
-clr_ints:			; clear soft interrupts stuff
-    ldi zl, low(intovf)
+    ldi zl, low(intovf)		; clear soft interrupts stuff
     ldi zh, high(intovf)
 clr_int:
     st  z+, zerol

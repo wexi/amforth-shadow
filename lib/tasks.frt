@@ -81,7 +81,7 @@ create task-resume  ( tid -- )
 ;
 
 : task-run?  ( task -- flag )
-   task>tid task-resume =
+   task>tid @ task-resume =
 ;   
 
 : task-stop  ( task | 0 -- )		\ 0 for self

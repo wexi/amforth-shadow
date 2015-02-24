@@ -54,6 +54,7 @@ decimal
   ESC[ [char] 7 emit [char] m emit
 ;
 
+: tab  ( -- )  9 emit  ;
 
 0 constant Black
 1 constant Red

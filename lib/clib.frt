@@ -30,7 +30,9 @@
 \ in tasks (not recommended for ISRs).
 \ Debugging aid: "events" lists the execution pending words.
 \
-
+\ #include buffer.frt
+\ #include vt100.frt
+\ 
 decimal
 
 variable clock				\ ISR driven ms counter

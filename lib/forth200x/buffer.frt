@@ -1,6 +1,4 @@
-\ allocate a buffer and give it a name in the dictionary
-\ see http://www.forth200x.org/buffer.html
+\ allocate a buffer of n bytes and give it a name in the dictionary
 
-: buffer: ( n "<spaces>name" )
-   \ variable already allocates 1 cell
-   variable 1 cells - allot ;
+: buffer:  ( n "<spaces>name" )  here constant allot  ;
+

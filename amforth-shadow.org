@@ -352,6 +352,8 @@ the number of rewrites. Hence:
 + also <vocabulary-name> :: [ASM] adds the vocabulary's wid to the
      search order head.
 
++ buffer: ( n "name" -- ) :: Allocates n-bytes, not n-words (aka cells).
+
 * Cookbook
 
 Using Edefer to resolve forward references is wasteful since it adds one

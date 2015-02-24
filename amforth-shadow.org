@@ -100,6 +100,13 @@ nested.
      c!~. The higher byte, if non-zero, indicates having the soft
      interrupts inhibited.
 
+** Enhancement
+
+lib/clib.frt enhances the effectiveness of soft ISRs by introducing delayed
+execution words. See elist ( delay value xt -- error-flag ), etc.  An ISR,
+for instance, before it ends can schedule continued activity after a
+desired number of milliseconds.
+
 ** Compatibility
 
 ISRs should be regular Forth colon definitions.

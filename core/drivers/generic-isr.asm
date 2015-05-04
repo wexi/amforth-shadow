@@ -1,9 +1,9 @@
-; ISR routines
+	;; ISR routines
 
 #ifdef	INTQUE
-.equ intsiz = INTQUE
+	.equ intsiz = INTQUE
 #else
-.equ intsiz = 8			;interrupts queue length
+	.equ intsiz = 8		;interrupts queue length
 #endif
 
 ; Note:
@@ -14,7 +14,7 @@
 	
 ; SPI / CAN interrupts auto disable
 
-.dseg
+	.dseg
 intovf:	.byte 1			;int'→ lo: hard interrupts overflow (nz = prog addr)
 intswi:	.byte 1			;int'→ hi: soft interrupts inhibit  (nz = inhibited)
 oSPDR:	.byte 1			;SPDR output buffer
@@ -22,7 +22,7 @@ iSPDR:	.byte 1			;SPDR input buffer
 intbuf:	.byte intsiz+1		;last byte always zero
 intvec:	.byte INTVECTORS * CELLSIZE
 
-.cseg
+	.cseg
 VE_oSPDR:
 	.dw	$ff05
 	.db	"oSPDR",0
@@ -43,19 +43,29 @@ XT_iSPDR:
 PFA_iSPDR:
 	.dw	iSPDR
 
-.set	pc_ = pc
-.org	SPIaddr
+	.set	pc_ = pc
+	.org	SPIaddr
 	rcall	isrspi
-.org	pc_
+	.org	pc_
 
-isrspi:	st	-Y, temp0	;SPIF cleared by interrupt
-	in_	temp0, SREG
-	st	-Y, temp1
-	in_	temp1, SPDR	;buffer i/o
-	sts	iSPDR, temp1
-	lds	temp1, oSPDR
-	out_	SPDR, temp1
-	cbi_	SPCR, SPIE, temp1 ;disable SPI interrupts
+	.macro	isrstx
+	st	-Y, tosh
+	st	-Y, tosl
+	in_	tosh, SREG
+	.endmacro
+
+	.macro	isretx
+	st	-Y, tosh	;push SREG
+	st	-Y, zh
+	st	-Y, zl
+	.endmacro
+
+isrspi:	isrstx			;SPIF cleared by interrupt
+	in_	tosl, SPDR	;buffer i/o
+	sts	iSPDR, tosl
+	lds	tosl, oSPDR
+	out_	SPDR, tosl
+	cbi_	SPCR, SPIE, tosl ;disable SPI interrupts
 	rjmp	isrcom
 	
 #ifdef	_CAN32DEF_INC_
@@ -69,56 +79,50 @@ isrspi:	st	-Y, temp0	;SPIF cleared by interrupt
 #endif
 
 #ifdef	_CANDEF_
-.set	pc_ = pc
-.org	CANITaddr
+	.set	pc_ = pc
+	.org	CANITaddr
 	rcall	isrcan
-.org	pc_
+	.org	pc_
 	
-isrcan:	st	-Y, temp0	;CANIT not cleared by interrupt
-	in_	temp0, SREG
-	st	-Y, temp1
-	cbi_	CANGIE, ENIT, temp1 ;disable CAN interrupts
+isrcan:	isrstx			;CANIT not cleared by interrupt
+	cbi_	CANGIE, ENIT, tosl ;disable CAN interrupts
 	rjmp	isrcom  
 #endif	
 	
-isr:	st	-Y, temp0
-	in_	temp0, SREG
-	st	-Y, temp1
+isr:	isrstx
 	
-isrcom:	pop	temp1		;rcall passes faddr+1
-	pop	temp1		;big endian stored
-	dec	temp1		;interrupt vector address
-	
-	st	-Y, temp2
-	st	-Y, zl
-	st	-Y, zh
-	ldiw	Z, intbuf
+isrcom:	pop	tosl		;rcall passes faddr+1
+	pop	tosl		; big endian stored
+	dec	tosl		;interrupt vector address
 	
 ; crude yet efficient queue (input) if having low occupancy
+
+	isretx
 	
-.macro	inp_buf
-.if	@0
-	ld	temp2, Z+
-	tst	temp2
+isrque:	ldiw	Z, intbuf
+	
+	.macro	inp_buf
+	.if	@0
+	ld	tosh, Z+
+	tst	tosh
 	breq	isrsav		;free Q place?
 	inp_buf	(@0-1)
-.endif
-.endmacro
-
+	.endif
+	.endmacro
+	
 	inp_buf intsiz
 	
-	sts	intovf, temp1	;mark overflow with prog addr
-	rjmp	isrbye
+isrovf:	ldiw	Z, intovf+1	;mark overflow with prog addr
+isrsav:	st	-Z, tosl	;save interrupt address in queue
+	ld	zl, Y+		;reverse isretx
+	ld	zh, Y+
+	ld	tosh, Y+
 	
-isrsav:	st	-Z, temp1	;save interrupt address in queue
-	lds	temp1, intswi
-	sbrs	temp1, 7	;skip if interrupts off
-	sbr	temp0, exp2(SREG_T) ;T bit position
+	lds	tosl, intswi
+	sbrs	tosl, 7		   ;skip if interrupts off
+	sbr	tosh, exp2(SREG_T) ;T bit position
 
-isrbye:	ld	zh, Y+
-	ld	zl, Y+
-	ld	temp2, Y+
-	ld	temp1, Y+
-	out_	SREG, temp0
-	ld	temp0, Y+
+	out_	SREG, tosh	;reverse isrstx
+	ld	tosl, Y+
+	ld	tosh, Y+
 	reti

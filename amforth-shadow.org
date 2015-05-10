@@ -303,9 +303,11 @@ implementation.
 
 - cell- :: [ASM] Cell size address subtraction (aka 2-).
 
-- du256* ( ud -- ud*256 ) :: double unsigned multiplication by 256.  
+- du2/ :: [ASM] unsigned double divide by 2.
 
-- du256/ ( ud -- ud/256 ) :: double unsigned division by 256.  
+- du256* ( ud -- ud*256 ) :: unsigned double multiply by 256.  
+
+- du256/ ( ud -- ud/256 ) :: unsigned double divide by 256.  
 
 - d0= ( d -- f ) :: flag is true if double equals zero.
 

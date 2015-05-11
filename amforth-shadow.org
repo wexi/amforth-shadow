@@ -257,8 +257,12 @@ connected.
  
 * WLSCOPE
 
-The shadow is proud to have contributed the Word List Scope idea and
-implementation.
+The Shadow is proud to have contributed the Word List Scope idea and
+implementation to the AmForth project. A newly created word can be added to
+a non default word-list based upon its name and the name can be changed in
+the process. For example, all the words with a leading underscore are added
+to a private word list; all the words which begin with gl- are added to the
+graphic library word-list with this prefix removed.
 
 * General purpose new words
 
@@ -355,6 +359,9 @@ the number of rewrites. Hence:
      search order head.
 
 + buffer: ( n "name" -- ) :: Allocates n-bytes, not n-words (aka cells).
+
+*end-case* is an *endcase* alternative where the switch value is
+preserved.
 
 * Cookbook
 

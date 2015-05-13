@@ -8,6 +8,7 @@
 \ the scheduled word. There can be up-to "EVENTS" number of words pending
 \ execution. "elist" returns "error" true if there is no room for more
 \ words to schedule: elist ( delay value xt -- error )
+\ To undo: delist ( xt -- ) cancels the earliest "xt" pending execution.
 (
 16 constant EVENTS			\ superseded by appl_defs.frt constant
 )
@@ -28,6 +29,7 @@
 \ 
 \ Bonus: "ms" replaces the standard FACILITY EXT word. It is to be used
 \ in tasks (not recommended for ISRs).
+\ 
 \ Debugging aid: "events" lists the execution pending words.
 \ 
 \ #include buffer.frt
@@ -125,7 +127,29 @@ variable _efree
    int+
 ;
 
-\ list pending events
+\ Cancel earliest "xt" event
+( xt -- )
+: delist
+   >r _etodo
+   int-
+   begin           ( eaᵢ )		\ i-th event address (done with)
+      dup @ ?dup
+   while           ( eaᵢ eaᵢ₊₁ )
+      dup _e.xt @ r@ =  if
+	 dup -rot  ( eaᵢ₊₁ eaᵢ eaᵢ₊₁ )
+	 @ swap !  ( eaᵢ₊₁ )		\ removed from the todo list
+	 _efree @ over !
+	 _efree !			\ added to the free list
+	 int+
+	 rdrop exit
+      then
+      nip
+   repeat
+   int+
+   drop rdrop   
+;
+
+\ list pending events (may cause soft interrupts overflow!)
 : events
    Red foreground
    ." №" tab ." DELAY" tab ." DATA" tab ." XT"

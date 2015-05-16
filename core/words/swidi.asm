@@ -31,9 +31,10 @@ PFA_TASKEX:
     ldd	tosh, z+3
 
 PFA_SWIDI:
-    ldiw z, intswi
-    ld	temp0, z
-    dec	temp0			; 0< indicates inhibit
-    st	z, temp0
-    clt				; reset soft interrupts flag
-    jmp_ DO_NEXTT		; no need to test for SWI
+    ldiw Z, intswi
+    ld temp0, Z			; interrupts: 0 → enabled, 0< → disabled
+    dec temp0
+    sbrc temp0, 7		; prevent wraparound
+    st	Z, temp0
+    clt
+    jmp_ DO_NEXTT

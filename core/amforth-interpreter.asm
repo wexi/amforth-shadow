@@ -19,12 +19,9 @@ DO_EXECUTE:
 	ijmp
 
 DO_INTERRUPT:
-	;here we deal with soft interrupts
 	clt
 	ldiw	z, intbuf
-	ld	temp0, z	;int prog addr
-
-ON_INTERRUPT:
+	ld	temp0, z	;interrupt vector
 	in_	temp2, SREG	;save unknown I-bit
 	cli			;no hard int-s when handling queue
 	
@@ -39,7 +36,7 @@ ON_INTERRUPT:
 	breq 	out_cur
 .endif
 .if	@0 == @1
-	ori	temp2, $40	;set T bit pos to interrupt forth further
+	sbr	temp2, exp2(SREG_T) ;another interrupt waiting
 .endif
 	out_buf (@0-1),@1
 .endif

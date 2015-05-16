@@ -15,10 +15,10 @@
 ; SPI / CAN interrupts auto disable
 
 	.dseg
-intovf:	.byte 1			;int'→ lo: hard interrupts overflow (nz = prog addr)
-intswi:	.byte 1			;int'→ hi: soft interrupts inhibit  (nz = inhibited)
 oSPDR:	.byte 1			;SPDR output buffer
 iSPDR:	.byte 1			;SPDR input buffer
+intovf:	.byte 1			;int' @ lsb: hard interrupts overflow (0 or prog addr)
+intswi:	.byte 1			;int' @ msb: soft interrupts inhibit  (0< if inhibited)
 intbuf:	.byte intsiz+1		;last byte always zero
 intvec:	.byte INTVECTORS * CELLSIZE
 
@@ -111,8 +111,7 @@ isrque:	ldiw	Z, intbuf
 	.endmacro
 	
 	inp_buf intsiz
-	
-isrovf:	ldiw	Z, intovf+1	;mark overflow with prog addr
+	ldiw	Z, intovf+1	;vector address is overflow mark
 isrsav:	st	-Z, tosl	;save interrupt address in queue
 	ld	zl, Y+		;reverse isretx
 	ld	zh, Y+

@@ -45,33 +45,3 @@ PFA_DIGITQ0:
 PFA_DIGITQ2:
     .dw XT_TRUE
     .dw XT_EXIT 
-
-; ( u1 u2 -- flag ) 
-; Compare
-; compare two unsigned numbers, returns true flag if u1 is less then or equal to u2
-VE_ULESSEQUAL:
-    .dw $ff03 
-    .db "u<=",0
-    .dw VE_HEAD
-    .set VE_HEAD = VE_ULESSEQUAL
-XT_ULESSEQUAL:
-    .dw DO_COLON 
-PFA_ULESSEQUAL:
-    .dw XT_UGREATER 
-    .dw XT_INVERT 
-    .dw XT_EXIT 
-
-; ( u1 u2 -- flag ) 
-; Compare
-; compare two unsigned numbers, returns true flag if u1 is greater then or equal to u2
-VE_UGREATEREQUAL:
-    .dw $ff03 
-    .db "u>=",0
-    .dw VE_HEAD
-    .set VE_HEAD = VE_UGREATEREQUAL
-XT_UGREATEREQUAL:
-    .dw DO_COLON 
-PFA_UGREATEREQUAL:
-    .dw XT_ULESS 
-    .dw XT_INVERT 
-    .dw XT_EXIT 

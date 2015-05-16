@@ -3,12 +3,16 @@
 \ Copyright (c) 2014 Energy Measurement & Control, NJ, USA.
 \ Redistribution: FreeBSD License.
 \
-\ "elist" schedules a word for execution after "delay" number of
+\ "elist" schedules an "xt" for execution after a "delay" number of
 \ milliseconds, passing an optional (non-zero) "value" through the stack to
-\ the scheduled word. There can be up-to "EVENTS" number of words pending
-\ execution. "elist" returns "error" true if there is no room for more
-\ words to schedule: elist ( delay value xt -- error )
-\ To undo: delist ( xt -- ) cancels the earliest "xt" pending execution.
+\ the scheduled xt. There can be up-to "EVENTS" number of xt-s pending
+\ execution, cf. the "_event" structure.
+\ "elist" error return is "true" if the events memory is exhausted:
+\ elist ( delay value xt -- error )
+\
+\ "delist" cancels the earliest "xt" pending execution.
+\ "delist" error return is "xt" if such event is not found:
+\ delist ( xt -- xt | false )
 (
 16 constant EVENTS			\ superseded by appl_defs.frt constant
 )
@@ -16,7 +20,7 @@
 \ (1) Initialize the clock library by calling "einit".
 \ (2) From a soft Interrupt Service Routine (ISR) increment "clock" and
 \ call "evoke" every millisecond. "evoke" should be called with the soft
-\ interrupt system off ("int-"). For example:
+\ interrupts system off ("int-"). For example:
 \ 
 \ 1000 Hz interrupt service
 \ : clkisr
@@ -30,11 +34,12 @@
 \ Bonus: "ms" replaces the standard FACILITY EXT word. It is to be used
 \ in tasks (not recommended for ISRs).
 \ 
-\ Debugging aid: "events" lists the execution pending words.
+\ Debugging aid: "events" lists the execution pending xt-s.
 \ 
+\ #include erase.frt
+\ #include structures.frt
 \ #include buffer.frt
 \ #include vt100.frt
-\
 
 decimal
 
@@ -63,18 +68,18 @@ field: _e.xt				\ function to call
 end-structure
 
 _event EVENTS * buffer: _ebuff
-variable _etodo				\ non-decreasing event delays
-variable _efree
+variable _etodo				\ pending events list
+variable _efree				\ free events list
 
-\ Initialize the free events linked list
+\ init event memory
 : einit
-   0 _ebuff
+   _ebuff [ _efree _ebuff - ]l erase
+   _ebuff _efree
    EVENTS 0  do
-      dup -rot !
-      dup _event +
+      2dup !
+      drop dup _event + swap
    loop
-   drop _efree !
-   0 _etodo !
+   2drop
 ;
 
 \ With the soft interrupts disabled call evoke each _clkisr to execute expired
@@ -97,28 +102,39 @@ variable _efree
    repeat
 ;
 
-\ Schedule "xt" for execution after a "delay" number of clock
-\ increments. 60000 is the largest "delay" value allowed.
-\ If the "data" value is non zero it will pass to the "xt".
+\ Schedule "xt" for execution after [1, 60000] "delay" milliseconds. 
+\ "evoke" would pass non-zero "data" to the "xt", i.e. data xt execute
 ( delay data xt -- error )
 : elist
-   _efree dup int- @    ( delay data xt event₀ event )
+   int-
+   _efree dup @   ( delay data xt event₀ event )
    ?dup  if
-      dup @ rot ! int+  ( delay data xt event )
-      \ free event allocated
-      dup _e.xt rot swap !
-      dup _e.data rot swap !
-      dup _e.when rot clock @ + dup >r 1- swap ! 
-      _etodo int-  ( event event₀ )
-      begin
-	 dup @     ( event eventₓ eventₓ₊₁ )
-	 dup  if  _e.when @ r@ - 60000 u>=  then
+      \ remove event from free list
+      dup @ rot ! ( delay data xt event )
+      \ fill in the event fields
+      swap over _e.xt !
+      swap over _e.data !
+      swap 1- dup >r clock int* @ + over _e.when !
+      \ put event on todo list
+      _etodo      ( event event₀ )
+      begin       ( event eventₓ )
+	 dup @    ( event eventₓ eventₓ₊₁ ) ( R: wait )
+	 dup  if
+	    dup _e.when @ clock @ -
+	    dup 60000 u<  if		\ waitₓ₊₁ not expired
+	       r@ u<=			\ waitₓ₊₁ ≤ wait ?
+	    else
+	       tdrop			\ after those expired
+	    then
+	 else
+	    false			\ eventₓ is todo last, i.e. eventₓ₊₁ = 0
+	 then
       while
-	 @
+	 nip
       repeat
-      rdrop        ( event eventₓ )
-      over over @  ( event eventₓ event eventₓ₊₁ )
-      swap ! !
+      rdrop           ( event eventₓ eventₓ₊₁ )
+      -rot over swap  ( eventₓ₊₁ event event eventₓ )
+      ! !
       false
    else
       2drop 2drop
@@ -127,8 +143,8 @@ variable _efree
    int+
 ;
 
-\ Cancel earliest "xt" event
-( xt -- )
+\ Cancel the earliest "xt" event. Return false if cancelation succeeded.
+( xt -- xt | false )
 : delist
    >r _etodo
    int-
@@ -141,12 +157,12 @@ variable _efree
 	 _efree @ over !
 	 _efree !			\ added to the free list
 	 int+
-	 rdrop exit
+	 r> fdrop exit
       then
       nip
    repeat
    int+
-   drop rdrop   
+   r>
 ;
 
 \ list pending events (may cause soft interrupts overflow!)

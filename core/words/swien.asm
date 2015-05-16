@@ -20,15 +20,12 @@ VE_SWIDO:
 XT_SWIDO:
     .dw PFA_SWIDO
 PFA_SWIDO:
-    lds temp0, intswi
+    ldiw Z, intswi
+    ld temp0, Z
     cpi temp0, -1
-    brlt PFA_SWIDO1		; nested critical section?
-    ldiw z, intbuf
-    ld temp0, z
-    cpse temp0, zerol
-    jmp_ ON_INTERRUPT		; serve pending
-PFA_SWIDO1:
-    jmp_ DO_NEXTT    		; non pending
+    breq PFA_SWIEN1		; shallow disable?
+    brlt PFA_SWIEN2		; deep disable?
+    jmp_ DO_NEXT		; interrupts enabled
 	
 ; ( tid -- ) 
 ; Stack
@@ -55,15 +52,16 @@ PFA_TASKEN:
     movw uph:upl, zh:zl
 
 PFA_SWIEN:
-    ldiw z, intswi
-    ld	temp0, z
-    cpse temp0, zerol
-    inc	temp0			; 0= → ints on, 0< → ints off
-    st	z, temp0
-    tst	temp0
-    brmi PFA_SWIEN1		; # int+ < # int- ?
-    lds zl, intbuf
-    cpse zl, zerol
-    set				; set soft interrupts flag
+    ldiw Z, intswi
+    ld temp0, Z			; interrupts: 0 → enabled, 0< → disabled	
+    sbrs temp0, 7
+    jmp_ DO_NEXT		; already enabled
+    inc temp0
+    st Z, temp0
+    brmi PFA_SWIEN2		; still disabled?
 PFA_SWIEN1:
-    jmp_ DO_NEXTT		; let next VM instr exec without SWI
+    ldd temp0, Z+1		; resume interrupt processing, check intbuf
+    cpse temp0, zerol
+    set
+PFA_SWIEN2:
+    jmp_ DO_NEXTT

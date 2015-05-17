@@ -1,9 +1,9 @@
 	;; ISR routines
 
 #ifdef	INTQUE
-	.equ intsiz = INTQUE
+	.equ INTSIZ = INTQUE
 #else
-	.equ intsiz = 8		;interrupts queue length
+	.equ INTSIZ = 8		;interrupts queue length
 #endif
 
 ; Note:
@@ -11,15 +11,14 @@
 ; Clear hard interrupts overflow by: 0 int' c!
 ; Enclose critical sections by: int- ... int+
 ; Serve soft interrupts from critical section: INT*
-	
 ; SPI / CAN interrupts auto disable
 
 	.dseg
 oSPDR:	.byte 1			;SPDR output buffer
 iSPDR:	.byte 1			;SPDR input buffer
-intovf:	.byte 1			;int' @ lsb: hard interrupts overflow (0 or prog addr)
-intswi:	.byte 1			;int' @ msb: soft interrupts inhibit  (0< if inhibited)
-intbuf:	.byte intsiz+1		;last byte always zero
+intbuf:	.byte INTSIZ+1		;\ last byte ALWAYS zero
+intovf:	.byte 1			;⁭| int' @ lsb: hard interrupts overflow (0 | int vector)
+intswi:	.byte 1			;/ int' @ msb: soft interrupts inhibit  (0< ≡ T=1 ≡ inhibit)
 intvec:	.byte INTVECTORS * CELLSIZE
 
 	.cseg
@@ -100,27 +99,17 @@ isrcom:	pop	tosl		;rcall passes faddr+1
 	isretx
 	
 isrque:	ldiw	Z, intbuf
-	
-	.macro	inp_buf
-	.if	@0
-	ld	tosh, Z+
-	tst	tosh
-	breq	isrsav		;free Q place?
-	inp_buf	(@0-1)
-	.endif
-	.endmacro
-	
-	inp_buf intsiz
-	ldiw	Z, intovf+1	;vector address is overflow mark
-isrsav:	st	-Z, tosl	;save interrupt address in queue
+isrqin:	ld	tosh, Z+
+	cpse	tosh, zerol
+	rjmp	isrqin
+
+	cpi	zl, low(intovf)	;last intbuf byte should stay zero
+	brne	isrsav
+	adiw	Z, 1		;overflow
+isrsav:	st	-Z, tosl	;save interrupt vector
 	ld	zl, Y+		;reverse isretx
 	ld	zh, Y+
 	ld	tosh, Y+
-	
-	lds	tosl, intswi
-	sbrs	tosl, 7		   ;skip if interrupts off
-	sbr	tosh, exp2(SREG_T) ;T bit position
-
 	out_	SREG, tosh	;reverse isrstx
 	ld	tosl, Y+
 	ld	tosh, Y+

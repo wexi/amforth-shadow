@@ -1,50 +1,40 @@
 ; the inner interpreter.
 
 DO_COLON:
-	push xh
-	push xl			;push return IP
-	movw xh:xl, wh:wl
-	adiw xh:xl, 1
+	push	xh
+	push	xl		;push return IP
+	movw	xh:xl, wh:wl
+	adiw	xh:xl, 1
 DO_NEXT:
-	brts DO_INTERRUPT
+	brts	DO_NEXTT	;soft interrupts disabled?
+	ldiw	Z, intbuf
+	ld	temp0, Z
+	cpse	temp0, zerol	;empty queue?
+	rjmp	DO_INTERRUPT
 DO_NEXTT:
-	movw zh:zl, xh:xl	;read XT
+	movw 	zh:zl, xh:xl	;read XT
 	readflashcell wl, wh
-	adiw xh:xl, 1		;inc IP
+	adiw 	xh:xl, 1	;inc IP
 
 DO_EXECUTE:
-	movw zh:zl, wh:wl
+	movw 	zh:zl, wh:wl
 	readflashcell temp0,temp1
-	movw zh:zl, temp1:temp0
+	movw 	zh:zl, temp1:temp0
 	ijmp
 
 DO_INTERRUPT:
-	clt
-	ldiw	z, intbuf
-	ld	temp0, z	;interrupt vector
-	in_	temp2, SREG	;save unknown I-bit
+	in_	temp2, SREG	;save I-bit
 	cli			;no hard int-s when handling queue
 	
 ; crude yet efficient queue (output) if having low occupancy
-	
-.macro	out_buf
-.if @0
-	ldd	temp1, z+(@1-@0+1)
-	std	z+(@1-@0), temp1
-.if	@0 > 1
-	tst	temp1
-	breq 	out_cur
-.endif
-.if	@0 == @1
-	sbr	temp2, exp2(SREG_T) ;another interrupt waiting
-.endif
-	out_buf (@0-1),@1
-.endif
-.endmacro
-	out_buf intsiz,intsiz
 
-out_cur:
-	out_	SREG, temp2	;restore I bit, T set if another swi pending
+DO_QOUT:
+	ldd	temp1, Z+1
+	st	Z+, temp1
+	cpse	temp1, zerol
+	rjmp	DO_QOUT
+
+	out_	SREG, temp2	;restore I-bit
 	
 	push	xh		;interrupted task cont point
 	push	xl

@@ -90,8 +90,8 @@ nested.
      *int-* calls.
 
 + int* ( -- ) "serve pending interrupts" :: Called within a critical
-     section to process all pending soft interrupts, an efficient *int+ nop
-     int-* equivalent.
+     section to process all pending soft interrupts, an *int+ nop int-*
+     equivalent.
 
 + int' ( -- addr ) "soft interrupts apostrophe" :: Returns the address
      of a system variable where the lower byte, if non zero, indicates

@@ -1,8 +1,9 @@
 #!/usr/bin/python
 #
-# pySerial based upload & interpreter interaction module for amforth.
+# pySerial based upload & interpreter interaction module for AmForth.
 #
 # Copyright 2011 Keith Amidon (camalot@picncipark.org)
+# AmForth-Shadow additions by Enoch (ixew@hotmail.com) 
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License version 2 as
@@ -16,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-# AmForth Shadow remarks:
+# AmForth-Shadow remarks:
 # =======================
 # 
 # This uploader saves dictionary space and words clutter by substituting
@@ -57,6 +58,8 @@
 # to synchronize the memory allocation pointers.
 #
 # ALLWORDS replaces WORDS in #update-words implementation.
+# 
+# Finally, to activate Python's debugger pass the argument --pdb.
 #
 # =====================================================================
 # DOCUMENTATION
@@ -231,14 +234,14 @@
 #
 # Programmatic Usage
 # ------------------
-# For programmatic usage, a single class named AMForth is provided.
+# For programmatic usage, a single class named AmForth is provided.
 # It can be instantiated with no arguments but typically a serial port
 # device and port speed will be provided as the defaults are unlikely
 # to be correct.
 #
 # Once an instance is obtained, and connected the high-level entry
 # points are the "upload_file" and "interact" methods, the former
-# uploading a file to the AMForth interperter and the latter providing
+# uploading a file to the AmForth interperter and the latter providing
 # an interative interpreter shell with command history and word
 # completion.  These methods provide progress information in various
 # cases by calling the function stored in the "progress_callback"
@@ -248,13 +251,13 @@
 # information to the screen in a terse format.  Other programs may
 # wish to replace this with their own progress presentation function.
 #
-# Low-level interaction with the AMForth interpreter would typically
+# Low-level interaction with the AmForth interpreter would typically
 # use the "send_line" and "read_response" methods.  Before these can
 # be used the serial connection must be established.  The
 # serial_connected property indicates whether a connection currently
 # exists.  A good way to obtain a connection and rule out errors in
 # serial communication is to call "find_prompt" which ensures the
-# existence of a serial connection and sends a newline to the AMForth
+# existence of a serial connection and sends a newline to the AmForth
 # interperter and watches for the echo.  This is usually the best way
 # of establishing a connection but the "serial_connect" method will
 # open a connection without sending anything if that is required.
@@ -280,7 +283,7 @@ import sys
 import fcntl
 import traceback
 
-class AMForthException(Exception):
+class AmForthException(Exception):
     pass
 
 class Behaviors(object):
@@ -327,7 +330,7 @@ class Behaviors(object):
             self.directive_uncommented = False
             self.directive_commented = True
         else:
-            raise AMForthException("Unknown directive config: %s" % value)
+            raise AmForthException("Unknown directive config: %s" % value)
 
 
 class BehaviorManager(object):
@@ -335,7 +338,7 @@ class BehaviorManager(object):
 
     This class manages the lifetime of behaviors established through
     configuration options and directives to minimize the impact of
-    that support on the AMForth class. """
+    that support on the AmForth class. """
     def __init__(self):
         self.default_behavior = Behaviors()
         self.clear()
@@ -392,8 +395,8 @@ class BehaviorManager(object):
         self._file_behaviors[0] = behavior
 
 
-class AMForth(object):
-    "Class for interacting with the AMForth interpreter"
+class AmForth(object):
+    "Class for interacting with the AmForth interpreter"
 
     amforth_error_cre = re.compile(" \?\? -\d+ \d+ \r\n> $")
     upload_directives = [
@@ -508,6 +511,7 @@ class AMForth(object):
         "T{", "}T",
     ]
     def __init__(self, serial_port="/dev/amforth", rtscts=False, speed=38400):
+        self.pdb = False
         self.debug = False
         self.max_line_length = 80
         self.progress_callback = self.print_progress
@@ -553,12 +557,12 @@ class AMForth(object):
 
     @property
     def serial_port(self):
-        "Serial port device attached to AMForth"
+        "Serial port device attached to AmForth"
         return self._serial_port
 
     @serial_port.setter
     def serial_port(self, value):
-        """Set the serial port device attached to AMForth
+        """Set the serial port device attached to AmForth
 
         If the value provided is different than the current value any
         existing serial connection will be closed and a new connection
@@ -569,7 +573,7 @@ class AMForth(object):
 
     @property
     def serial_rtscts(self):
-        "RTS/CTS enable of serial connection to AMForth"
+        "RTS/CTS enable of serial connection to AmForth"
         return self._serial_rtscts
 
     @serial_rtscts.setter
@@ -580,7 +584,7 @@ class AMForth(object):
 
     @property
     def serial_speed(self):
-        "Speed of the serial connection to AMForth"
+        "Speed of the serial connection to AmForth"
         return self._serial_speed
 
     @serial_speed.setter
@@ -591,12 +595,15 @@ class AMForth(object):
 
     @property
     def serial_connected(self):
-        "Boolean status for whether currently connected to AMForth"
+        "Boolean status for whether currently connected to AmForth"
         return self._serialconn is not None
 
     def main(self):
         "Main function called when module is used as a script"
         upload_files, interact = self.parse_arg()
+
+        if self.pdb:
+            import pdb; pdb.set_trace()
 
         base_str = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
         base_len = len(base_str)
@@ -623,7 +630,7 @@ class AMForth(object):
                     self.upload_file(fn, install=True)
             if interact:
                 self.interact()
-        except AMForthException:
+        except AmForthException:
             return 1
         except KeyboardInterrupt:
             print "\nAborted with keyboard interrupt"
@@ -650,14 +657,14 @@ class AMForth(object):
                 if response[-3:] == " ok":
                     print "\nMemory alloc pointers synced, good-bye."
 
-            except AMForthException:
+            except AmForthException:
                 print "\nLost contact with AmForth"
             self.serial_disconnect()
         return 0
 
     def parse_arg(self):
         "Argument parsing used when module is used as a script"
-        parser = argparse.ArgumentParser(description="Interact with AMForth", 
+        parser = argparse.ArgumentParser(description="Interact with AmForth", 
              epilog="""
 The environment variable AMFORTH_LIB can be set with to a colon (:) separated 
 list of directories that are recursivly searched for file names. If not set, 
@@ -700,8 +707,11 @@ additional definitions (e.g. register names)
             help="Ignore errors during upload (not recommended)")
         parser.add_argument("--debug-serial", action="store_true",
             help="Output extra info about serial transfers in stderr")
+        parser.add_argument("--pdb", action="store_true",
+            help="Start Python debugger")
         parser.add_argument("files", nargs="*", help="may be found via the environment variable AMFORTH_LIB")
         arg = parser.parse_args()
+        self.pdb = arg.pdb
         self.debug = arg.debug_serial
         self.max_line_length = arg.line_length
         self._serial_port = arg.port
@@ -720,7 +730,7 @@ additional definitions (e.g. register names)
         return arg.files, (arg.interact or len(arg.files) == 0)
 
     def serial_connect(self, port=None, rtscts=None, speed=None):
-        """Connect to AMForth on a serial port
+        """Connect to AmForth on a serial port
 
         The port and speed argument are optional.  If not specified
         the current values set in the object are used.  These will be
@@ -751,12 +761,12 @@ additional definitions (e.g. register names)
                                              None, False)
             fcntl.flock(self._serialconn.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
         except serial.SerialException, e:
-            raise AMForthException("Serial port connect failure: %s" % str(e))
+            raise AmForthException("Serial port connect failure: %s" % str(e))
         except IOError:
-            raise AMForthException("Serial port locking failure: %s" % str(self.serial_port))
+            raise AmForthException("Serial port locking failure: %s" % str(self.serial_port))
 
     def serial_disconnect(self):
-        """Disconnect the serial connection to AMForth
+        """Disconnect the serial connection to AmForth
 
         This is safe to call even if there is currently no connection."""
         if self._serialconn:
@@ -764,7 +774,7 @@ additional definitions (e.g. register names)
             self._serialconn = None
 
     def serial_reconnect(self):
-        """Reconnect the serial connection to AMForth
+        """Reconnect the serial connection to AmForth
 
         This is the same as calling serial_connect while there is an
         existing connection.  It is provided to make the clear when
@@ -784,7 +794,7 @@ additional definitions (e.g. register names)
                 self.read_response() # Throw away the response.
             except serial.SerialException, e:
                 self.progress_callback("Error", None, str(e))
-                raise AMForthException("Failed to get prompt: %s" % str(e))
+                raise AmForthException("Failed to get prompt: %s" % str(e))
         finally:
             # Restore the current timeout
             self._serialconn.timeout = self._config.current_behavior.timeout
@@ -801,10 +811,10 @@ additional definitions (e.g. register names)
         else:
           if not self._filedirs.has_key(filename):
             self.progress_callback("Error", None,  "file "+ filename+" not found in search path")
-            raise AMForthException("file " + filename + " not found in search path")
+            raise AmForthException("file " + filename + " not found in search path")
           if len(self._filedirs[filename])!=1:
             # oops, too many files or no one at all no file found?
-            raise AMForthException("Wrong # of file occurances: " + filename + " ("+str(len(self._filedirs[filename]))+")\n\t"+"\n\t".join(self._filedirs[filename]))
+            raise AmForthException("Wrong # of file occurances: " + filename + " ("+str(len(self._filedirs[filename]))+")\n\t"+"\n\t".join(self._filedirs[filename]))
           self.progress_callback("Information", None,  "using "+ filename+" from"+ self._filedirs[filename][0])
           fpath = os.path.join(self._filedirs[filename][0], filename)
         self._config.push_file(fpath)
@@ -820,7 +830,7 @@ additional definitions (e.g. register names)
         try:
             try:
                 self.find_prompt()
-            except AMForthException, e:
+            except AmForthException, e:
                 self.progress_callback("Error", None, str(e))
                 raise
             self._update_cpu()
@@ -830,7 +840,7 @@ additional definitions (e.g. register names)
                     self._send_file_contents(f)
             except (OSError, IOError), e:
                 self.progress_callback("Error", None, str(e))
-                raise AMForthException("Unknown file: " + fpath)
+                raise AmForthException("Unknown file: " + fpath)
             self._last_error = ()
         finally:
             print "**** " + self._config.current_behavior.working_directory
@@ -843,7 +853,7 @@ additional definitions (e.g. register names)
                           % (self._config.current_behavior.working_directory,
                              str(e)))
                 self.progress_callback("Error", None, errmsg)
-                raise AMForthException(errmsg)
+                raise AmForthException(errmsg)
         return True
 
     def _send_file_contents(self, f):
@@ -859,7 +869,7 @@ additional definitions (e.g. register names)
                           % (self._config.current_behavior.working_directory,
                              str(e)))
                 self.progress_callback("Error", None, errmsg)
-                raise AMForthException(errmsg)
+                raise AmForthException(errmsg)
             lineno += 1
             if full_line and full_line[-1] == "\n":
                 full_line = full_line[:-1]
@@ -877,7 +887,7 @@ additional definitions (e.g. register names)
                  directive,
                  directive_arg) = self.preprocess_line(full_line, in_comment,
                                                        self.upload_directives)
-            except AMForthException, e:
+            except AmForthException, e:
                 self._record_error(lineno)
                 self.progress_callback("Error", lineno, full_line)
                 self.progress_callback("Error", None, str(e))
@@ -896,7 +906,7 @@ additional definitions (e.g. register names)
                 continue
             try:
                 self.send_line(line)
-            except AMForthException, e:
+            except AmForthException, e:
                 self._record_error(lineno)
                 self.progress_callback("Error", lineno, full_line)
                 self.progress_callback("Error", None, str(e))
@@ -920,7 +930,7 @@ additional definitions (e.g. register names)
                             self.progress_callback("Error", lineno, errmsg)
                             if not self._config.current_behavior.ignore_errors:
                                 self._record_error(lineno)
-                                raise AMForthException(errmsg)
+                                raise AmForthException(errmsg)
                 elif self._log:
                     self._log.write(line + "\n")
                     
@@ -928,7 +938,7 @@ additional definitions (e.g. register names)
                 self.progress_callback("Error", None, response)
                 if not self._config.current_behavior.ignore_errors:
                     self._record_error(lineno)
-                    raise AMForthException("Error in line sent")
+                    raise AmForthException("Error in line sent")
 
     def preprocess_line(self, line, in_delim_comment=False, directives=[]):
         # Compresses whitespace, including comments so send minimum
@@ -979,7 +989,7 @@ additional definitions (e.g. register names)
                 if not in_delim_comment:
                     in_delim_comment = True
                 else:
-                    raise AMForthException("Illegal nested comment")
+                    raise AmForthException("Illegal nested comment")
                 continue
 
             if not in_delim_comment and not in_line_comment:
@@ -1018,7 +1028,7 @@ additional definitions (e.g. register names)
                         comment_words.append(w)
 
         if directive and len(result):
-            raise AMForthError("Directive must not have other content: %s",
+            raise AmForthError("Directive must not have other content: %s",
                                " ".join(result))
 
         return (" ".join(result), in_delim_comment,
@@ -1101,7 +1111,7 @@ additional definitions (e.g. register names)
             behavior.directive_config = directive_arg.strip()
         else:
             errmsg = "Unknown directive: %s %s" % (directive, directive_arg)
-            raise AMForthException(errmsg)
+            raise AmForthException(errmsg)
 
     def _yes_or_no_arg(self, directive_arg):
         if not directive_arg:
@@ -1113,11 +1123,11 @@ additional definitions (e.g. register names)
                 return False
             else:
                 errmsg = "Invalid directive argument.  Must be yes or no."
-                raise AMForthExcetion(errmsg)
+                raise AmForthExcetion(errmsg)
 
     def send_line(self, line):
         if len(line) > self.max_line_length - 1: # For newline
-            raise AMForthException("Input line > %d char"
+            raise AmForthException("Input line > %d char"
                                    % self.max_line_length)
         if self.debug:
             sys.stderr.write("|a(     )" + repr(line)[1:-1] + "\n")
@@ -1135,7 +1145,7 @@ additional definitions (e.g. register names)
                     sys.stderr.flush()
                 r = self._serialconn.read(1)
             if not r:
-                raise AMForthException("Input character not echoed.")
+                raise AmForthException("Input character not echoed.")
             if self.debug:
                 sys.stderr.write(repr(r)[1:-1] + "|")
                 sys.stderr.flush()
@@ -1179,7 +1189,7 @@ additional definitions (e.g. register names)
         self._config.push_file(None)
         try:
             self.find_prompt()
-        except AMForthException, e:
+        except AmForthException, e:
             self.progress_callback("Error", None, str(e))
             self._config.pop_file()
             raise
@@ -1204,7 +1214,7 @@ additional definitions (e.g. register names)
                           % (self._config.current_behavior.working_directory,
                              str(e)))
                 self.progress_callback("Error", None, errmsg)
-                raise AMForthException(errmsg)
+                raise AmForthException(errmsg)
             (line, in_comment,
              directive,
              directive_arg) = self.preprocess_line(full_line, in_comment,
@@ -1242,7 +1252,7 @@ additional definitions (e.g. register names)
                 else:
                     self.send_line(line)
                     print self.read_response()
-            except AMForthException, e:
+            except AmForthException, e:
                 print "Error: " + str(e)
         self._config.pop_file()
         self._serialconn.timeout = self._config.current_behavior.timeout
@@ -1253,7 +1263,7 @@ additional definitions (e.g. register names)
                       % (self._config.current_behavior.working_directory,
                          str(e)))
             self.progress_callback("Error", None, errmsg)
-            raise AMForthException(errmsg)
+            raise AmForthException(errmsg)
         self.progress_callback("Interact", None,
                                "Leaving interactive interpreter")
 
@@ -1386,10 +1396,10 @@ additional definitions (e.g. register names)
                 subprocess.call(cmd)
                 self._last_edited_file = filename
             except OSError, e:
-                raise AMForthException("Could not start editor: "+self.editor)
+                raise AmForthException("Could not start editor: "+self.editor)
         else:
-            raise AMForthException("No editor specified.  Use --editor or EDITOR environment variable")
+            raise AmForthException("No editor specified.  Use --editor or EDITOR environment variable")
 
 if __name__ == "__main__":
-    sys.exit(AMForth().main())
+    sys.exit(AmForth().main())
 

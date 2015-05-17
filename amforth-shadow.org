@@ -259,10 +259,12 @@ connected.
 
 The Shadow is proud to have contributed the Word List Scope idea and
 implementation to the AmForth project. A newly created word can be added to
-a non default word-list based upon its name and the name can be changed in
-the process. For example, all the words with a leading underscore are added
-to a private word list; all the words which begin with gl- are added to the
-graphic library word-list with this prefix removed.
+a non default word-list based upon its name and, if desired, the name can
+be changed in the process. For example, all the words which begin with gl-
+are added to the graphic library word-list with this prefix removed.
+
+It is recommended to include this wordlist-scope in every project:
+lib/_local.frt
 
 * General purpose new words
 

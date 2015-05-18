@@ -146,14 +146,13 @@ variable _efree				\ free events list
 \ Cancel the earliest "xt" event. Return false if cancelation succeeded.
 ( xt -- xt | false )
 : delist
-   >r _etodo
-   int-
-   begin           ( eaᵢ )		\ i-th event address (done with)
+   >r _etodo int-
+   begin           ( eventᵢ )		\ i-th event address (done with)
       dup @ ?dup
-   while           ( eaᵢ eaᵢ₊₁ )
-      dup _e.xt @ r@ =  if
-	 dup -rot  ( eaᵢ₊₁ eaᵢ eaᵢ₊₁ )
-	 @ swap !  ( eaᵢ₊₁ )		\ removed from the todo list
+   while           ( eventᵢ eventᵢ₊₁ )
+      dup _e.xt @ r@ =  if		\ eventᵢ₊₁ matches
+	 dup -rot  ( eventᵢ₊₁ eventᵢ eventᵢ₊₁ )
+	 @ swap !  ( eventᵢ₊₁ )		\ removed from the todo list
 	 _efree @ over !
 	 _efree !			\ added to the free list
 	 int+
@@ -161,8 +160,7 @@ variable _efree				\ free events list
       then
       nip
    repeat
-   int+
-   r>
+   int+ drop r>
 ;
 
 \ list pending events (may cause soft interrupts overflow!)

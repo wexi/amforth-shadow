@@ -3,9 +3,8 @@
 \ Copyright (c) 2015 Energy Measurement & Control, NJ, USA.
 \ Redistribution: FreeBSD License.
 
-vocabulary _local			\ _ prefixed words are not worth of mention
-
-\ Note: It is YOUR responsibility to add _local to the search order
+\ Wordlist scope that puts words with underscore (_) prefix
+\ on a _local wordlist.
 
 :noname  ( addr len -- addr' len' wid ) 
    2dup

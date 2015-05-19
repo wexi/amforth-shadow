@@ -359,7 +359,9 @@ the number of rewrites. Hence:
      id) value.
 
 + also <vocabulary-name> :: [ASM] adds the vocabulary's wid to the
-     search order head.
+     search order top.
+
++ previous :: [ASM] remove search order topmost wordlist id.
 
 + buffer: ( n "name" -- ) :: Allocates n-bytes, not n-words (aka cells).
 

@@ -3,8 +3,9 @@
 \ Copyright (c) 2015 Energy Measurement & Control, NJ, USA.
 \ Redistribution: FreeBSD License.
 
-vocabulary _local			\ library words to ignore
-also _local
+vocabulary _local			\ _ prefixed words are not worth of mention
+
+\ Note: It is YOUR responsibility to add _local to the search order
 
 :noname  ( addr len -- addr' len' wid ) 
    2dup

@@ -36,6 +36,7 @@
 \ 
 \ Debugging aid: "events" lists the execution pending xt-s.
 \ 
+\ #include _local.frt
 \ #include erase.frt
 \ #include structures.frt
 \ #include buffer.frt
@@ -61,10 +62,10 @@ variable clock				\ ISR driven ms counter
 \ ----------------------------------------------------------------------
 
 begin-structure _event
-field: _e.next				\ keep first!
-field: _e.when				\ clock value to act
-field: _e.data				\ NZ data to pass
-field: _e.xt				\ function to call
+   field: _e.next			\ keep first!
+   field: _e.when			\ clock value to act
+   field: _e.data			\ NZ data to pass
+   field: _e.xt				\ function to call
 end-structure
 
 _event EVENTS * buffer: _ebuff

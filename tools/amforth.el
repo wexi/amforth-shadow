@@ -1,6 +1,6 @@
-;;; amforth.el --- major mode for editing AmForth sources
+;;; amforth.el --- major mode for editing AmForth-Shadow sources
 
-;; Copyright (C) 1995,1996,1997,1998,2000,2001,2003,2004,2007,2008,2010,2011,2012,2013 Free Software Foundation, Inc.
+;; Copyright (C) 1995,1996,1997,1998,2000,2001,2003,2004,2007,2008,2010,2011,2012,2013,2014 Free Software Foundation, Inc.
 
 ;; ----------------------------------------------------------------------
 
@@ -282,7 +282,7 @@ PARSED-TYPE specifies what kind of text is parsed. It should be on of 'name',
 	 "[\"\n]" nil string (font-lock-string-face . 1))
 	(("abort\"") compile-only (font-lock-keyword-face . 1)
 	 "[\"\n]" nil string (font-lock-string-face . 1))
-	(("{") compile-only (font-lock-variable-name-face . 1)
+	(("{" "{:") compile-only (font-lock-variable-name-face . 1)
 	 "[\n}]" nil name (font-lock-variable-name-face . 1))
 	((".(" "(") immediate (font-lock-comment-face . 1)
 	  ")" nil comment (font-lock-comment-face . 1))
@@ -291,9 +291,9 @@ PARSED-TYPE specifies what kind of text is parsed. It should be on of 'name',
 	  
 	(("[if]" "[?do]" "[do]" "[for]" "[begin]" 
 	  "[endif]" "[then]" "[loop]" "[+loop]" "[next]" "[until]" "[repeat]"
-	  "[again]" "[while]" "[else]" "[:" ";]")
+	  "[again]" "[while]" "[else]" "[:" ";]" "nope")
 	 immediate (font-lock-keyword-face . 2))
-	(("[ifdef]" "[ifundef]") immediate (font-lock-keyword-face . 2)
+	(("[ifdef]" "[ifundef]" "[defined]" "[undefined]") immediate (font-lock-keyword-face . 2)
 	 "[ \t\n]" t name (font-lock-function-name-face . 3))
 	(("if" "begin" "ahead" "do" "?do" "+do" "u+do" "-do" "u-do" "for" 
 	  "case" "of" "?dup-if" "?dup-0=-if" "then" "endif" "until"
@@ -325,8 +325,10 @@ PARSED-TYPE specifies what kind of text is parsed. It should be on of 'name',
 	 "[ \t\n]" t name (font-lock-variable-name-face . 3))
 
 	(("create" "variable" "constant" "cvariable" "buffer:" "2variable" "2constant" "fvariable"
-	  "fconstant" "value" "field" "user" "vocabulary" 
-	  "create-interpret/compile" "interpret/compile:")
+	  "fconstant" "value" "2value" "field" "user" "vocabulary" 
+	  "create-interpret/compile" "interpret/compile:"
+	  "debug:" "field:" "2field:" "ffield:" "sffield:" "dffield:"
+	  "uvar" "uvalue" "cfield:" "wfield:" "lfield:")
 	 non-immediate (font-lock-type-face . 2)
 	 "[ \t\n]" t name (font-lock-variable-name-face . 3))
 	("\\S-+%" non-immediate (font-lock-type-face . 2))
@@ -335,9 +337,9 @@ PARSED-TYPE specifies what kind of text is parsed. It should be on of 'name',
 	 "[ \t\n]" t name (font-lock-function-name-face . 3))
 	(("end-struct") non-immediate (font-lock-keyword-face . 2)
 	 "[ \t\n]" t name (font-lock-type-face . 3))
-	(("struct" "end-c-library" "c-library-name") 
+	(("struct" "end-c-library" "c-library-name" "end-structure") 
 	 non-immediate (font-lock-keyword-face . 2))
-	(("c-library") non-immediate (font-lock-keyword-face . 2)
+	(("c-library" "begin-structure") non-immediate (font-lock-keyword-face . 2)
 	 "[ \t\n]" t name (font-lock-variable-name-face . 3))
 	(("c-variable") non-immediate (font-lock-type-face . 1)
 	 "[ \t\n]" t name (font-lock-function-name-face . 3)
@@ -357,8 +359,10 @@ PARSED-TYPE specifies what kind of text is parsed. It should be on of 'name',
 	 "[\n]" nil string (font-lock-string-face . 1))
 	("-?[0-9]+\\(\\.[0-9]*e\\(-?[0-9]+\\)?\\|\\.?[0-9a-f]*\\)" 
 	 immediate (font-lock-constant-face . 3))
-	("-?\\([&#][0-9]+\\|\\(0x\\|\\$\\)[0-9a-f]+\\|%[01]+\\)"
+	("-?\\([&#][0-9]+\\|\\(0x\\|\\$\\)[0-9a-f.]+\\|%[01]+\\)"
 	 immediate (font-lock-constant-face . 3))
+	("[a-z\-0-9]+(" immediate (font-lock-comment-face . 1)
+	 ")" nil comment (font-lock-comment-face . 1))
 	))
 
 (defvar forth-use-objects nil 
@@ -467,16 +471,16 @@ INDENT1 and INDENT2 are indentation specifications of the form
 	  "[if]" "[ifdef]" "[ifundef]" "[begin]" "[for]" "[do]" "[?do]" "[:")
 	 (0 . 2) (0 . 2))
 	((":" ":noname" "code" "abi-code" "struct" "m:" ":m" "class" 
-	  "interface" "c-library" "c-library-name" "comp:" "post:")
+	  "interface" "c-library" "c-library-name" "comp:" "post:" "begin-structure")
 	 (0 . 2) (0 . 2) non-immediate)
 	("\\S-+%$" (0 . 2) (0 . 0) non-immediate)
 	((";" ";m") (-2 . 0) (0 . -2))
 	(("again" "then" "endif" "endtry" "endcase" "end-case" "endof" 
 	  "[then]" "[endif]" "[loop]" "[+loop]" "[next]" 
-	  "[until]" "[again]" "loop" ";]")
+	  "[until]" "[again]" "loop" ";]" "nope")
 	 (-2 . 0) (0 . -2))
 	(("end-code" "end-class" "end-interface" "end-class-noname" 
-	  "end-interface-noname" "end-struct" "class;" "end-c-library")
+	  "end-interface-noname" "end-struct" "class;" "end-c-library" "end-structure")
 	 (-2 . 0) (0 . -2) non-immediate)
 	(("protected" "public" "how:") (-1 . 1) (0 . 0) non-immediate)
 	(("+loop" "-loop" "until") (-2 . 0) (-2 . 0))
@@ -783,8 +787,9 @@ End:\" construct).")
 ;;;
 (defvar forth-defining-words 
   '("VARIABLE" "CONSTANT" "CVARIABLE" "BUFFER:" "2VARIABLE" "2CONSTANT" "FVARIABLE" "FCONSTANT"
-   "USER" "VALUE" "field" "end-struct" "VOCABULARY" "CREATE" ":" "CODE"
-   "DEFER" "ALIAS" "interpret/compile:")
+   "USER" "VALUE" "2Value" "field" "end-struct" "VOCABULARY" "CREATE" ":" "CODE"
+   "DEFER" "ALIAS" "interpret/compile:" "debug:" "field:" "2field:" "ffield:"
+   "sffield:" "dffield:" "uvar" "uvalue")
   "List of words, that define the following word.
 Used for imenu index generation.")
 

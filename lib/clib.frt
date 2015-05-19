@@ -36,7 +36,6 @@
 \ 
 \ Debugging aid: "events" lists the execution pending xt-s.
 \ 
-\ #include _local.frt
 \ #include erase.frt
 \ #include structures.frt
 \ #include buffer.frt

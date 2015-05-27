@@ -1,18 +1,18 @@
 ;;; usart receiver interrupt service
 
-	.set pc_ = pc
-	.org URXCaddr
-	jmp_ usart_rx_isr
-	.org pc_
+	.set	pc_ = pc
+	.org	URXCaddr
+	jmp_	usart_rx_isr
+	.org	pc_
 
 #ifdef RXR_SIZE
 	.equ 	USART_RX_SIZ = RXR_SIZE	;must be a power of 2
 #else
-	.equ USART_RX_SIZ = 16
+	.equ 	USART_RX_SIZ = 16
 #endif
-	.equ USART_RX_MSK = USART_RX_SIZ - 1
-	.equ USART_RX_OFF = USART_RX_SIZ - 2 ;≤ cnt: CTS_OFF 
-	.equ USART_RX_ONN = USART_RX_SIZ / 2 ;≥ cnt: CTS_ON  
+	.equ 	USART_RX_MSK = USART_RX_SIZ - 1
+	.equ 	USART_RX_OFF = USART_RX_SIZ - 2 ;≤ cnt: CTS_OFF 
+	.equ 	USART_RX_ONN = USART_RX_SIZ / 2 ;≥ cnt: CTS_ON  
 	
 	.IF	USART_RX_SIZ > 256
 	.MESSAGE 256 is largest buffer

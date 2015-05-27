@@ -3,7 +3,7 @@
 	.set pc_ = pc
 	.org URXCaddr
 	jmp_ usart_rx_isr
-.	org pc_
+	.org pc_
 
 #ifdef RXR_SIZE
 	.equ 	USART_RX_SIZ = RXR_SIZE	;must be a power of 2

@@ -15,8 +15,8 @@ VE_TWOMINUS:
     .dw VE_HEAD
     .set VE_HEAD = VE_TWOMINUS
 XT_TWOMINUS:
-    _pfa_
+    .dw PFA_CELLMINUS
 ;
 PFA_CELLMINUS:	
-  sbiw	tosl, CELLSIZE
-  jmp_	DO_NEXT
+	sbiw	tosl, CELLSIZE
+	jmp_	DO_NEXT

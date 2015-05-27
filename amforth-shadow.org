@@ -100,9 +100,9 @@ nested.
      c!~. The higher byte, if non-zero, indicates having the soft
      interrupts inhibited.
 
-** Enhancement
+** Soft ISR Enhancements
 
-lib/clib.frt enhances the effectiveness of soft ISRs by introducing delayed
+lib/clib.frt enhances the effectiveness of ISRs by introducing delayed
 execution words. See elist ( delay value xt -- error-flag ), etc.  An ISR,
 for instance, before it ends can schedule continued activity after a
 desired number of milliseconds.
@@ -197,11 +197,11 @@ all. Also note that RTS requires an edge sensitive interrupt input.
 .set WANT_ISR_RX = 1	;interrupt driven receive
 .set WANT_ISR_TX = 1	;interrupt driven transmit
 
-#define RXR_SIZE 32	;= 2⁵ receive queue size
-#define TXR_SIZE 64	;= 2⁶ transmit queue size
+#define RXR_SIZE 32	;receive queue size (2ˣ ≤ 128)
+#define TXR_SIZE 100	;transmit queue size
 #+END_EXAMPLE
 
-Overrides the default 16/16 character I/O buffer
+Overrides the default 16/64 character I/O buffer
 	
 #+BEGIN_EXAMPLE
 #define CTS_ENABLE	;input queue gate
@@ -240,15 +240,21 @@ drivers/usart-isr-rx.asm if you need different ON/OFF levels.
 .macro IS_RTS_OFF
   sbis PINE, 6	;skip if RTS is OFF
 .endmacro
+.macro IS_RTS_ON
+ sbic	PINE, 6		;skip if RTS is ON
+.endmacro
 #+END_EXAMPLE
 
 The RTS mechanism enables the host computer to control AmForth output
-characaters rate.
+characters rate.
 
 #+BEGIN_EXAMPLE
 #define DTR_ENABLE
 .macro IS_DTR_OFF
-  sbic PINE, 7		;skip if DTR is OFF
+  sbic PINE, 7	;skip if DTR is OFF
+.endmacro
+.macro IS_DTR_ON
+  sbis PINE, 7	;skip if DTR is ON
 .endmacro
 #+END_EXAMPLE
 

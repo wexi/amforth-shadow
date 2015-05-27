@@ -15,9 +15,9 @@ VE_TWOPLUS:
     .dw VE_HEAD
     .set VE_HEAD = VE_TWOPLUS
 XT_TWOPLUS:
-    _pfa_
+    .dw PFA_CELLPLUS
 ;	
 PFA_CELLPLUS:
-    adiw tosl, CELLSIZE
-    jmp_ DO_NEXT
+	adiw 	tosl, CELLSIZE
+	jmp_ 	DO_NEXT
 

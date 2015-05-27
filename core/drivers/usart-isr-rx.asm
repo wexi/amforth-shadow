@@ -14,19 +14,19 @@
 	.equ 	USART_RX_OFF = USART_RX_SIZ - 2 ;≤ cnt: CTS_OFF 
 	.equ 	USART_RX_ONN = USART_RX_SIZ / 2 ;≥ cnt: CTS_ON  
 	
-	.IF	USART_RX_SIZ > 256
-	.MESSAGE 256 is largest buffer
+	.IF	USART_RX_SIZ > 128
+	.MESSAGE 128 is largest buffer
 	.ENDIF
 	
 	.dseg
 usart_rx_inp:
-	.byte 1
+	.byte 	1
 usart_rx_out:
-	.byte 1
+	.byte 	1
 usart_rx_cnt:
-	.byte 1
+	.byte 	1
 usart_rx_dat:
-	.byte USART_RX_SIZ
+	.byte 	USART_RX_SIZ
 
 	.cseg
 usart_rx_isr:
@@ -58,9 +58,7 @@ usart_rx_isr_store:
 	adc	zh, zeroh
 	st	z, xh
 	inc	xl
-	.IF	USART_RX_MSK < 255
 	andi	xl, USART_RX_MSK
-	.ENDIF
 	sts	usart_rx_inp, xl
 
 usart_rx_isr_done:
@@ -78,22 +76,26 @@ VE_RXQ_ISR:
 	.db 	"rxq-isr",0
 	.dw 	VE_HEAD
 	.set 	VE_HEAD = VE_RXQ_ISR
-XT_RXQ_ISR: _pfa_
+XT_RXQ_ISR:
+	.dw 	PFA_RXQ_ISR
+PFA_RXQ_ISR:		
 	savetos
 	lds	tosl, usart_rx_cnt
 	clr	tosh
 #ifdef	CTS_ENABLE
 	IS_CTS_OFF
-	rjmp	RXQ_ISR		;already ON 
+	rjmp	PFA_RXQ_ISR1	;already ON 
 	cpi	tosl, USART_RX_ONN + 1
-	brsh	RXQ_ISR
+	brsh	PFA_RXQ_ISR1
 	CTS_ON			;cnt ≤ USART_RX_ONN
 #endif
-RXQ_ISR:
+PFA_RXQ_ISR1:
 	jmp_	DO_NEXT
 	
 ; ( -- c ) assuming the queue is not empty!
-XT_RXR_ISR: _pfa_
+XT_RXR_ISR:
+	.dw	PFA_RXR_ISR	
+PFA_RXR_ISR:	
 	savetos
 	lds	temp0, usart_rx_out
 	ldiw	z, usart_rx_dat
@@ -102,9 +104,7 @@ XT_RXR_ISR: _pfa_
 	ld	tosl, z
 	clr	tosh
 	inc	temp0
-	.IF	USART_RX_MSK < 255
 	andi	temp0, USART_RX_MSK
-	.ENDIF
 	sts	usart_rx_out, temp0
 
 	in	temp0, SREG	;uninterruptible count dec
@@ -116,7 +116,9 @@ XT_RXR_ISR: _pfa_
 	jmp_	DO_NEXT
 
 ; called by +usart
-XT_USART_INIT_RX_ISR: _pfa_
+XT_USART_INIT_RX_ISR:
+	.dw	PFA_USART_INIT_RX_ISR
+PFA_USART_INIT_RX_ISR:	
 	in	temp0, SREG
 	cli
 	sts	usart_rx_inp, zerol

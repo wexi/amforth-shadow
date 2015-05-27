@@ -1,6 +1,6 @@
 \ -*- Mode: Forth; Coding: utf-8 -*-
 
-\ Copyright (c) 2015 Energy Measurement & Control, NJ, USA.
+\ Copyright © 2015 Energy Measurement & Control, NJ, USA.
 \ Redistribution: FreeBSD License.
 
 \ Wordlist scope that puts words with underscore (_) prefix

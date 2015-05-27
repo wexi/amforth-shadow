@@ -22,6 +22,7 @@
 
   .def temp0 = r16
   .def temp1 = r17
+	
   .def temp2 = r18
   .def temp3 = r19
 
@@ -34,10 +35,6 @@
   .def wl = r22
   .def wh = r23
 
-.macro _pfa_			;ijmp target is next word
-  .dw	pc + 1
-.endmacro
-	
 .macro loadtos
     ld tosl, Y+
     ld tosh, Y+
@@ -49,8 +46,18 @@
 .endmacro
 
 .macro ldiw
-  ldi	@0l,low(@1)
-  ldi	@0h,high(@1)
+  ldi	@0l, low(@1)
+  ldi	@0h, high(@1)
+.endm
+
+.macro ldsw
+  lds	@0l, @1+0
+  lds	@0h, @1+1
+.endm
+
+.macro stsw
+  sts	@0+0, @1l
+  sts	@0+1, @1h
 .endm
 	
 .macro in_

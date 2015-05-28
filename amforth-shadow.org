@@ -107,6 +107,9 @@ execution words. See elist ( delay value xt -- error-flag ), etc.  An ISR,
 for instance, before it ends can schedule continued activity after a
 desired number of milliseconds.
 
+lib/mite.frt protects text output that is enclosed by ~.{~ and ~.}~ from
+interruption by other ISRs.
+
 ** Compatibility
 
 ISRs should be regular Forth colon definitions.
@@ -114,7 +117,7 @@ ISRs should be regular Forth colon definitions.
 ** Limitation
 
 If you are not using USART CTS, see [[handshake]], it is recommended to turn
-interrupts off (~int-~) when compiling new code.
+the soft interrupts off (~int-~) when compiling new code.
 
 ** Implementation
 

@@ -13,8 +13,8 @@ decimal
 (
 2 constant STX
 3 constant ETX
-7 constant ITEMNEST
-256 constant ITEMBUFF
+7 constant MITENEST
+256 constant MITEBUFF
 )
 
 : .{  STX emit  ;
@@ -27,13 +27,13 @@ decimal
 \ Suggestion:
 \ Use lib/_local.frt to reduce the #include library names clutter.
 
-ITEMBUFF buffer: _tbuff
-ITEMNEST 1+ cells buffer: _tpntr	\ i/o pointers
+MITEBUFF buffer: _tbuff
+MITENEST 1+ cells buffer: _tpntr	\ i/o pointers
 variable _tnest				\ .{ nesting .} level
 
 \ valid nesting level?
 : _nest?  ( -- flag )
-   _tnest @ 1 [ ITEMNEST 1+ ]l within
+   _tnest @ 1 [ MITENEST 1+ ]l within
 ;
 
 \ highest nesting start address
@@ -43,7 +43,7 @@ variable _tnest				\ .{ nesting .} level
 
 \ next buffer address
 : _naddr  ( addr -- addr' )
-   1+ dup [ _tbuff ITEMBUFF + ]l =  if
+   1+ dup [ _tbuff MITEBUFF + ]l =  if
       drop _tbuff
    then
 ;

@@ -17,7 +17,9 @@ PFA_DO_STOREI_NRWW:
 	rjmp	PFA_DO_STOREI
 	cpse	temp1, temp3
 	rjmp	PFA_DO_STOREI
-	jmp_ 	DO_NEXT		;need not change flash cell
+	loadtos			;need not change flash cell
+	loadtos
+	jmp_ 	DO_NEXT
 ;
 PFA_DO_STOREI:
 	

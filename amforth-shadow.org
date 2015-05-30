@@ -276,12 +276,12 @@ removed.
 It is recommended to include the lib/_local.frt ("also") wordlist-scope and
 remove it after use from the search order ("previous") ...
 
-* A lazy man locals implementation (aka three greek locals)
+* A lazy man locals implementation (aka three Greek locals)
 
 words/greek.asm uses the AVR VM otherwise unused [fn:2] registers ah:al
 (r7:r6) "α", bh:bl (r9:r8) "β" and ch:cl (r11:r10) "γ" to create three
-Forth greek alphbet named locals. Here is an example where "(3)" is
-responsibile for initializing the locals from the stack. Use "(2)" or "(1)"
+Forth Greek alphabet named locals. Here is an example where "(3)" is
+responsible for initializing the locals from the stack. Use "(2)" or "(1)"
 if your word is using two locals ("α" "β") or just one ("α").
 
 #+CAPTION: Functionality Test

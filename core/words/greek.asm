@@ -1,5 +1,5 @@
-;;; AmForth-Shadow lib/greek.asm
-;;; A lazy man "locals", aka three greek locals. Example:
+;;; AmForth-Shadow core/words/greek.asm
+;;; A lazy man "locals", aka three Greek locals. Example:
 	
 ;;; : sort  ( α=addr β=length γ=order -- )  (3)  \ loads three locals from stack
 ;;; Your-Favorite-Algorithm-Using-Greek-Alphabet-Named-Locals  ;
@@ -77,7 +77,7 @@ PFA_GREEKX:
 	pop	ch
 	dec	dl
 PFA_GREEKY:
-	inc	dl		;dl ← 0, greek locals restored too
+	inc	dl		;dl ← 0, Greek locals restored too
 	pop	xl		;normal exit
 	pop	xh
 	jmp_	DO_NEXT

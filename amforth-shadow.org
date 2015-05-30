@@ -200,7 +200,7 @@ all. Also note that RTS requires an edge sensitive interrupt input.
 .set WANT_ISR_RX = 1	;interrupt driven receive
 .set WANT_ISR_TX = 1	;interrupt driven transmit
 
-#define RXR_SIZE 32	;receive queue size (2ˣ ≤ 128)
+#define RXR_SIZE 80	;receive queue size (< 256)
 #define TXR_SIZE 100	;transmit queue size
 #+END_EXAMPLE
 
@@ -275,6 +275,16 @@ removed.
 
 It is recommended to include the lib/_local.frt wordlist-scope and remove
 it after use from the search order...
+
+* (a lazy man) locals
+
+words/greek.asm uses the AVR registers ah:al (r7:r6), .. , dh:dl (r13:r12)
+as Forth locals. The following example uses three (out of the four
+available) greek alphabet named locals. "(3)" loads the locals from stack.
+
+#+BEGIN_EXAMPLE
+: sort  ( α=addr β=length γ=order -- ) (3) your-favorite-sort-algo ;
+#+END_EXAMPLE
 
 * General purpose new words
 
@@ -374,8 +384,7 @@ the number of rewrites. Hence:
 
 + buffer: ( n "name" -- ) :: Allocates n-bytes, not n-words (aka cells).
 
-*end-case* is an *endcase* alternative where the switch value is
-preserved.
++ end-case :: An *endcase* alternative where the switch value is preserved.
 
 * Cookbook
 

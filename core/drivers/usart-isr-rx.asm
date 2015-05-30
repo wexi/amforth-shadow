@@ -6,26 +6,25 @@
 	.org	pc_
 
 #ifdef RXR_SIZE
-	.equ 	USART_RX_SIZ = RXR_SIZE	;must be a power of 2
+	.equ 	USART_RX_SIZ = RXR_SIZE
 #else
-	.equ 	USART_RX_SIZ = 16
+	.equ 	USART_RX_SIZ = 80
 #endif
-	.equ 	USART_RX_MSK = USART_RX_SIZ - 1
-	.equ 	USART_RX_OFF = USART_RX_SIZ - 2 ;≤ cnt: CTS_OFF 
-	.equ 	USART_RX_ONN = USART_RX_SIZ / 2 ;≥ cnt: CTS_ON  
-	
-	.IF	USART_RX_SIZ > 128
-	.MESSAGE 128 is largest buffer
+	.IF	USART_RX_SIZ > 255
+	.MESSAGE 255 is largest buffer
 	.ENDIF
 	
+	.equ 	USART_RX_OFF = USART_RX_SIZ - 4 ;CTS_OFF 
+	.equ 	USART_RX_ONN = USART_RX_SIZ / 2 ;CTS_ON  
+	
 	.dseg
-usart_rx_inp:
+usart_rx_inp:			;buffer input index
 	.byte 	1
-usart_rx_out:
+usart_rx_out:			;buffer output index
 	.byte 	1
-usart_rx_cnt:
+usart_rx_cnt:			;buffer capacity
 	.byte 	1
-usart_rx_dat:
+usart_rx_buf:			;buffer
 	.byte 	USART_RX_SIZ
 
 	.cseg
@@ -33,37 +32,43 @@ usart_rx_isr:
 	push 	xl
 	in 	xl, SREG
 	push 	xl
+	lds	xl, USART_DATA	;new character input
 	push 	xh
-	push 	zl
-	push 	zh
 
-	lds	xh, USART_DATA	;clears interrupt
-	lds	xl, usart_rx_cnt
-
+#ifdef	DTR_ENABLE
+	IS_DTR_ON
+	rjmp	usart_rx_done	;terminal is down
+#endif
+	
+	lds	xh, usart_rx_cnt
 #ifdef	CTS_ENABLE
-	cpi	xl, USART_RX_OFF - 1
-	brlo	usart_rx_isr_store
+	cpi	xh, USART_RX_OFF - 1
+	brlo	usart_rx_store
 	CTS_OFF
 #endif
-
-usart_rx_isr_store:
-	cpi	xl, USART_RX_SIZ
-	brsh	usart_rx_isr_done ;overflow?
-	inc	xl
-	sts	usart_rx_cnt, xl
+usart_rx_store:
+	cpi	xh, USART_RX_SIZ
+	brsh	usart_rx_done	;buffer overflow?
+	inc	xh
+	sts	usart_rx_cnt, xh
 	
-	lds	xl, usart_rx_inp
-	ldiw	z, usart_rx_dat
-	add	zl, xl
+	push 	zl
+	push 	zh
+	lds	xh, usart_rx_inp
+	ldiw	Z, usart_rx_buf
+	add	zl, xh
 	adc	zh, zeroh
-	st	z, xh
-	inc	xl
-	andi	xl, USART_RX_MSK
-	sts	usart_rx_inp, xl
-
-usart_rx_isr_done:
+	st	Z, xl		;new char into buffer
+	inc	xh
+	cpi	xh, USART_RX_SIZ
+	brlo	usart_rx_wrap
+	clr	xh
+usart_rx_wrap:
+	sts	usart_rx_inp, xh
 	pop	zh
 	pop	zl
+
+usart_rx_done:
 	pop	xh
 	pop	xl
 	out	SREG, xl
@@ -80,16 +85,16 @@ XT_RXQ_ISR:
 	.dw 	PFA_RXQ_ISR
 PFA_RXQ_ISR:		
 	savetos
+	mov	tosh, zeroh
 	lds	tosl, usart_rx_cnt
-	clr	tosh
+	
 #ifdef	CTS_ENABLE
+	cpse	tosl,zerol
+	jmp_	DO_NEXT
 	IS_CTS_OFF
-	rjmp	PFA_RXQ_ISR1	;already ON 
-	cpi	tosl, USART_RX_ONN + 1
-	brsh	PFA_RXQ_ISR1
-	CTS_ON			;cnt ≤ USART_RX_ONN
+	jmp_	DO_NEXT
+	CTS_ON			;rescue
 #endif
-PFA_RXQ_ISR1:
 	jmp_	DO_NEXT
 	
 ; ( -- c ) assuming the queue is not empty!
@@ -98,13 +103,16 @@ XT_RXR_ISR:
 PFA_RXR_ISR:	
 	savetos
 	lds	temp0, usart_rx_out
-	ldiw	z, usart_rx_dat
+	ldiw	z, usart_rx_buf
 	add 	zl, temp0
 	adc	zh, zeroh
-	ld	tosl, z
+	ld	tosl, Z
 	clr	tosh
 	inc	temp0
-	andi	temp0, USART_RX_MSK
+	cpi	temp0, USART_RX_SIZ
+	brlo	PFA_RXR_ISR1
+	clr	temp0
+PFA_RXR_ISR1:
 	sts	usart_rx_out, temp0
 
 	in	temp0, SREG	;uninterruptible count dec
@@ -112,6 +120,12 @@ PFA_RXR_ISR:
 	lds	temp1, usart_rx_cnt
 	dec	temp1
 	sts	usart_rx_cnt, temp1
+#ifdef	CTS_ENABLE
+	cpi	temp1, USART_RX_ONN
+	brsh	PFA_RXR_ISR2
+	CTS_ON
+PFA_RXR_ISR2:
+#endif	
 	out	SREG, temp0  
 	jmp_	DO_NEXT
 

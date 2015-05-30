@@ -8,7 +8,7 @@
 #ifdef TXR_SIZE
 	.equ 	USART_TX_SIZ = TXR_SIZE
 #else
-	.equ 	USART_TX_SIZ = 64
+	.equ 	USART_TX_SIZ = 100
 #endif
 
 	.dseg
@@ -26,48 +26,43 @@ usart_tx_isr:
 	push	xl
 	in 	xl, SREG
 	push 	xl
-	push	xh
-	push 	zl
-	push 	zh
+	
+	lds	xl, USART_B	;disable transmit empty interrupts
+	cbr	xl, bm_ENABLE_INT_TX
+	sts	USART_B, xl
+	sei			;now safe
 
+	push	xh
 	ldsw	X, usart_tx_cnt
 	sbiw	xh:xl, 1
-	
 #ifdef	RTS_ENABLE
-	IS_RTS_OFF		;skip next instruction if RTS is OFF
+	IS_RTS_ON		;skip next instruction if RTS is ON
+	sec
 #endif
-	brsh	usart_udre_next
-
-usart_udre_halt:
-	lds	zl, USART_B	;disable transmit empty interrupts
-	cbr	zl, bm_ENABLE_INT_TX
-	sts	USART_B, zl
-	rjmp 	usart_udre_exit
-
-#ifdef	RTS_ENABLE
-usart_udre_resume:
-	lds 	zl, USART_B
-	sbr 	zl, bm_ENABLE_INT_TX
-	sts 	USART_B, zl
-#endif
-
-usart_udre_next:
+	brlo	usart_tx_exit
 	stsw	usart_tx_cnt, X
 	
+	push 	zl
+	push 	zh
 	ldsw	Z, usart_tx_out
 	ld	xl, Z+
 	sts	USART_DATA, xl
 	cpi	zl, low(usart_tx_buf+USART_TX_SIZ)
-	brne	usart_udre_wrap
+	brne	usart_tx_wrap
 	cpi	zh, high(usart_tx_buf+USART_TX_SIZ)
-	brne	usart_udre_wrap
+	brne	usart_tx_wrap
 	ldiw	Z, usart_tx_buf
-usart_udre_wrap:	
+usart_tx_wrap:	
 	stsw	usart_tx_out, Z
-
-usart_udre_exit:
 	pop 	zh
 	pop 	zl
+
+usart_tx_resume:
+	lds 	xl, USART_B
+	sbr 	xl, bm_ENABLE_INT_TX
+	sts 	USART_B, xl
+
+usart_tx_exit:
 	pop	xh
 	pop 	xl
 	out 	SREG,xl
@@ -80,13 +75,11 @@ usart_rts_isr:			;RTS OFF→ON
 	in 	xl, SREG
 	push 	xl
 	push	xh
-	push 	zl
-	push 	zh
 
 	ldsw	X, usart_tx_cnt
 	sbiw	xh:xl, 1
-	brsh	usart_udre_resume
-	rjmp	usart_udre_exit
+	brsh	usart_tx_resume
+	rjmp	usart_tx_exit
 #endif	
 
 ; ( -- n ) return the number of char places in queue or -1 if the DTR is OFF

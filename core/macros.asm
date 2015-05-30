@@ -8,32 +8,33 @@
   .def upl = r4
   .def uph = r5
 
-  .def al  = r6
-  .def ah  = r7
-  .def bl  = r8
-  .def bh  = r9
+  .def al = r6			;see lazy man 4 locals: words/greek.asm
+  .def ah = r7
+  .def bl = r8
+  .def bh = r9
+  .def cl = r10
+  .def ch = r11
+  .def dl = r12
+  .def dh = r13
 
 ; internal
-  .def mcu_boot      = r10
-  .def erase_counter = r11
-
-  .def temp4 = r14
-  .def temp5 = r15
-
   .def temp0 = r16
   .def temp1 = r17
 	
   .def temp2 = r18
   .def temp3 = r19
 
-  .def temp6 = r20
-  .def temp7 = r21
+  .def temp4 = r20
+  .def temp5 = r21
 
-  .def tosl = r24
-  .def tosh = r25
+  .def temp6 = r14		;cannot ldi
+  .def temp7 = r15		;cannot ldi
 
   .def wl = r22
   .def wh = r23
+
+  .def tosl = r24
+  .def tosh = r25
 
 .macro loadtos
     ld tosl, Y+

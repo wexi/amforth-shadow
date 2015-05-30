@@ -273,18 +273,31 @@ be changed in the process. For example, all the words which begin with
 "gl-" can be added to a separate graphics word-list with the "gl-" prefix
 removed.
 
-It is recommended to include the lib/_local.frt wordlist-scope and remove
-it after use from the search order...
+It is recommended to include the lib/_local.frt ("also") wordlist-scope and
+remove it after use from the search order ("previous") ...
 
-* (a lazy man) locals
+* A lazy man locals implementation (aka three greek locals)
 
-words/greek.asm uses the AVR registers ah:al (r7:r6), .. , dh:dl (r13:r12)
-as Forth locals. The following example uses three (out of the four
-available) greek alphabet named locals. "(3)" loads the locals from stack.
+words/greek.asm uses the AVR VM otherwise unused [fn:2] registers ah:al
+(r7:r6) "α", bh:bl (r9:r8) "β" and ch:cl (r11:r10) "γ" to create three
+Forth greek alphbet named locals. Here is an example where "(3)" is
+responsibile for initializing the locals from the stack. Use "(2)" or "(1)"
+if your word is using two locals ("α" "β") or just one ("α").
 
+#+CAPTION: Functionality Test
 #+BEGIN_EXAMPLE
-: sort  ( α=addr β=length γ=order -- ) (3) your-favorite-sort-algo ;
+: test1 (3)  α . β . γ .  ;
+: test2 (3)  α . β . γ . α 1+ β 1+ γ 1+ test1 α . β . γ .  ;
+> 1 2 3 test2 
+1 2 3 2 3 4 1 2 3  ok
 #+END_EXAMPLE
+
+#+CAPTION: Typical use
+#+BEGIN_EXAMPLE
+: sort  ( α=addr β=length γ=order -- ) (3) your-favorite-sort-algorithm ;
+#+END_EXAMPLE
+
+Note: AmForth-Shadow supports UTF-8 dictionary names.
 
 * General purpose new words
 
@@ -494,6 +507,10 @@ For more information see tools/amforth-shell.py beginning comments.
      reach full usefulness.
 
 * Footnotes
+
+[fn:2] The Shadow believes that [[http://www.complang.tuwien.ac.at/anton/euroforth/ef08/papers/pelc.pdf][MPE VM extension]], which HQ adopted, would
+never make it into the standard for being too "C"-ish. That's not the case
+with locals...
 
 [fn:1] Forth is an old language, no one with less than 20 years of Forth
 programming experience counts :-)

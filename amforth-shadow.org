@@ -332,6 +332,8 @@ Note: AmForth-Shadow supports UTF-8 dictionary names.
 
 - 4* :: [ASM] Unsigned multiplication by 4.
 
+- 10* :: [ASM] Unsigned multiplication by 10.
+
 - -! ( w addr -- ) :: [ASM] Subtracts w from addressed word.
 
 - || ( HL -- L H ) :: [ASM] Split a word bytes.

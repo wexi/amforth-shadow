@@ -38,8 +38,8 @@
 # significant dictionary space and obfuscate the resulting Forth code.
 #
 # Step 1: Invoke the shell with one or more -c (--create) arguments:
-# -c <vocabulary1> -c <vocabulary2> etc. This would create a file
-# of the appended word-lists; the file name is appl.dic.
+# -c <vocabulary1> -c <vocabulary2> etc. This would create a file with the
+# words listed in random order; the file name is appl.dic.
 #
 # Step 2: Invoke the shell with the argument -C (--conceal) to
 # substitute in the next compilation session the names of the words in
@@ -282,6 +282,7 @@ import subprocess
 import sys
 import fcntl
 import traceback
+from random import shuffle
 
 class AmForthException(Exception):
     pass
@@ -618,8 +619,8 @@ class AmForth(object):
             fp = open("appl.dic", "r")
             frt = fp.read()
             fp.close()
-            wl = eval(frt)
-            for wn, wd in enumerate(wl):
+            words = eval(frt)
+            for wn, wd in enumerate(words):
                 self._appl_defs[wd] = "^^" + encode(wn)
 
         try:
@@ -646,9 +647,10 @@ class AmForth(object):
                 if self._create:
                     self.send_line(" ".join(self._create) + " %d my-words" % len(self._create))
                     response = self.read_response()
-                    words = set(response[:-4].split(" "))
+                    words = list(set(response[:-4].split(" ")))
+                    shuffle(words);
                     fp = file("appl.dic", "w")
-                    fp.write(repr(tuple(words)))
+                    fp.write(repr(words))
                     fp.close()
                     print "\nappl.dic file created with %d entries" % len(words),
 

@@ -284,6 +284,8 @@ import fcntl
 import traceback
 from random import shuffle
 
+Greek = re.compile(r'\s\{\s+((\S+\s+){1,3})(--.*)?\}\s')
+
 class AmForthException(Exception):
     pass
 
@@ -555,6 +557,8 @@ class AmForth(object):
             ad_def = {}
         self.progress_callback("Information", None, "appl_defs: %d loaded" % len(ad_def))
         self._appl_defs = ad_def
+
+        self._greeks = {}
 
     @property
     def serial_port(self):
@@ -952,6 +956,18 @@ additional definitions (e.g. register names)
         in_line_comment = False
         directive = None
         directive_arg = []
+
+        # see core/words/greek.asm locals implementation
+        local = Greek.search(line)
+        if local:
+            locals = local.group(1)
+            locals = locals.split(' ')
+            locals.pop()
+            count = len(locals)
+            line = line[:local.start()] + " ({0}) ".format(count) + line[local.end():]
+            for iw, w in enumerate(locals):
+                self._greeks[w] = '\xCE' + chr(0xB1+iw) # utf-8 alpha, beta or gamma
+
         words = self._split_space_or_tab(line)
         for iw,w in enumerate(words):
             if in_string:
@@ -976,7 +992,11 @@ additional definitions (e.g. register names)
 
             if not w:
                 continue
-            if w in self._appl_defs:
+            if w == ';':
+                self._greeks.clear()
+            elif w in self._greeks:
+                w = self._greeks[w]
+            elif w in self._appl_defs:
                 w = self._appl_defs[w]
             elif w in self._amforth_regs:
                 w = self._amforth_regs[w]

@@ -278,26 +278,32 @@ remove it after use from the search order ("previous") ...
 
 * A lazy man locals implementation (aka three Greek locals)
 
-words/greek.asm uses the AVR VM otherwise unused [fn:2] registers ah:al
-(r7:r6) "α", bh:bl (r9:r8) "β" and ch:cl (r11:r10) "γ" to create three
-Forth Greek alphabet named locals. Here is an example where "(3)" is
-responsible for initializing the locals from the stack. Use "(2)" or "(1)"
-if your word is using two locals ("α" "β") or just one ("α").
+Examine core/words/greek.asm – a limited yet _fast_ locals
+implementation. Learn by example:
 
-#+CAPTION: Functionality Test
 #+BEGIN_EXAMPLE
-: test1 (3)  α . β . γ .  ;
-: test2 (3)  α . β . γ . α 1+ β 1+ γ 1+ test1 α . β . γ .  ;
-> 1 2 3 test2 
-1 2 3 2 3 4 1 2 3  ok
+: div (2) α β / ;   \ 1st Greek form
+: div (2) \1 \2 / ; \ 2nd form for typing convenience
+4 2 div . 2  ok
 #+END_EXAMPLE
 
-#+CAPTION: Typical use
+Using tools/amforth-shell.py the traditional syntax:
 #+BEGIN_EXAMPLE
-: sort  ( α=addr β=length γ=order -- ) (3) your-favorite-sort-algorithm ;
+: div { numerator denominator -- quotient } numerator denominator / ;
 #+END_EXAMPLE
-
-Note: AmForth-Shadow supports UTF-8 dictionary names.
+would be converted to the above 1st form. _However_, note that outside this
+"div" definition you cannot use these names of convenience!
+	
+Note:
+1. There can be up to 3 locals, their initial value is zero. The locals –
+   *α*, *α β* or *α β γ* – are loaded from the stack via the words *(1)*,
+   *(2)* or *(3)*, respectively. This should be the defined word first
+   action. Upon return to the _calling word_ the values of its locals are
+   restored. Local values can be used by _called words_ if not reloaded.
+2. "to" is not implemented (need to be convinced of its usefulness).
+3. Locals can be used in one task only (the TCB needs to be extended).
+4. It is assumed that registers ah:al bh:bl ch:cl and dl are used by
+   greek.asm only.
 
 * General purpose new words
 

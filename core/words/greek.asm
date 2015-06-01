@@ -1,12 +1,18 @@
 ;;; AmForth-Shadow core/words/greek.asm
+
 ;;; A lazy man "locals", aka three Greek locals. Example:
+;;; : div (2) α β / ;
+;;; : div (2) \1 \2 / ; \ an equivalent form
+;;; 4 2 div . 2  ok
+;;; 
+;;; Using tools/amforth-shell.py you can use the traditional syntax:
+;;; : div { numerator denominator -- quotient } numerator denominator / ;
 	
-;;; : sort  ( α=addr β=length γ=order -- )  (3)  \ loads three locals from stack
-;;; Your-Favorite-Algorithm-Using-Greek-Alphabet-Named-Locals  ;
-	
-;;; Untested: Working under lib/tasks.frt
-;;; Unimplemented: "to"
-;;; Assumed: A B C D are used by words/greek.asm only. 0 init on "reboot".
+;;; Note:
+;;; 1. There can be up to 3 locals
+;;; 2. "to" is not implemented (easy but need to be convinced of its necessity)
+;;; 3. Locals can be used in one task only (need to extend the TCB)
+;;; 4. It is assumed that registers ah:al bh:bl ch:cl & dl are only used by words/greek.asm
 
 ;;; Copyright © 2015 Energy Measurement & Control, NJ, USA. 
 ;;; Redistribution: FreeBSD License.
@@ -117,3 +123,27 @@ PFA_GAMMA:
 	savetos
 	movw 	tosh:tosl, ch:cl
 	jmp_ 	DO_NEXT
+
+VE_ALEF:
+	.dw 	$ff02
+	.db 	"\1"		;α synonym
+	.dw 	VE_HEAD
+	.set 	VE_HEAD = VE_ALEF
+XT_ALEF:
+	.dw 	PFA_ALPHA
+
+VE_BET:
+	.dw 	$ff02
+	.db 	"\2"		;β synonym
+	.dw 	VE_HEAD
+	.set 	VE_HEAD = VE_BET
+XT_BET:
+	.dw PFA_BETA
+
+VE_GIMEL:
+	.dw 	$ff02
+	.db 	"\3"		;γ synonym
+	.dw 	VE_HEAD
+	.set 	VE_HEAD = VE_GIMEL
+XT_GIMEL:
+	.dw 	PFA_GAMMA

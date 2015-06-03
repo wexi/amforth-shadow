@@ -1,5 +1,4 @@
 ; Layout of the user area
-; 
 
 ; used by the multitasker
 .set USER_STATE    = 0
@@ -26,7 +25,13 @@
 .set USER_G_IN    = 24
 .set USER_REFILL  = 26
 
-; task dictionary name
-.set USER_NFA     = 28
+; locals
+.set USER_ALPHA = 28
+.set USER_BETA = 30
+.set USER_GAMMA = 32
+.set USER_DELTA = 34
 
-.set SYSUSERSIZE = 30
+; task dictionary name
+.set USER_NFA     = 35
+
+.set SYSUSERSIZE = 37

@@ -58,6 +58,10 @@
 # to synchronize the memory allocation pointers.
 #
 # ALLWORDS replaces WORDS in #update-words implementation.
+#
+# The shell provides humble support to locals. See core/words/greeks.asm.
+# It would replace : definition { name1 [ name2 [ name3 [ -- comment ]]] }
+# with : definition (3) (2) or (1), with \1 \2 \3 instead of names.
 # 
 # Finally, to activate Python's debugger pass the argument --pdb.
 #
@@ -284,7 +288,7 @@ import fcntl
 import traceback
 from random import shuffle
 
-Greek = re.compile(r'\s\{\s+((\S+\s+){1,3})(--.*)?\}\s')
+Greek = re.compile(r'(\s|^)\{\s+((\S+\s+){1,3})(--.*)?\}(\s|$)')
 
 class AmForthException(Exception):
     pass
@@ -960,13 +964,13 @@ additional definitions (e.g. register names)
         # see core/words/greek.asm locals implementation
         local = Greek.search(line)
         if local:
-            locals = local.group(1)
+            locals = local.group(2)
             locals = locals.split(' ')
             locals.pop()
             count = len(locals)
             line = line[:local.start()] + " ({0}) ".format(count) + line[local.end():]
             for iw, w in enumerate(locals):
-                self._greeks[w] = '\xCE' + chr(0xB1+iw) # utf-8 alpha, beta or gamma
+                self._greeks[w] = "\\{}".format(iw+1) # local names
 
         words = self._split_space_or_tab(line)
         for iw,w in enumerate(words):

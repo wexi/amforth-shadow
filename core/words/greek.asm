@@ -5,14 +5,13 @@
 ;;; : div (2) \1 \2 / ; \ an equivalent form
 ;;; 4 2 div . 2  ok
 ;;; 
-;;; Using tools/amforth-shell.py you can use the traditional syntax:
+;;; Using tools/amforth-shell.py you can use the traditional form:
 ;;; : div { numerator denominator -- quotient } numerator denominator / ;
 	
 ;;; Note:
-;;; 1. There can be up to 3 locals
-;;; 2. "to" is not implemented (easy but need to be convinced of its necessity)
-;;; 3. Locals can be used in one task only (need to extend the TCB)
-;;; 4. It is assumed that registers ah:al bh:bl ch:cl & dl are only used by words/greek.asm
+;;; 1. There can be up to 3 locals.
+;;; 2. "to" is not implemented (necessary?)
+;;; 3. Registers ah:al bh:bl ch:cl & dl should be used with locals only.
 
 ;;; Copyright © 2015 Energy Measurement & Control, NJ, USA. 
 ;;; Redistribution: FreeBSD License.
@@ -58,7 +57,8 @@ PFA_1GREEK:
 	push	al
 	movw	ah:al, tosh:tosl
 	loadtos
-	push	dl
+	inc	dl
+	push	dl		;number of initialized locals
 	ldiw	Z, XT_GREEKS	;restore locals before returning
 	push	zh
 	push	zl
@@ -74,16 +74,15 @@ PFA_GREEKX:
 	pop	al
 	pop	ah
 	dec	dl
-	brmi	PFA_GREEKY
+	breq	PFA_GREEKY
 	pop	bl
 	pop	bh
 	dec	dl
-	brmi	PFA_GREEKY
+	breq	PFA_GREEKY
 	pop	cl
 	pop	ch
-	dec	dl
+	dec	dl		;dl ← 0
 PFA_GREEKY:
-	inc	dl		;dl ← 0, Greek locals restored too
 	pop	xl		;normal exit
 	pop	xh
 	jmp_	DO_NEXT
@@ -99,7 +98,7 @@ PFA_ALPHA:
 	savetos
 	movw tosh:tosl, ah:al
 	jmp_ DO_NEXT
-
+	
 VE_BETA:
 	.dw 	$ff02
 	.db 	"β"
@@ -111,7 +110,7 @@ PFA_BETA:
 	savetos
 	movw 	tosh:tosl, bh:bl
 	jmp_ 	DO_NEXT
-
+	
 VE_GAMMA:
 	.dw 	$ff02
 	.db 	"γ"

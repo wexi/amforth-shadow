@@ -276,34 +276,34 @@ removed.
 It is recommended to include the lib/_local.frt ("also") wordlist-scope and
 remove it after use from the search order ("previous") ...
 
-* A lazy man locals implementation (aka three Greek locals)
+* Lazy man locals implementation (aka three Greek locals)
 
 Examine core/words/greek.asm – a limited yet _fast_ locals
 implementation. Learn by example:
 
 #+BEGIN_EXAMPLE
-: div (2) α β / ;   \ 1st Greek form
-: div (2) \1 \2 / ; \ 2nd form for typing convenience
+: div (2) α β / ;
+: div (2) \1 \2 / ; \ alternative names for typing convenience
 4 2 div . 2  ok
 #+END_EXAMPLE
 
-Using tools/amforth-shell.py the traditional syntax:
+Using the shell (tools/amforth-shell.py) the traditional syntax:
 #+BEGIN_EXAMPLE
 : div { numerator denominator -- quotient } numerator denominator / ;
 #+END_EXAMPLE
-would be converted to the above 1st form. _However_, note that outside this
+would be converted to the above form. _However_, note that outside this
 "div" definition you cannot use these names of convenience!
 	
 Note:
+
 1. There can be up to 3 locals, their initial value is zero. The locals –
-   *α*, *α β* or *α β γ* – are loaded from the stack via the words *(1)*,
-   *(2)* or *(3)*, respectively. This should be the defined word first
-   action. Upon return to the _calling word_ the values of its locals are
-   restored. Local values can be used by _called words_ if not reloaded.
-2. "to" is not implemented (need to be convinced of its usefulness).
-3. Locals can be used in one task only (the TCB needs to be extended).
-4. It is assumed that registers ah:al bh:bl ch:cl and dl are used by
-   greek.asm only.
+   *α*, *α β* or *α β γ* – are loaded from stack via the words *(1)*, *(2)*
+   or *(3)*, respectively. This should be the defined word first
+   action. Upon return to the _calling word_ the values of the calling word
+   locals are restored. Local values can be used by _called words_ if not
+   reloaded.
+
+2. "to" is not implemented.
 
 * General purpose new words
 

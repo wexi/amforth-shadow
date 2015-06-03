@@ -19,7 +19,11 @@
 \  4  rp0  | empty R stack address pointer |
 \  6  sp0  | empty D stack address pointer |
 \  8   sp  | D stack address pointer save  |
-\ 28  nfa  | dictionary nfa                |
+\ 28    α  | 1st local                     |
+\ 30    β  | 2nd local                     |
+\ 32    γ  | 3rd local                     |
+\ 34    #  | locals count                  |
+\ 35  nfa  | dictionary nfa                |
 
 decimal
 
@@ -27,13 +31,12 @@ create task-bypass  ( tid1 -- tid2 )
 ] cell+ @ dup @ >r exit [		\ no ASM since rare
 
 create task-resume  ( tid -- )
-\ ] up! 8 @u sp! rp! int+ [		\ ASM at core/words/swien.asm
+\ restore stack-pointers & locals. see core/words/swien.asm
 ] ..task exit [				\ returns from a task-switch
 
 : task-switch  ( -- tid )     
-   \ int- rp@ sp@ 8 !u			\ save stack pointers,
-   \ 2 @u				\ next task user area:
-   task..				\ asm at core/words/swidi.asm
+\ save locals, stack-pointers & choose next task area:
+   task..				\ see core/words/swidi.asm
    dup @ >r				\ continue as task-bypass or task-resume
 ;
 
@@ -68,7 +71,8 @@ create task-resume  ( tid -- )
    dup task>rp0 2- over task>sp0 2- !	\ R pointer to D stack
    dup task>sp0 2- over task>tid 8 + !	\ D pointer to SP
    up@ 10 + over task>tid 10 + 18 cmove	\ inherit from calling task
-   dup task>nfa swap task>tid 28 + !	\ name pointer
+   dup task>tid 28 + 7 erase		\ initialize locals
+   dup task>nfa swap task>tid 35 + !	\ name pointer
 ;
 
 : tasks-init  ( -- )			\ must be called first!
@@ -110,7 +114,7 @@ create task-resume  ( tid -- )
    begin  ( tid tidₓ )
       dup up@ =  if  [char] *  else  bl  then
       emit				\ * marks current task
-      dup 28 + @ name>string itype	\ dictionary name
+      dup 35 + @ name>string itype	\ dictionary name
       9 emit				\ HT
       dup u.
       dup @ case

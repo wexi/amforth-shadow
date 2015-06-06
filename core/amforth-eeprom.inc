@@ -1,3 +1,4 @@
+; -*- Mode: asm -*-
 ; To reduce EEPROM wear the following three EE pointers have RAM copies:
 	
 EE_DP:
@@ -28,41 +29,45 @@ EE_RECOGNIZERS:
 EE_RECOGNIZERLISTLEN:
     .dw 2
 EE_RECOGNIZERLIST:
-    .dw XT_REC_WORD
-    .dw XT_REC_NUM
-    .byte  (NUMRECOGNIZERS-2)*CELLSIZE ; two slots are already used
+	.dw XT_REC_WORD
+	.dw XT_REC_NUM
+	.byte  (NUMRECOGNIZERS-2)*CELLSIZE ; two slots are already used
 
 EE_WLSCOPE:
-    .dw XT_GET_CURRENT  ; default wordlist scope
+	.dw 	XT_GET_CURRENT  ; default wordlist scope
 
 ; default user area
 EE_INITUSER:
-    .dw 0  ; USER_STATE
-    .dw 0  ; USER_FOLLOWER
-    .dw rstackstart  ; USER_RP0
-    .dw stackstart   ; USER_SP0
-    .dw stackstart   ; USER_SP
-    
-    .dw 0  ; USER_HANDLER
-    .dw 10 ; USER_BASE
-    
-    .dw XT_TX  ; USER_EMIT
-    .dw XT_TXQ ; USER_EMITQ
-    .dw XT_RX  ; USER_KEY
-    .dw XT_RXQ ; USER_KEYQ
-    .dw XT_SOURCETIB ; USER_SKEY
-    .dw 0            ; USER_G_IN
-    .dw XT_REFILLTIB ; USER_REFILL
-
-    .dw VE_MAIN_FETCH; task NFA
+	;; 0..16
+	.dw 	0		; USER_STATE
+	.dw 	0		; USER_FOLLOWER
+	.dw 	rstackstart	; USER_RP0
+	.dw 	stackstart	; USER_SP0
+	.dw 	stackstart	; USER_SP
+	.dw 	0		; \1
+	.dw 	0		; \2
+	.dw 	0		; \3
+	.dw 	0		; (#)
+	;; 18..35
+	.dw 	0		; USER_HANDLER
+	.dw 	10		; USER_BASE
+	.dw 	XT_TX		; USER_EMIT
+	.dw 	XT_TXQ		; USER_EMITQ
+	.dw 	XT_RX		; USER_KEY
+	.dw 	XT_RXQ		; USER_KEYQ
+	.dw 	XT_SOURCETIB	; USER_SKEY
+	.dw 	0		; USER_G_IN
+	.dw 	XT_REFILLTIB	; USER_REFILL
+	;; 36..37
+	.dw 	VE_MAIN_FETCH	; task NFA
 
 ; calculate baud rate error
-.equ UBRR_VAL   = ((F_CPU+BAUD*8)/(BAUD*16)-1)  ; smart round
-.equ BAUD_REAL  = (F_CPU/(16*(UBRR_VAL+1)))     ; effective baud rate
-.equ BAUD_ERROR = ((BAUD_REAL*1000)/BAUD-1000)  ; error in pro mille
+	.equ UBRR_VAL   = ((F_CPU+BAUD*8)/(BAUD*16)-1)  ; smart round
+	.equ BAUD_REAL  = (F_CPU/(16*(UBRR_VAL+1)))     ; effective baud rate
+	.equ BAUD_ERROR = ((BAUD_REAL*1000)/BAUD-1000)  ; error in pro mille
 
 .if ((BAUD_ERROR>BAUD_MAXERROR) || (BAUD_ERROR<-BAUD_MAXERROR))       
-  .error "Serial line cannot be set up properly (systematic baud error too high)"
+	.error "Serial line cannot be set up properly (systematic baud error too high)"
 .endif
 EE_UBRRVAL:
-    .dw UBRR_VAL     ; BAUDRATE
+	.dw 	UBRR_VAL	; BAUDRATE

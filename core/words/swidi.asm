@@ -8,40 +8,62 @@ VE_SWIDI:
 	.set 	VE_HEAD = VE_SWIDI
 XT_SWIDI:
 	.dw	PFA_SWIDI
+
+; lib/tasks.frt helpers
 	
-; ( -- tid ) 
-; Task
-; Saves stacks before leaving task, etc. A lib/tasks.frt helper.
 VE_TASKEX:
 	.dw 	$ff06
 	.db 	"task.."
 	.dw 	VE_HEAD
 	.set 	VE_HEAD = VE_TASKEX
 XT_TASKEX:
-    .dw PFA_TASKEX
-PFA_TASKEX:
-	push	ah		;preserve locals
-	push	al
-	push	bh
-	push	bl
-	push	ch
-	push	cl
-	push	dl
-	savetos
-	in	tosl, SPL
-	in	tosh, SPH
-	savetos
-	movw 	zh:zl, uph:upl
-	std	Z+8, yl
-	std	Z+9, yh
-	ldd	tosl, z+2
-	ldd	tosh, z+3
+	.dw 	PFA_TASKEX
+	
+VE_TASKCONT:
+	.dw 	$ff05
+	.db 	"task.",0
+	.dw 	VE_HEAD
+	.set 	VE_HEAD = VE_TASKCONT
+XT_TASKCONT:
+	.dw 	PFA_TASKCONT
 
-PFA_SWIDI:
-	ldiw 	Z, intswi
-	ld 	temp0, Z	;interrupts: 0 → enabled, 0< → disabled
+VE_TASKPASS:
+	.dw 	$ff06
+	.db 	".task."
+	.dw 	VE_HEAD
+	.set 	VE_HEAD = VE_TASKPASS
+XT_TASKPASS:
+	.dw 	PFA_TASKPASS
+
+;;; ------------------------------------------------------------
+	
+PFA_TASKEX:			;task..
+	push	xh		;X  → next XT after pause call
+	push	xl
+	movw	xh:xl, wh:wl
+	adiw	xh:xl, 1	;X → next XT after task.. call
+;
+	movw 	zh:zl, uph:upl
+	savetask
+;
+	ldd	tosl, Z+2	;TOS = next TCB
+	ldd	tosh, Z+3
+
+PFA_SWIDI:			;int-
+	lds 	temp0, intswi	;interrupts: 0 → enabled, 0< → disabled
 	dec 	temp0
 	sbrc 	temp0, 7	;avoid wraparound
-	st	Z, temp0
+	sts	intswi, temp0
 	bst 	temp0, 7	;update soft interrupts state
 	jmp_ 	DO_NEXTT
+	
+PFA_TASKPASS:			;.task.
+	movw	zh:zl, tosh:tosl
+	ldd	tosl, Z+2
+	ldd	tosh, Z+3
+PFA_TASKCONT:			;task.
+	movw	zh:zl, tosh:tosl
+	ld	wl, Z+
+	ld	wh, Z+
+	jmp_	DO_EXECUTE
+	

@@ -53,27 +53,9 @@ DO_QOUT:
 
 ;	task-switch, leave resume to lib/tasks.frt
  
-DO_SWT:	savetos			;rp@
-	in_	tosl, SPL
-	in_	tosh, SPH
-	savetos			;sp@ 8 !u
-	std	z+8, yl
-	std	z+9, yh
-
-;	task-resume main, exec ISR first
-	
+DO_SWT:	savetask		;Z = UP
 	ldiw	z, ram_user1
-	ldd	tosl, z+8	;8 @u
-	ldd	tosh, z+9
-	movw	yh:yl, tosh:tosl ;sp!
-	loadtos
-	in_	temp0, SREG	;rp!
-	cli
-	out_	SPL, tosl
-	out_	SPH, tosh
-	out_	SREG, temp0
-	loadtos
-	movw	uph:upl, zh:zl
+	loadtask
 
 DO_ISR:	adiw	xh:xl, 1	;skip ISR DO-COLON
 	jmp_	DO_NEXTT	;makes ISR first word uninterruptible

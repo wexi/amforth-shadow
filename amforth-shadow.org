@@ -15,8 +15,9 @@ The redistribution license of *original* AmForth-Shadow software is [[https://ww
 compatible]]; Otherwise, it is GPLv2.
 
 AmForth-Shadow is maintained by an experienced embedded systems programmer
-who considers himself yet a novice[fn:1] in Forth. AT90CAN128 is his
-current AVR microcontroller of interest.
+who considers himself yet a novice[fn:1] in Forth. *AT90CAN128 is his
+current AVR microcontroller of interest.* If you use another
+microcontroller pass his device.asm changes to your architecture.
 
 The AmForth-Shadow system and the commercial application it serves undergo
 [[http://en.wikipedia.org/wiki/Software_testing#Beta_testing][Beta Testing]] now. Hence, core/words/env-forthversion.asm V0.9 mark.
@@ -78,7 +79,7 @@ The following (soft "rear-end") words were added to the existing *+int* and
 An *int-* *int+* pair can enclose a piece of code, aka a critical section,
 that needs to run with the soft interrupts disabled. It is permitted to
 enclose a critical section within another critical section, aka
-nesting. Within a critical section one can call *int*' to process all
+nesting. Within a critical section one can call *int** to process all
 pending soft interrupts. This will not work if the critical section is
 nested.
 

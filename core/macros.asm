@@ -8,14 +8,15 @@
   .def upl = r4
   .def uph = r5
 
-  .def al = r6			;see lazy man 4 locals: words/greek.asm
+  .def al = r6			;cf lazy man 4 locals: words/greek.asm
   .def ah = r7
   .def bl = r8
   .def bh = r9
   .def cl = r10
   .def ch = r11
   .def dl = r12
-  .def dh = r13
+	
+  .def dh = r13			;cf devices/at90can128/device.asm readflashcell
 
 ; internal
   .def temp0 = r16
@@ -165,4 +166,40 @@ delay_loop:
           .endif
         .endif
       .endif
+.endmacro
+
+.macro	savetask		;Z = task control block address
+	savetos
+	in_	tosl, SPL
+	in_	tosh, SPH
+	savetos
+	std	Z+8, yl
+	std	Z+9, yh
+	std	Z+10, al
+	std	Z+11, ah
+	std	Z+12, bl
+	std	Z+13, bh
+	std	Z+14, cl
+	std	Z+15, ch
+	std	Z+16, dl
+.endmacro
+
+.macro	loadtask		;Z = task control block address
+	in_	temp0, SREG
+	cli
+	ldd	yl, Z+8
+	ldd	yh, Z+9
+	loadtos
+	out_	SPL, tosl
+	out_	SPH, tosh
+	out_	SREG, temp0
+	loadtos
+	ldd	al, Z+10
+	ldd	ah, Z+11
+	ldd	bl, Z+12
+	ldd	bh, Z+13
+	ldd	cl, Z+14
+	ldd	ch, Z+15
+	ldd	dl, Z+16
+	movw	uph:upl, zh:zl
 .endmacro

@@ -23,7 +23,7 @@ COLD_START:
 	movw	ah:al, zeroh:zerol ;see words/greek.asm
 	movw	bh:bl, zeroh:zerol
 	movw	ch:cl, zeroh:zerol
-	movw	dh:dl, zeroh:zerol
+	mov	dl, zerol
 	ldiw 	Z, intbuf	;clear soft interrupts stuff
 clr_int:
 	st  	Z+, zerol

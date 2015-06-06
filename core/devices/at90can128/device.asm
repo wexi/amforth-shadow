@@ -10,18 +10,16 @@
 .macro readflashcell
   lsl	zl
   rol	zh
-  rol	zh
-  out	RAMPZ, zh
-  ror	zh
+  rol	dh
+  out	RAMPZ, dh		;dh.0 is A16
   elpm	@0, Z+
   elpm	@1, Z+
 .endmacro
 .macro writeflashcell
   lsl	zl
   rol	zh
-  rol	zh
-  out	RAMPZ, zh
-  ror	zh
+  rol	dh
+  out	RAMPZ, dh		;dh.0 is A16
 .endmacro
 .set WANT_PORTA = 0
 .set WANT_PORTB = 0

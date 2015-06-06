@@ -306,6 +306,19 @@ Note:
 
 2. "to" is not implemented.
 
+* Protecting text output
+
+Since Forth output is character by character (emit), concurrently operating
+soft ISRs and tasks that send text to the terminal can have their output
+disrupted by each other; This is bad: VT100 terminal escape sequences can
+be broken, logging messages mangled. Here comes lib/mite.frt:
+
+#+BEGIN_EXAMPLE
+\ This module (★) protects .{ enclosed text .} output from breaking up
+\ by like output from other soft ISRs. Install on start-up by: {mite}
+\ (★) Name hint: { e { mit } } and keep your texts mite-proof :)
+#+END_EXAMPLE
+
 * General purpose new words
 
 - reboot :: [ASM] A "cold" rename to match the Linux tradition. The Shadow

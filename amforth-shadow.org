@@ -94,12 +94,14 @@ nested.
      section to process all pending soft interrupts, an *int+ nop int-*
      equivalent.
 
-+ int' ( -- addr ) "soft interrupts apostrophe" :: Returns the address
-     of a system variable where the lower byte, if non zero, indicates
++ int' ( -- addr ) "soft interrupts apostrophe" :: Returns the address of a
+     system variable where the lower byte, if non zero, indicates
      occurrence of a hard interrupt overflow. The overflow mark is the
      interrupting-device program address. Clear this mark by: ~0 int'
-     c!~. The higher byte, if non-zero, indicates having the soft
-     interrupts inhibited.
+     c!~. The higher byte, if negative, indicates the soft interrupts
+     inhibition level.
+
++ int? ( -- flag) :: returns *true* when the soft interrupts are enabled.
 
 ** Soft ISR Enhancements
 

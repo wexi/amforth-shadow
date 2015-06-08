@@ -51,8 +51,7 @@ PFA_TASKEX:			;task..
 
 PFA_SWIDI:			;int-
 	lds 	temp0, intswi	;interrupts: 0 → enabled, 0< → disabled
-	dec 	temp0
-	sbrc 	temp0, 7	;avoid wraparound
+	dec	temp0
 	sts	intswi, temp0
 	bst 	temp0, 7	;update soft interrupts state
 	jmp_ 	DO_NEXTT

@@ -33,15 +33,15 @@ XT_TASKEN:
 ;;; ------------------------------------------------------------
 	
 PFA_SWIDO:			;int*
+	brtc	PFA_SWIDONT	;already enabled?
 	lds 	temp0, intswi	;interrupts: 0 → enabled, 0< → disabled	
-	sbrs 	temp0, 7
-	jmp_ 	DO_NEXT		;already enabled?
 	inc 	temp0
 	sts	intswi, temp0
 	bst 	temp0, 7	;update soft interrupts state
 	push 	xh
 	push 	xl
 	ldiw 	X, XT_SWIDONE	
+PFA_SWIDONT:
 	jmp_ 	DO_NEXT		;let VM serve pending interrupts
 XT_SWIDONE:
 	.dw	XT_SWIDI
@@ -54,9 +54,9 @@ PFA_TASKEN:			;..task
 	loadtask
 
 PFA_SWIEN:			;int+
+	brtc	PFA_SWIDONT	;already enabled?
 	lds 	temp0, intswi	;interrupts: 0 → enabled, 0< → disabled	
-	sbrc 	temp0, 7
-	inc 	temp0
+	inc	temp0
 	sts	intswi, temp0
 	bst 	temp0, 7	;update soft interrupts state
 	jmp_ 	DO_NEXTT	;one VM instruction interrupts hold-off

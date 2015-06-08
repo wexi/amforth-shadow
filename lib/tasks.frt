@@ -103,7 +103,9 @@ create _task-bypass
 ;
 
 : tasks-on ( -- )
-   _task-switch is pause
+   main @  if
+      _task-switch is pause
+   then
 ;
 
 \ list linked tasks
@@ -119,7 +121,10 @@ create _task-bypass
       dup u.				\ task TCB
       dup @ _task-resume ?=  if  ." running"
       else  _task-bypass ?=  if  ." stopped"
-	 else  tdrop abort" UNKNOWN TASK STATE"  then
+	 else
+	    abort" UNKNOWN TASK STATE"
+	    abort" uninitialized"
+	 then
       then
       dup up@ <>  if
 	 ." @" dup 8 + @ dup		\ saved D stack pointer (two copies)

@@ -88,6 +88,7 @@ variable _tnest				\ .{ nesting .} level
       else
 	 int+
 	 [ ' emit defer@ ]l execute
+	 int-
       then
    end-case
    int+

@@ -7,14 +7,13 @@
 ;    .dw VE_HEAD
 ;    .set VE_HEAD = VE_PROMPTRDY
 XT_PROMPTRDY:
-    .dw DO_COLON
+	.dw 	DO_COLON
 PFA_PROMPTRDY:
-    .dw XT_CR
-    .dw XT_DOSLITERAL
-    .dw 2
-    .db "> "
-    .dw XT_ITYPE
-    .dw XT_EXIT
+	.dw 	XT_DOSLITERAL
+	.dw 	2
+	.dw	$203E		;"> "
+	.dw 	XT_ITYPE
+	.dw 	XT_EXIT
 
 ; ( -- )
 ; System
@@ -25,13 +24,15 @@ PFA_PROMPTRDY:
 ;    .dw VE_HEAD
 ;    .set VE_HEAD = VE_PROMPTOK
 XT_PROMPTOK:
-    .dw DO_COLON
+	.dw 	DO_COLON
 PFA_PROMPTOK:
-    .dw XT_DOSLITERAL
-    .dw 3
-    .db " ok",0
-    .dw XT_ITYPE
-    .dw XT_EXIT
+	.dw 	XT_DOSLITERAL
+	.dw 	5
+	.dw	$6F20		;" ok\r\n"
+ 	.dw	$0D6B
+	.dw	$000A
+	.dw 	XT_ITYPE
+	.dw 	XT_EXIT
 
 ; ( n -- ) 
 ; System
@@ -42,21 +43,21 @@ PFA_PROMPTOK:
 ;    .dw VE_HEAD
 ;    .set VE_HEAD = VE_PROMPTERROR
 XT_PROMPTERROR:
-    .dw DO_COLON
+	.dw 	DO_COLON
 PFA_PROMPTERROR:
-	.dw XT_DOSLITERAL
-	.dw 4
-	.db  " ?? "
-    .dw XT_ITYPE
-	.dw XT_BASE
-	.dw XT_FETCH
-	.dw XT_TO_R
-	.dw XT_DECIMAL
-	.dw XT_DOT
-	.dw XT_G_IN
-	.dw XT_FETCH
-	.dw XT_DOT
-	.dw XT_R_FROM
-	.dw XT_BASE
-	.dw XT_STORE
-    .dw XT_EXIT
+	.dw 	XT_DOSLITERAL
+	.dw 	4
+	.db  	" ?? "
+	.dw 	XT_ITYPE
+	.dw 	XT_BASE
+	.dw 	XT_FETCH
+	.dw 	XT_TO_R
+	.dw 	XT_DECIMAL
+	.dw 	XT_DOT
+	.dw 	XT_G_IN
+	.dw 	XT_FETCH
+	.dw 	XT_DOT
+	.dw 	XT_R_FROM
+	.dw 	XT_BASE
+	.dw 	XT_STORE
+	.dw 	XT_EXIT

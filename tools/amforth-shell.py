@@ -260,7 +260,7 @@
 # be used the serial connection must be established.  The
 # serial_connected property indicates whether a connection currently
 # exists.  A good way to obtain a connection and rule out errors in
-# serial communication is to call "find_prompt" which ensures the
+# serial communication is to call "serial_hello" which ensures the
 # existence of a serial connection and sends a newline to the AmForth
 # interperter and watches for the echo.  This is usually the best way
 # of establishing a connection but the "serial_connect" method will
@@ -726,6 +726,7 @@ additional definitions (e.g. register names)
         self.max_line_length = arg.line_length
         self._serial_port = arg.port
         self._serial_rtscts = arg.rtscts
+        self._echo = False
         self._serial_speed = arg.speed
         assert not arg.create or not arg.conceal, "Either --create or --conceal"
         self._create = arg.create
@@ -792,19 +793,20 @@ additional definitions (e.g. register names)
         to apply new settings) versus creating a new connectoion."""
         self.serial_connect()
 
-    def find_prompt(self):
-        "Attempt to find a prompt by sending a newline and verifying echo"
+    def serial_hello(self):
         if not self.serial_connected:
             self.serial_connect()
-        # Use a short timeout to quickly detect if can't communicate
-        self._serialconn.timeout = 2.0
+        self._serialconn.timeout = 0.5
         try:
-            try:
-                self.send_line("\n") # Get empty line echo to make sure ready
-                self.read_response() # Throw away the response.
-            except serial.SerialException, e:
-                self.progress_callback("Error", None, str(e))
-                raise AmForthException("Failed to get prompt: %s" % str(e))
+            self._serialconn.readlines()
+            self.send_line("ver")
+            response = self.read_response()
+            if response:
+                self.progress_callback("Information", None, response)
+            else:
+                raise serial.SerialException('"ver" response')
+        except serial.SerialException, e:
+            raise AmForthException("Hello failure: %s" % str(e))
         finally:
             # Restore the current timeout
             self._serialconn.timeout = self._config.current_behavior.timeout
@@ -839,7 +841,7 @@ additional definitions (e.g. register names)
 
         try:
             try:
-                self.find_prompt()
+                self.serial_hello()
             except AmForthException, e:
                 self.progress_callback("Error", None, str(e))
                 raise
@@ -1153,54 +1155,39 @@ additional definitions (e.g. register names)
 
     def send_line(self, line):
         if len(line) > self.max_line_length - 1: # For newline
-            raise AmForthException("Input line > %d char"
-                                   % self.max_line_length)
-        if self.debug:
-            sys.stderr.write("|a(     )" + repr(line)[1:-1] + "\n")
-            sys.stderr.write("|s(     )")
-        for c in line + "\n":
-            if self.debug:
-                sys.stderr.write(repr(c)[1:-1]+"->")
-                sys.stderr.flush()
-            self._serialconn.write(c)
-            self._serialconn.flush()
-            r = self._serialconn.read(1) # Read echo of character we just sent
-            while r and (r != c or (c == '\t' and r != ' ')):
-                if self.debug:
-                    sys.stderr.write(repr(r)[1:-1])
-                    sys.stderr.flush()
-                r = self._serialconn.read(1)
-            if not r:
-                raise AmForthException("Input character not echoed.")
-            if self.debug:
-                sys.stderr.write(repr(r)[1:-1] + "|")
-                sys.stderr.flush()
-        if self.debug:
-            sys.stderr.write("\n")
+            raise AmForthException("Input line > %d char" % self.max_line_length)
+        if self._serial_rtscts:
+            line += '\r'
+            self._serialconn.write(line)
+            self._echo = True
+        else:
+            for c in line + "\r":
+                self._serialconn.write(c)
+                self._serialconn.flush()
+                r = self._serialconn.read(1) # Read echo of character we just sent
+                while r and (r != c or (c == '\t' and r != ' ')):
+                    r = self._serialconn.read(1)
+                if not r:
+                    raise AmForthException("Input character not echoed.")
 
     def read_response(self):
-        if self.debug:
-            sys.stderr.write("|r(     )")
-        response = ""
-        r = self._serialconn.read(1)
-        while r != "":
-            if self.debug:
-                sys.stderr.write(repr(r)[1:-1])
-                sys.stderr.flush()
-            response = response + r
-            if response[-3:] == " ok":
-                # Interactive prompt read and discarded while handling
-                # echo of next line sent.
-                break
-            elif self.amforth_error_cre.search(response) is not None:
-                response = response[:-3]  # Don't return prompt in response
-                break
-            r = self._serialconn.read(1)
+        if self._echo:
+            response = self._serialconn.readline()
+            if not response:
+                raise serial.SerialException("Timed out waiting for echo")
+            self._echo = False
+        response = self._serialconn.read(2)
         if not response:
-            response = "Timed out waiting for ok response"
-        if self.debug:
-            sys.stderr.write("\n")
-        return response
+            raise serial.SerialException("Timed out waiting for response")
+        if response == "> ":
+            return " ok"
+        if response != "\r\n":
+            response += self._serialconn.readline() 
+        if not response:
+            raise serial.SerialException("Timed out waiting for response")
+        if self._serialconn.read(2) != "> ":
+            raise serial.SerialException("Timed out waiting for prompt")
+        return response[:-2]
 
     def print_progress(self, type, lineno, info):
         if not lineno:
@@ -1214,7 +1201,7 @@ additional definitions (e.g. register names)
         # Use null filename "file" to capture interactive config
         self._config.push_file(None)
         try:
-            self.find_prompt()
+            self.serial_hello()
         except AmForthException, e:
             self.progress_callback("Error", None, str(e))
             self._config.pop_file()

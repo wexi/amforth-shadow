@@ -401,8 +401,7 @@ be broken, logging messages mangled. Here comes lib/mite.frt:
           word-lists CREATE followed by WILD can compile different code.
 
 - main :: [ASM] Returns the address of the main task user area (main task
-          TID). Note, main ia not a real task name, that is, you cannot
-          call MAIN TASK>TID
+          TID).
 
 - kernel :: [ASM] Returns the DP of the first compiled word.
 

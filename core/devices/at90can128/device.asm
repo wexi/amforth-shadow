@@ -5,22 +5,22 @@
 	.include "can128def.inc"
 .list
 
-.equ ramstart =  256
-.equ CELLSIZE = 2
-.macro readflashcell
-  lsl	zl
-  rol	zh
-  rol	dh
-  out	RAMPZ, dh		;dh.0 is A16
-  elpm	@0, Z+
-  elpm	@1, Z+
+.equ 	ramstart =  256
+.equ 	CELLSIZE = 2
+	
+.macro 	flashcell		;Z is flash word address
+	lsl	zl
+	rol	zh
+	rol	dh		;dh is used for nothing else
+	out	RAMPZ, dh
+.endm				;RAMPZ-Z is flash byte address
+
+.macro 	readflashcell
+	flashcell
+	elpm	@0, Z+
+	elpm	@1, Z+
 .endmacro
-.macro writeflashcell
-  lsl	zl
-  rol	zh
-  rol	dh
-  out	RAMPZ, dh		;dh.0 is A16
-.endmacro
+	
 .set WANT_PORTA = 0
 .set WANT_PORTB = 0
 .set WANT_PORTC = 0

@@ -9,35 +9,45 @@
 independent fork of the [[http://amforth.sourceforge.net/][AmForth]] project since AmForth trunk@1687 decision
 to change its license from GPLv2 to GPLv3. Earlier to that decision the
 AmForth project was fondly called "HQ" as there was a hope that AmForth
-will adopt some of AmForth-Shadow ideas/patches.
+will adopt some of the AmForth-Shadow new ideas patches.
+
+Even before the fork relationship with "HQ" was rocky. Most of the Shadow
+new ideas were rejected out of hand and there was the constant squabbling
+over the jurisdiction of GPLv2. Here are some sparks from that time:
+:hq:
+
+[[http://sourceforge.net/users/mtrute][Matthias Trute]], AmForth creator, believes that its GPLv2 license means that
+users are entitled to receive the source of any code which the developer
+has chosen to include in the distribution, whether this code has an AmForth
+origin or not. While the shadow questions this claim, based on a [[http://www.amazon.com/Intellectual-Property-Open-Source-Protecting/dp/0596517963][reliable
+source]], the Shadow recommends to abide by Matthias expectations and solve
+pesky commercial situations through obfuscation of the source code. See
+amforth-shell options [[create][--create]], [[conceal][--conceal]] and [[log][--log]].
+
+:END:
 
 The redistribution license of *original* AmForth-Shadow software is [[https://www.freebsd.org/copyright/freebsd-license.html][FreeBSD
 compatible]]; Otherwise, it is GPLv2.
 
 AmForth-Shadow is maintained by an experienced embedded systems programmer
 who considers himself yet a novice[fn:1] in Forth. *AT90CAN128 is his
-current AVR microcontroller of interest.* If you use another
-microcontroller pass his device.asm changes to your architecture.
+current AVR micro-controller of interest.* Thus, _important_, if you use
+any other AVR pass his core/devices/at90can128/device.asm changes to your
+device.asm of interest.
 
-The AmForth-Shadow system and the commercial application it serves undergo
-[[http://en.wikipedia.org/wiki/Software_testing#Beta_testing][Beta Testing]] now. Hence, core/words/env-forthversion.asm V0.9 mark.
+The commercial product that includes AmForth-Shadow at the time of this
+writing is considered "Release Candidate" quality. Hence the elevation of
+env-forthversion.asm to V1.0.
 
-The following summarizes the Shadow changes to HQ's code.
+The following summarizes the Shadow changes to HQ's code. It begins though
+by mentioning the next, yet unfulfilled, todo item.
 
-* (before the fork) Thoughts
+* TODO Flash programming, faster and safer 
 
-- [[http://sourceforge.net/users/mtrute][Matthias Trute]], AmForth creator, believes that its GPLv2 license means
-  that users are entitled to receive the source of any code which the
-  developer has chosen to include in the distribution, whether this code
-  has an AmForth origin or not. While the shadow questions this claim,
-  based on a [[http://www.amazon.com/Intellectual-Property-Open-Source-Protecting/dp/0596517963][reliable source]], the Shadow recommends to abide by Matthias
-  expectations and solve pesky commercial situations through obfuscation of
-  the source code. See the new amforth-shell options [[create][--create]], [[conceal][--conceal]]
-  and [[log][--log]].
-
-- Words implemented in AVR assembly language cannot be interrupted by [[SLIH][soft
-  interrupts]]. This is the main reason for the proliferation of assembly
-  language implemented words in the AmForth-Shadow version.
+The current method of Flash programming (!i) is both inefficient and
+unsafe. Inefficient, since one can program 128× faster through pages;
+Unsafe, since we erase the Flash 128× more than necessary and the Flash is
+only guaranteed 10,000 erase/write cycles.
 
 * Reduce EEPROM based pointers wear out <<eesy>>
 

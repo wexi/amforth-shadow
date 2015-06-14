@@ -1,6 +1,6 @@
-; ( n f-addr -- ) 
+; ( x f-addr -- ) 
 ; Memory
-; Executing from NRWW write n into an RWW f-addr
+; NRWW word that writes x into the addressed RWW flash cell
 VE_DO_STOREI:
 	.dw 	$ff04
 	.db 	"(!i)"
@@ -8,6 +8,45 @@ VE_DO_STOREI:
 	.set 	VE_HEAD = VE_DO_STOREI
 XT_DO_STOREI:
 	.dw 	PFA_DO_STOREI
+	
+; ( x f-addr -- ) 
+; Memory
+; NRWW word that writes x into the addressed flash-buffer cell
+VE_DO_STOREP:
+	.dw 	$ff04
+	.db 	"(!p)"
+	.dw 	VE_HEAD
+	.set 	VE_HEAD = VE_DO_STOREP
+XT_DO_STOREP:
+	.dw 	PFA_DO_STOREP
+	
+; ( f-addr -- )
+; Memory
+; NRWW word that writes the flash-buffer into the addressed RWW flash page
+VE_DO_PSTORE:
+	.dw 	$ff04
+	.db 	"(!P)"
+	.dw 	VE_HEAD
+	.set 	VE_HEAD = VE_DO_PSTORE
+XT_DO_PSTORE:
+	.dw 	PFA_DO_PSTORE
+
+;;; ------------------------------------------------------------
+
+PFA_DO_STOREP:
+	movw	zh:zl, tosh:tosl ;f-addr
+	flashcell
+	loadtos			 ;x
+	movw	r1:r0, tosh:tosl
+	loadtos
+	in_	temp0, SREG
+	ldi	temp1, exp2(SPMEN)
+	cli
+	out_ 	SPMCSR, temp1
+	spm
+	out_	SREG, temp0	;restore interrupts
+	jmp_	DO_NEXT
+	
 PFA_DO_STOREI:
 	movw	temp1:temp0, tosh:tosl ;temp1:temp0 = f-addr
 	loadtos			       ;TOS = new f-data
@@ -20,10 +59,6 @@ PFA_DO_STOREI:
 	jmp_ 	DO_NEXT
 	
 PFA_DO_NRWW:
-	
-#ifdef	CTS_ENABLE
-	CTS_OFF			;hope to be noticed 
-#endif
 
 	;; update flash page buffer with TOS value
 
@@ -61,10 +96,18 @@ PFA_DO_NRWW3:
 	cp	temp2, temp4
 	cpc	temp3, temp5
 	brne	PFA_DO_NRWW1
+	rjmp	PFA_DO_PSTORE1
 	
+PFA_DO_PSTORE:
+	movw	zh:zl, tosh:tosl
+	flashcell
+	loadtos
+	in_	temp7, SREG
+	
+PFA_DO_PSTORE1:
 	cli
 	ldi	temp0, exp2(SPMEN)+exp2(PGERS) ;command
-	ldi	temp1, exp2(SPMEN)	       ;test for
+	ldi	temp1, exp2(SPMEN)	       ;test
 	rcall	DOSPM
 	ldi	temp0, exp2(SPMEN)+exp2(PGWRT)
 	rcall	DOSPM

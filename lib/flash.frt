@@ -34,7 +34,7 @@ variable _faddr
       PAGESIZE swap - ?dup  if		\ erased cell count > 0
 	 _faddr @ dup PAGESIZE + swap  do
 	    i _fmask lo?  if		\ erased buffer cell
-	       i @i i (!p)		\ fill with flash value 
+	       i (@i) i (!p)		\ fill with flash value 
 	       1- 0 ?=  if  leave  then	\ all erased cells filled?
 	    then
 	 loop

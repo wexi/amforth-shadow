@@ -33,7 +33,8 @@ AmForth-Shadow is maintained by an experienced embedded systems programmer
 who considers himself yet a novice[fn:1] in Forth. *AT90CAN128 is his
 current AVR micro-controller of interest.* Thus, _important_, if you use
 any other AVR pass his core/devices/at90can128/device.asm changes to your
-device.asm of interest.
+device.asm of interest. Also pass his core/dict 4k changes to your chosen
+core size (2k or 8k).
 
 The commercial product that includes AmForth-Shadow at the time of this
 writing is considered "Release Candidate" quality. Hence the elevation of
@@ -42,12 +43,18 @@ env-forthversion.asm to V1.0.
 The following summarizes the Shadow changes to HQ's code. It begins though
 by mentioning the next, yet unfulfilled, todo item.
 
-* TODO Flash programming, faster and safer 
+* TODO Flash programming, faster and safer (experimental) 
 
-The current method of Flash programming (!i) is both inefficient and
-unsafe. Inefficient, since one can program 128× faster through pages;
-Unsafe, since we erase the Flash 128× more than necessary and the Flash is
-only guaranteed 10,000 erase/write cycles.
+The current method of Flash programming of one word at a time (!i) is
+inefficient and unsafe. Inefficient, since one can program 128 times faster
+when using full page buffers; Unsafe, since we erase the Flash 128 times
+more than necessary while the Flash is only guaranteed for 10,000
+erase/write cycles.
+
+lib/ flash.frt and core/words/ store-i* fetch-i* store-e* offer an
+experimental solution. Many changes were necessary to "flush" the page
+buffer to memory after compilation of each word (to make the word instantly
+available).
 
 * Reduce EEPROM based pointers wear out <<eesy>>
 

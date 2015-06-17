@@ -25,7 +25,6 @@
 .include "words/catch.asm"
 .include "words/throw.asm"
 
-
 .include "words/edefer-fetch.asm"
 .include "words/edefer-store.asm"
 .include "words/rdefer-fetch.asm"

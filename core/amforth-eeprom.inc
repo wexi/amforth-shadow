@@ -2,43 +2,41 @@
 ; To reduce EEPROM wear the following three EE pointers have RAM copies:
 	
 EE_DP:
-    .dw DPSTART      ; Dictionary Pointer
+	.dw 	DPSTART		; Dictionary Pointer
 EE_HERE:
-    .dw HERESTART    ; Memory Allocation
+	.dw 	HERESTART	; Memory Allocation
 EE_EHERE:
-    .dw EHERESTART     ; EEProm Memory Allocation
+	.dw 	EHERESTART	; EEProm Memory Allocation
 EE_TURNKEY:
-    .dw XT_APPLTURNKEY  ; TURNKEY
-EE_STOREI:
-    .dw XT_DO_STOREI  ; Store a cell into flash
+	.dw 	XT_APPLTURNKEY  ; TURNKEY
 
 EE_ENVIRONMENT:
-    .dw VE_ENVHEAD   ; environmental queries
+	.dw 	VE_ENVHEAD	; environmental queries
 EE_WL_FORTH:
-    .dw EE_FORTHWORDLIST; forth-wordlist
+	.dw 	EE_FORTHWORDLIST ; forth-wordlist
 EE_CURRENT:
-    .dw EE_FORTHWORDLIST
+	.dw 	EE_FORTHWORDLIST
 EE_FORTHWORDLIST:
-    .dw VE_HEAD      ; pre-defined (compiled in) wordlist
+	.dw 	VE_HEAD		; pre-defined (compiled in) wordlist
 EE_ORDERLISTLEN:
-    .dw 1
+	.dw 	1
 EE_ORDERLIST: ; list of wordlist id, exactly numwordlist entries
-    .dw EE_FORTHWORDLIST      ; get/set-order
-    .byte  (NUMWORDLISTS-1)*CELLSIZE ; one slot is already used
+	.dw 	EE_FORTHWORDLIST      ; get/set-order
+	.byte  	(NUMWORDLISTS-1)*CELLSIZE ; one slot is already used
 EE_RECOGNIZERS:
 EE_RECOGNIZERLISTLEN:
-    .dw 2
+	.dw 	2
 EE_RECOGNIZERLIST:
-	.dw XT_REC_WORD
-	.dw XT_REC_NUM
-	.byte  (NUMRECOGNIZERS-2)*CELLSIZE ; two slots are already used
+	.dw 	XT_REC_WORD
+	.dw 	XT_REC_NUM
+	.byte  	(NUMRECOGNIZERS-2)*CELLSIZE ; two slots are already used
 
 EE_WLSCOPE:
 	.dw 	XT_GET_CURRENT  ; default wordlist scope
 
 ; default user area
 EE_INITUSER:
-	;; 0..16
+	;; 0..17
 	.dw 	0		; USER_STATE
 	.dw 	0		; USER_FOLLOWER
 	.dw 	rstackstart	; USER_RP0

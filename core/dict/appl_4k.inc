@@ -15,8 +15,10 @@
 .include "words/tib.asm"
 .include "words/init-user.asm"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-
+.include "words/store-e.asm"
+.include "words/fetch-i.asm"
+.include "words/store-i.asm"
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 .include "words/environment.asm"
 .include "words/env-wordlists.asm"
 .include "words/env-slashpad.asm"

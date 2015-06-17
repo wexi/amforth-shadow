@@ -1,6 +1,6 @@
 ; ( x f-addr -- ) 
 ; Memory
-; NRWW word that writes x into the addressed RWW flash cell
+; Write x into the addressed RWW flash cell
 VE_DO_STOREI:
 	.dw 	$ff04
 	.db 	"(!i)"
@@ -11,7 +11,7 @@ XT_DO_STOREI:
 	
 ; ( x f-addr -- ) 
 ; Memory
-; NRWW word that writes x into the addressed flash-buffer cell
+; Write x into the addressed flash-buffer cell
 VE_DO_STOREP:
 	.dw 	$ff04
 	.db 	"(!p)"
@@ -22,7 +22,7 @@ XT_DO_STOREP:
 	
 ; ( f-addr -- )
 ; Memory
-; NRWW word that writes the flash-buffer into the addressed RWW flash page
+; Write buffer into the addressed RWW flash page
 VE_DO_PSTORE:
 	.dw 	$ff04
 	.db 	"(!P)"
@@ -31,7 +31,7 @@ VE_DO_PSTORE:
 XT_DO_PSTORE:
 	.dw 	PFA_DO_PSTORE
 
-;;; ------------------------------------------------------------
+;;; The following must be placed in the NRWW section!
 
 PFA_DO_STOREP:
 	movw	zh:zl, tosh:tosl ;f-addr

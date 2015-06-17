@@ -2,22 +2,22 @@
 ; System
 ; runtime of value
 VE_DOVALUE:
-    .dw $ff07
-    .db "(value)", 0
-    .dw VE_HEAD
-    .set VE_HEAD = VE_DOVALUE
+	.dw 	$ff07
+	.db 	"(value)", 0
+	.dw 	VE_HEAD
+	.set 	VE_HEAD = VE_DOVALUE
 XT_DOVALUE:
-    .dw DO_COLON
+	.dw 	DO_COLON
 PFA_DOVALUE:
-    .dw XT_DOCREATE
-    .dw XT_REVEAL
-    .dw XT_COMPILE
-    .dw PFA_DOVALUE1
-    .dw XT_EXIT
+	.dw 	XT_DOCREATE
+	.dw 	XT_COMPILE
+	.dw 	PFA_DOVALUE1
+	.dw 	XT_REVEAL
+	.dw 	XT_EXIT
 PFA_DOVALUE1:
-    call_ DO_DODOES
-    .dw XT_DUP
-    .dw XT_1PLUS
-    .dw XT_FETCHI
-    .dw XT_EXECUTE
-    .dw XT_EXIT
+	call_ 	DO_DODOES
+	.dw 	XT_DUP
+	.dw 	XT_1PLUS
+	.dw 	XT_FETCHI
+	.dw 	XT_EXECUTE
+	.dw 	XT_EXIT

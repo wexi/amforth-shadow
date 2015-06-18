@@ -1258,7 +1258,10 @@ additional definitions (e.g. register names)
                     continue
                 else:
                     self.send_line(line)
-                    print self.read_response()
+                    try:
+                        print self.read_response()
+                    except serial.SerialException, e:
+                        raise AmForthException("Serial port %s" % str(e))
             except AmForthException, e:
                 print "Error: " + str(e)
         self._config.pop_file()

@@ -14,8 +14,7 @@ PFA_WORDLIST:
     .dw XT_OVER
     .dw XT_STOREE
     .dw XT_DUP
-    .dw XT_1PLUS
-    .dw XT_1PLUS
+    .dw XT_CELLPLUS
     .dw XT_DOTO
     .dw PFA_EHERE
     .dw XT_EXIT

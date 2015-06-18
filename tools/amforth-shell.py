@@ -54,9 +54,6 @@
 # Invoke the shell with the argument --rtscts to enable serial port
 # RTS/CTS hardware handshake connection.
 #
-# "eesy" is automatically sent to the application before leaving the program 
-# to synchronize the memory allocation pointers.
-#
 # ALLWORDS replaces WORDS in #update-words implementation.
 #
 # The shell provides humble support to locals. See core/words/greeks.asm.
@@ -287,6 +284,7 @@ import sys
 import fcntl
 import traceback
 from random import shuffle
+from datetime import datetime
 
 Greek = re.compile(r'(\s|^)\{\s+((\S+\s+){1,3})(--.*)?\}(\s|$)')
 
@@ -649,7 +647,8 @@ class AmForth(object):
             return 1
         finally:
             if self._log:
-                self._log.write("eesy\n")
+                t = datetime.now()
+                self._log.write('\\ ' + t.isoformat() + '\n')
                 self._log.close()
             try:
                 if self._create:
@@ -661,11 +660,6 @@ class AmForth(object):
                     fp.write(repr(words))
                     fp.close()
                     print "\nappl.dic file created with %d entries" % len(words),
-
-                self.send_line("eesy") #RAM to EE sync
-                response = self.read_response()
-                if response[-3:] == " ok":
-                    print "\nMemory alloc pointers synced, good-bye."
 
             except AmForthException:
                 print "\nLost contact with AmForth"

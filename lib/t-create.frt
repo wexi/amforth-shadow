@@ -5,40 +5,42 @@
 
 decimal
 
-\ As the project grows and adds more words compilation gets slower and
-\ slower. This is in particular annoying when compiling large numerical
-\ tables. The following "t-create" is the answer.  Note, if you replace
-\ "t-create" with "create" and remove the last semicolon the table could be
-\ compiled by the interpreter.
-
-: truncate  ( key -- )  begin  13 <>  while  key  repeat  ;
+\ As a project develops and adds words to its word-lists compilation gets
+\ slower. This is particularly annoying when compiling large numeric
+\ tables. This is where lib/t-create.frt can help.
+\ Note, there is no syntax check!
 
 \ fast table compiler:
-\ t-create "name" n₁ , n₂ , .. , nₓ ;   \ unsigned decimal numbers
+\ t-create "name" n₁ , n₂ , .. , nₓ ;   \ 16bit decimal numbers
 : t-create  ( "name" -- )
-   create
-   p_rd
-   0 key
-   begin
+   create p_rd				\ ." > "
+   false >r 0 key
+   begin     ( num char ) ( R: sign )
       13 ?=  if
 	 cr p_rd
       else
-	 dup emit
+	 dup emit			\ echo
 	 dup 48 58 within  if		\ digit
-	    48 - swap 10* +
+	    48 - swap 10* +		\ decimals only
 	 else
-	    44 ?=  if			\ comma
-	       , 0
+	    45 ?=  if			\ minus
+	       r> not >r
 	    else
-	       59 ?=  if		\ semicolon
+	       44 ?=  if		\ comma
+		  r>  if  negate  then
 		  ,
-		  key truncate
-		  p_ok p_rd
-		  exit
+		  false >r 0
 	       else
-		  32 ?= not  if		\ space
-		     9 ?= not  if	\ tab
-			truncate cr p_rd \ anything else is a comment
+		  59 ?=  if		\ semicolon
+		     r>  if  negate  then
+		     ,
+		     eesy exit
+		  else
+		     32 ?= not  if      \ skip space & tab
+			9 ?= not  if    \ anything else starts "a comment"
+			   begin  13 <>  while  key  repeat
+			   cr p_rd
+			then
 		     then
 		  then
 	       then
@@ -48,6 +50,3 @@ decimal
       key
    again
 ;
-	       
-
-		  

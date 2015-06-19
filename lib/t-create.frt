@@ -33,8 +33,9 @@ decimal
 	       else
 		  59 ?=  if		\ semicolon
 		     r>  if  negate  then
-		     ,
-		     eesy exit
+		     , eesy
+		     begin  key 13 =  until
+		     cr exit
 		  else
 		     32 ?= not  if      \ skip space & tab
 			9 ?= not  if    \ anything else starts "a comment"

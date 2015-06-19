@@ -38,21 +38,19 @@ any other AVR micro pass his core/devices/at90can128/device.asm changes to
 your device.asm of interest. Also pass his core/dict 4k changes to your
 chosen core size (2k or 8k).
 
-The following summarizes the Shadow changes to HQ's code. It begins though
-by mentioning the next, yet unfulfilled, todo item.
+The following summarizes the Shadow changes to HQ's code.
 
 * Flash programming, faster and safer
 
-The current method of Flash programming of one word at a time (!i) is
-inefficient and unsafe. Inefficient, since one can program 128 times faster
-when using full page buffers; Unsafe, since we erase the Flash 128 more
-times than necessary while the Flash is only guaranteed for 10,000
+The kernel method of Flash programming of one word at a time is inefficient
+and unsafe. Inefficient, since (theoretically) one can program 128 times
+faster when using full page buffers; Unsafe, since the Flash is erased 128
+more times than necessary while the Flash is only guaranteed for 10,000
 erase/write cycles.
 
-lib/ flash.frt and core/words/ store-i* fetch-i* store-e* offer an
-experimental solution. Many changes were necessary to "flush" the page
-buffer to memory after compilation of each word (to make the word instantly
-available).
+lib/flash.frt redefines *@i* *!i* and *!e* with page buffered
+alternatives. After installation of lib/flash.frt make sure that *flash* is
+called on every *reboot*.
 
 * Reduce EEPROM based pointers wear out <<eesy>>
 

@@ -1,11 +1,11 @@
 ; ( -- )
 ; System
 ; send the READY prompt to the command line
-;VE_PROMPTRDY:
-;    .dw $ff04
-;    .db "p_rd"
-;    .dw VE_HEAD
-;    .set VE_HEAD = VE_PROMPTRDY
+VE_PROMPTRDY:
+	.dw 	$ff04
+	.db 	"p_rd"
+	.dw 	VE_HEAD
+	.set 	VE_HEAD = VE_PROMPTRDY
 XT_PROMPTRDY:
 	.dw 	DO_COLON
 PFA_PROMPTRDY:
@@ -18,11 +18,11 @@ PFA_PROMPTRDY:
 ; ( -- )
 ; System
 ; send the OK prompt to the command line
-;VE_PROMPTOK:
-;    .dw $ff04
-;    .db "p_ok"
-;    .dw VE_HEAD
-;    .set VE_HEAD = VE_PROMPTOK
+VE_PROMPTOK:
+	.dw 	$ff04
+	.db 	"p_ok"
+	.dw 	VE_HEAD
+	.set 	VE_HEAD = VE_PROMPTOK
 XT_PROMPTOK:
 	.dw 	DO_COLON
 PFA_PROMPTOK:

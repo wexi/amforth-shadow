@@ -43,12 +43,12 @@ env-forthversion.asm to V1.0.
 The following summarizes the Shadow changes to HQ's code. It begins though
 by mentioning the next, yet unfulfilled, todo item.
 
-* TODO Flash programming, faster and safer (experimental) 
+* Flash programming, faster and safer
 
 The current method of Flash programming of one word at a time (!i) is
 inefficient and unsafe. Inefficient, since one can program 128 times faster
-when using full page buffers; Unsafe, since we erase the Flash 128 times
-more than necessary while the Flash is only guaranteed for 10,000
+when using full page buffers; Unsafe, since we erase the Flash 128 more
+times than necessary while the Flash is only guaranteed for 10,000
 erase/write cycles.
 
 lib/ flash.frt and core/words/ store-i* fetch-i* store-e* offer an
@@ -354,6 +354,12 @@ be broken, logging messages mangled. Here comes lib/mite.frt:
      appl.dic file.
 
 - ]l :: Equivalent to '] literal'.
+
+- t-create :: A fast table compiler
+
+  #+BEGIN_EXAMPLE
+  t-create "name" n₁ , n₂ , .. , nₓ ;   \ unsigned decimal numbers
+  #+END_EXAMPLE
 
 - @c :: [ASM] Like C@ but reads the byte as a signed 8 bit integer
         (i.e., extends sign).

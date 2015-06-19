@@ -5,6 +5,8 @@
 #+OPTIONS: email:t
 #+STARTUP: indent
 
+*AmForth-Shadow V1.1*
+
 [[https://github.com/wexi/amforth-shadow][AmForth-Shadow]] is a sandbox for [[http://en.wikipedia.org/wiki/Atmel_AVR%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20][AVR8]] [[http://en.wikipedia.org/wiki/Forth_(programming_language)][Forth]] development that has become an
 independent fork of the [[http://amforth.sourceforge.net/][AmForth]] project since AmForth trunk@1687 decision
 to change its license from GPLv2 to GPLv3. Earlier to that decision the
@@ -35,10 +37,6 @@ current AVR micro-controller of interest.* Thus, _important_, if you use
 any other AVR micro pass his core/devices/at90can128/device.asm changes to
 your device.asm of interest. Also pass his core/dict 4k changes to your
 chosen core size (2k or 8k).
-
-The commercial product that includes AmForth-Shadow at the time of this
-writing is considered "Release Candidate" quality. Hence the elevation of
-env-forthversion.asm to V1.0.
 
 The following summarizes the Shadow changes to HQ's code. It begins though
 by mentioning the next, yet unfulfilled, todo item.

@@ -790,13 +790,14 @@ additional definitions (e.g. register names)
     def serial_hello(self):
         if not self.serial_connected:
             self.serial_connect()
-        self._serialconn.timeout = 0.5
         try:
+            self._serialconn.timeout = 0.5
             self._serialconn.readlines()
             self.send_line("ver")
+            self._serialconn.timeout = 2.0
             response = self.read_response()
             if response:
-                self.progress_callback("Information", None, response)
+                self.progress_callback("Information", None, "Forth: " + response)
             else:
                 raise serial.SerialException('"ver" response')
         except serial.SerialException, e:
@@ -1204,11 +1205,7 @@ additional definitions (e.g. register names)
         in_comment = False
         while True:
             try:
-                if self._amforth_cpu:
-                  prompt="("+self._amforth_cpu+")> "
-                else:
-                  prompt="> "
-                full_line = raw_input(prompt)
+                print unichr(0x2192),; full_line = raw_input()
             except EOFError, e:
                 print ""
                 break
@@ -1309,9 +1306,9 @@ additional definitions (e.g. register names)
             self._amforth_words = words[:-4].split(" ") + self.interact_directives
 
     def _update_cpu(self):
-        self.progress_callback("Information", None, "getting MCU name..")
         self.send_line("s\" cpu\" environment search-wordlist drop execute itype")
         words = self.read_response()
+        self.progress_callback("Information", None, "MCU: " + words)
         if words[-3:] != " ok":
             return # Something went wrong, just silently ignore
         mcudef = words[:-3].lower()
@@ -1321,15 +1318,15 @@ additional definitions (e.g. register names)
           from device import MCUREGS
           self._amforth_regs=MCUREGS
           self._amforth_cpu = words[:-3]
-          self.progress_callback("Information", None, "successfully loaded register definitions for " + mcudef)
+          self.progress_callback("Information", None, "Successfully loaded register definitions for " + mcudef)
         except:
-          self.progress_callback("Warning", None, "failed loading register definitions for " + mcudef + " .. continuing")
+          self.progress_callback("Warning", None, "Failed loading register definitions for " + mcudef + " .. continuing")
 
     def _update_files(self):
-      self.progress_callback("Information", None, "getting filenames on the host")
+      self.progress_callback("Information", None, "Getting filenames on the host")
       self._filedirs = {}
       for p in self._search_list:
-        self.progress_callback("Information", None, "  Reading "+p)
+        self.progress_callback("Information", None, "Reading "+p)
         for root, dirs, files in os.walk(p):
           for f in files:
             fpath=os.path.realpath(os.path.join(root, f))

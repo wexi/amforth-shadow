@@ -1205,7 +1205,7 @@ additional definitions (e.g. register names)
         in_comment = False
         while True:
             try:
-                print unichr(0x2192),; full_line = raw_input()
+                full_line = raw_input('> ')
             except EOFError, e:
                 print ""
                 break

@@ -45,6 +45,10 @@ variable _faddr
 ;
 
 : fwrite  ( x f-addr -- )
+   2dup (@i) =  if			\ same value
+      2drop exit
+   then
+   
    dup [ PAGESIZE 1- invert ]l and  ( x f-addr page-f-addr )
    over _fmask 2>r                  ( R: mask addr )
    _flash @  if				\ buffer non empty

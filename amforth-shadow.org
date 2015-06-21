@@ -32,11 +32,10 @@ The redistribution license of *original* AmForth-Shadow software is [[https://ww
 compatible]]; Otherwise, it is GPLv2.
 
 AmForth-Shadow is maintained by an experienced embedded systems programmer
-who considers himself yet a novice[fn:1] in Forth. *AT90CAN128 is his
-current AVR micro-controller of interest.* Thus, _important_, if you use
-any other AVR micro pass his core/devices/at90can128/device.asm changes to
-your device.asm of interest. Also pass his core/dict 4k changes to your
-chosen core size (2k or 8k).
+who considers himself yet a novice [fn:1] in Forth. *AT90CAN128 is his AVR
+micro-controller of interest*. Thus, please note, only the
+core/dict/*4k.inc and core/devices/at90can128/device.asm files underwent
+change!
 
 The following summarizes the Shadow changes to HQ's code.
 

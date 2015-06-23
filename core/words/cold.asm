@@ -30,6 +30,12 @@ clr_int:
 	cpi 	zl, low(intvec)
 	brne 	clr_int
 	clt			;enables soft interrupts
+
+	ldiw	Z, HERESTART
+clr_bss:			;initialize lib/flash.frt, etc.
+	st	Z+, zerol
+	cpi	zl, low(HERESTART+BSS_SEG)
+	brne	clr_bss
 	
 ;reduce wear of EE based memory alloc pointers using RAM copies
 ;use "eesy" to sync back EEPROM with RAM

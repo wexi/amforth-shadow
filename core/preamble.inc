@@ -8,6 +8,9 @@
 ; some defaults, change them in your application master file
 ; see template.asm for an example
 
+; number of bytes starting from HERESTART that are initialized to zero
+.set BSS_SEG = 32
+
 .set AMFORTH_RO_SEG = NRWW_START_ADDR
 
 ; receiving is asynchron, so an interrupt queue is useful.

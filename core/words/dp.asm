@@ -17,7 +17,12 @@ PFA_DP1:			;wish compile be faster
 	savetos
 	ldsw	TOS, RAM_DP
 	jmp_	DO_NEXT
-	
+
+VE_DPINC:
+	.dw 	$ff04
+	.db 	"dp++"
+	.dw 	VE_HEAD
+	.set 	VE_HEAD = VE_DPINC
 XT_DPINC:			;"dp 1+ to dp" but faster
 	.dw	PFA_DPINC
 PFA_DPINC:

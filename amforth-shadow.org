@@ -48,8 +48,8 @@ more times than necessary while the Flash is only guaranteed for 10,000
 erase/write cycles.
 
 lib/flash.frt redefines *@i* *!i* and *!e* with page buffered
-alternatives. After installation of lib/flash.frt make sure that *flash* is
-called on every *reboot*.
+alternatives. Make sure that flash.frt is the first compiled code that
+allocates RAM.
 
 * Reduce EEPROM based pointers wear out <<eesy>>
 

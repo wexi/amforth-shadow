@@ -7,7 +7,10 @@ decimal
 
 \ Page optimized flash programming for faster compilation and extended
 \ erase/write cycles durability. See: fetch-i*, store-i* & store-e*
-\ On start-up call "flash". "flush" after compilation is done by "eesy"
+
+\ IMPORTANT: Compile flash.frt as early as possible. This will make sure
+\ that the _flash structure is allocated from the BSS_SEG initialized RAM.
+\ Cf. preamble.inc and cold.asm.
 
 \ #include buffer.frt
 
@@ -15,10 +18,11 @@ decimal
 128 constant PAGESIZE			\ check your AVR8 spec
 )
 
+\ NOTE: _flash is initialized to zero by cold.asm
 PAGESIZE 8 / cell+ buffer: _flash	\ count, set()
 variable _faddr
 
-: flash
+: _flush
    _flash [ _faddr _flash - ]l erase
 ;
 
@@ -29,7 +33,7 @@ variable _faddr
    swap 3 rshift [ _flash cell+ ]l +
 ;
 
-: flush  ( -- )
+: fflush  ( -- )
    _flash @ ?dup  if			\ buffer cell count > 0
       PAGESIZE swap - ?dup  if		\ erased cell count > 0
 	 _faddr @ dup PAGESIZE + swap  do
@@ -40,7 +44,7 @@ variable _faddr
 	 loop
       then
       _faddr @ (!P)			\ write buffer to page
-      flash
+     _flush
    then
 ;
 
@@ -53,9 +57,9 @@ variable _faddr
    over _fmask 2>r                  ( R: mask addr )
    _flash @  if				\ buffer non empty
       _faddr @ over <>  if
-	 flush				\ different page
+	 fflush				\ different page
       else
-	 2r@ hi?  if  flush  then	\ superseded value
+	 2r@ hi?  if  fflush  then	\ superseded value
       then
    then
    _faddr !
@@ -69,22 +73,21 @@ variable _faddr
       dup [ PAGESIZE 1- invert ]l and   ( f-addr page-f-addr )
       _faddr @  =  if
 	 dup _fmask hi?  if		\ value in buffer
-	    flush
+	    fflush
 	 then
       then
    then
    (@i)
 ;
-   
-\ plug in:
 
-flash
+\ install
 
-' fread  ' @i 1+ (!i)
+' fread ' @i 1+ (!i)
 ' fwrite ' !i 1+ (!i)
-' flush  ' !e 1+ (!i)
+' fflush ' !e 1+ (!i)
 
-' flash  (@i)				\ :
+' fread (@i)				\ :
 dup ' @i (!i)
 dup ' !i (!i)
-    ' !e (!i)
+' !e (!i)
+

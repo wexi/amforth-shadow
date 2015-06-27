@@ -11,7 +11,7 @@
 independent fork of the [[http://amforth.sourceforge.net/][AmForth]] project since AmForth trunk@1687 decision
 to change its license from GPLv2 to GPLv3. Earlier to that decision the
 AmForth project was fondly called "HQ" as there was a hope that AmForth
-will adopt some of the AmForth-Shadow new ideas patches.
+will adopt some of the AmForth-Shadow new ideas and patches.
 
 Even before the fork relationship with "HQ" was rocky. Most of the Shadow
 new ideas were rejected out of hand and there was the constant squabbling
@@ -28,7 +28,7 @@ amforth-shell options [[create][--create]], [[conceal][--conceal]] and [[log][--
 
 :END:
 
-The redistribution license of *original* AmForth-Shadow software is [[https://www.freebsd.org/copyright/freebsd-license.html][FreeBSD
+The redistribution license of *original* AmForth-Shadow code is [[https://www.freebsd.org/copyright/freebsd-license.html][FreeBSD
 compatible]]; Otherwise, it is GPLv2.
 
 AmForth-Shadow is maintained by an experienced embedded systems programmer
@@ -48,18 +48,18 @@ more times than necessary while the Flash is only guaranteed for 10,000
 erase/write cycles.
 
 lib/flash.frt redefines *@i* *!i* and *!e* with page buffered
-alternatives. Make sure that flash.frt is the first compiled code that
-allocates RAM.
+alternatives. Make sure that flash.frt is the first compiled module (more
+precisely, the first module to *allot* RAM).
 
 * Reduce EEPROM based pointers wear out <<eesy>>
 
 The memory allocation pointers, EE_DP, EE_HERE and EE_EHERE now have
-RAM_DP, RAM_HERE and RAM_EHERE copies.  IMPORTANT: Remember to execute
-EESY ( -- ) to sync the EE pointer values with their RAM copies.  This
-is done automatically for you by tools/amforth-shell.py before leaving
-the program.
+RAM_DP, RAM_HERE and RAM_EHERE copies. Note: *eesy* ( -- ) synchronizes the
+EE pointer values with their RAM copies.
 
 * <<SLIH>> Second Level Interrupt Handlers (SLIH), aka Soft Interrupts Handlers.
+
+For background information refer to [[https://en.wikipedia.org/wiki/Interrupt_handler][Wikipedia - Interrupt Hanlders]].
 
 The First Level Interrupts Handler (FLIH), aka the Hard Interrupts Handler,
 records the program address of each interrupting device into a queue that
@@ -203,6 +203,9 @@ key, emit and so forth). "1448" is the starting address of the task memory
 "pause". "greet" has 4 numbers on its D-stack where the topmost 3 are
 displayed.
 
+*NEWS*: The latest version of *events* lists the D stack contents in
+standard picture format. It also displays the task 3 local variables.
+
 * USART tx/rx isr with RTS/CTS/DTR support <<handshake>>
 
 Define the following macros in your application "template.asm" according
@@ -288,8 +291,8 @@ be changed in the process. For example, all the words which begin with
 "gl-" can be added to a separate graphics word-list with the "gl-" prefix
 removed.
 
-It is recommended to include the lib/_local.frt ("also") wordlist-scope and
-remove it after use from the search order ("previous") ...
+It is recommended to include the lib/_local.frt (via *also*) wordlist-scope and
+remove it after use from the search order (via *previous*) ...
 
 * Lazy man locals implementation (aka three Greek locals)
 
@@ -318,7 +321,10 @@ Note:
    locals are restored. Local values can be used by _called words_ if not
    reloaded.
 
-2. "to" is not implemented.
+2. "to" is not implemented for didactic reasons! 
+
+3. A word non changing args are a well suited for locals. It would free
+   your stacks to hold just the more important [[https://en.wikipedia.org/wiki/Invariant_(computer_science)][loop invariants]], etc.
 
 * Protecting text output
 

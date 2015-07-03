@@ -2,17 +2,14 @@
 
 decimal
 
-: ESC[ 27 emit [char] ] emit ;
-
 \ some helper words: print a number *without*
 \ leading space in decimal
-: .n    base @ swap decimal 0 u.r base ! ;
-: .;n   [char] ; emit .n ;
+: _n    base @ swap decimal 0 u.r base ! ;
 : ESC[  27 emit [char] [ emit ;
 
 \  position curser on terminal
 : at-xy ( u1 u2 -- ) 
-  1+ swap 1+ swap ESC[ .n .;n [char] H emit
+  1+ swap 1+ swap ESC[ _n [char] ; emit _n [char] H emit
 ;
 
 \ clear page
@@ -23,11 +20,11 @@ decimal
 \ more definitions based on gforth' ansi.fs
 
 : foreground ( n -- | set foreground color to n )
-  ESC[ 30 + .n [char] m emit 
+  ESC[ 30 + _n [char] m emit 
 ;
 
 : background ( n -- | set background color to n )
-  ESC[ 40 + .n [char] m emit 
+  ESC[ 40 + _n [char] m emit 
 ;
 
 : text_normal ( -- | set normal text display )

@@ -58,6 +58,6 @@ decimal
 2 constant Green
 3 constant Yellow
 4 constant Blue
-5 constant Brown
+5 constant Magenta
 6 constant Cyan
 7 constant White

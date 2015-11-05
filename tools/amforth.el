@@ -259,7 +259,7 @@ PARSED-TYPE specifies what kind of text is parsed. It should be on of 'name',
 	(("immediate" "compile-only" "restrict")
 	 immediate (font-lock-keyword-face . 1))
 	(("does>") definition-starter (font-lock-keyword-face . 1))
-	((":noname" "comp:" "post:") definition-starter (font-lock-keyword-face . 1))
+	((":noname" "comp:" "post:" "lit,:") definition-starter (font-lock-keyword-face . 1))
 	((";" ";code" ";abi-code") definition-ender (font-lock-keyword-face . 1))
 	(("include" "require" "needs" "use") 
 	 non-immediate (font-lock-keyword-face . 1) 
@@ -325,7 +325,7 @@ PARSED-TYPE specifies what kind of text is parsed. It should be on of 'name',
 	 "[ \t\n]" t name (font-lock-variable-name-face . 3))
 
 	(("create" "variable" "constant" "cvariable" "buffer:" "2variable" "2constant" "fvariable"
-	  "fconstant" "value" "2value" "field" "user" "vocabulary" 
+	  "fconstant" "value" "2value" "field" "user" "vocabulary" "voctable" 
 	  "create-interpret/compile" "interpret/compile:"
 	  "debug:" "field:" "2field:" "ffield:" "sffield:" "dffield:"
 	  "uvar" "uvalue" "cfield:" "wfield:" "lfield:")
@@ -359,7 +359,7 @@ PARSED-TYPE specifies what kind of text is parsed. It should be on of 'name',
 	 "[\n]" nil string (font-lock-string-face . 1))
 	("-?[0-9]+\\(\\.[0-9]*e\\(-?[0-9]+\\)?\\|\\.?[0-9a-f]*\\)" 
 	 immediate (font-lock-constant-face . 3))
-	("-?\\([&#][0-9]+\\|\\(0x\\|\\$\\)[0-9a-f.]+\\|%[01]+\\)"
+	("-?\\([&#][0-9.]+\\|\\(0x\\|\\$\\)[0-9a-f.]+\\|%[01]+\\)"
 	 immediate (font-lock-constant-face . 3))
 	("[a-z\-0-9]+(" immediate (font-lock-comment-face . 1)
 	 ")" nil comment (font-lock-comment-face . 1))
@@ -471,7 +471,8 @@ INDENT1 and INDENT2 are indentation specifications of the form
 	  "[if]" "[ifdef]" "[ifundef]" "[begin]" "[for]" "[do]" "[?do]" "[:")
 	 (0 . 2) (0 . 2))
 	((":" ":noname" "code" "abi-code" "struct" "m:" ":m" "class" 
-	  "interface" "c-library" "c-library-name" "comp:" "post:" "begin-structure")
+	  "interface" "c-library" "c-library-name" "comp:" "post:"
+	  "begin-structure" "event:")
 	 (0 . 2) (0 . 2) non-immediate)
 	("\\S-+%$" (0 . 2) (0 . 0) non-immediate)
 	((";" ";m") (-2 . 0) (0 . -2))
@@ -789,7 +790,7 @@ End:\" construct).")
   '("VARIABLE" "CONSTANT" "CVARIABLE" "BUFFER:" "2VARIABLE" "2CONSTANT" "FVARIABLE" "FCONSTANT"
    "USER" "VALUE" "2Value" "field" "end-struct" "VOCABULARY" "CREATE" ":" "CODE"
    "DEFER" "ALIAS" "interpret/compile:" "debug:" "field:" "2field:" "ffield:"
-   "sffield:" "dffield:" "uvar" "uvalue")
+   "sffield:" "dffield:" "uvar" "uvalue" "voctable")
   "List of words, that define the following word.
 Used for imenu index generation.")
 

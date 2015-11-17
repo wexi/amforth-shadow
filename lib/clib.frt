@@ -3,12 +3,12 @@
 \ Copyright (c) 2014 Energy Measurement & Control, NJ, USA.
 \ Redistribution: FreeBSD License.
 \
-\ "elist" schedules an "xt" for execution after a "delay" number of
+\ "enlist" schedules an "xt" for execution after a "delay" number of
 \ milliseconds, passing an optional (non-zero) "value" through the stack to
 \ the scheduled xt. There can be up-to "EVENTS" number of xt-s pending
 \ execution, cf. the "_event" structure.
-\ "elist" error return is "true" if the events memory is exhausted:
-\ elist ( delay value xt -- error )
+\ "enlist" error return is "true" if the events memory is exhausted:
+\ enlist ( delay value xt -- error )
 \
 \ "delist" cancels the earliest "xt" pending execution.
 \ "delist" error return is "xt" if such event is not found:
@@ -105,7 +105,7 @@ variable _efree				\ free events list
 \ Schedule "xt" for execution after [1, 60000] "delay" milliseconds. 
 \ "evoke" would pass non-zero "data" to the "xt", i.e. data xt execute
 ( delay data xt -- error )
-: elist
+: enlist
    int-
    _efree dup @   ( delay data xt event₀ event )
    ?dup  if

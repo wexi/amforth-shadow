@@ -358,6 +358,9 @@ be broken, logging messages mangled. Here comes lib/mite.frt:
 
 - ]l :: Equivalent to '] literal'.
 
+- recourse :: [ASM] Creates an XT literal to the latest word being
+     defined. If "recurse" has a right to exist, so has "recourse".
+
 - t-create :: A fast table compiler
 
   #+BEGIN_EXAMPLE

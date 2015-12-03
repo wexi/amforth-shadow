@@ -358,8 +358,8 @@ be broken, logging messages mangled. Here comes lib/mite.frt:
 
 - ]l :: Equivalent to '] literal'.
 
-- recourse :: [ASM] Creates an XT literal to the latest word being
-     defined. If "recurse" has a right to exist, so has "recourse".
+- recurse' :: [ASM] Creates an XT literal to the latest word being
+     defined. If "recurse" has a right to exist, so has "recurse'".
 
 - t-create :: A fast table compiler
 
@@ -367,7 +367,7 @@ be broken, logging messages mangled. Here comes lib/mite.frt:
   t-create "name" n₁ , n₂ , .. , nₓ ;   \ 16bit decimal numbers
   #+END_EXAMPLE
 
-- @c :: [ASM] Like C@ but reads the byte as a signed 8 bit integer
+- @c :: [ASM] Like c@ but reads the byte as a signed 8 bit integer
         (i.e., extends sign).
 
 - cinvert :: [ASM] Complements a single byte.

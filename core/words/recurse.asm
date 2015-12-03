@@ -17,14 +17,14 @@ PFA_RECURSE:
 ; ( -- ) 
 ; Compiler
 ; compile the XT literal of the word currently being defined into the dictionary
-VE_REWORD:
+VE_RECURSETICK:
     .dw $0008
-    .db "recourse"
+    .db "recurse'"
     .dw VE_HEAD
-    .set VE_HEAD = VE_REWORD
-XT_REWORD:
+    .set VE_HEAD = VE_RECURSETICK
+XT_RECURSETICK:
     .dw DO_COLON
-PFA_REWORD:
+PFA_RECURSETICK:
     .dw XT_COMPILE
     .dw XT_DOLITERAL	
     .dw XT_DOBRANCH

@@ -1,6 +1,6 @@
 ;;; amforth.el --- major mode for editing AmForth-Shadow sources
 
-;; Copyright (C) 1995,1996,1997,1998,2000,2001,2003,2004,2007,2008,2010,2011,2012,2013,2014 Free Software Foundation, Inc.
+;; Copyright (C) 1995,1996,1997,1998,2000,2001,2003,2004,2007,2008,2010,2011,2012,2013,2014,2015 Free Software Foundation, Inc.
 
 ;; ----------------------------------------------------------------------
 
@@ -1747,4 +1747,13 @@ processes.")
 
 (provide 'forth-mode)
 
-;;; amforth.el ends here
+;;;###autoload
+(add-to-list 'auto-mode-alist '("\\.fs\\'" . forth-mode))
+;;;###autoload
+(add-to-list 'auto-mode-alist '("\\.fb\\'" . forth-block-mode))
+;;;###autoload
+(add-to-list 'auto-mode-alist '("\\.fth\\'" . forth-mode))
+;;;###autoload
+(add-to-list 'auto-mode-alist '("\\.4th\\'" . forth-mode))
+
+;;; gforth.el ends here

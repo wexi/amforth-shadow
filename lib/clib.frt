@@ -18,16 +18,20 @@
 )
 \ Requirements:
 \ (1) Initialize the clock library by calling "einit".
-\ (2) From a soft Interrupt Service Routine (ISR) increment "clock" and
-\ call "evoke" every millisecond. "evoke" should be called with the soft
-\ interrupts system off ("int-"). For example:
+\ (2) From a soft Interrupt Service Routine (ISR) increment "clock" and call "evoke"
+\     every millisecond to execute expired events. "evoke" should be called with
+\     the soft interrupts system off ("int-") and protected against re-entry.
+\  For example:
 \ 
 \ 1000 Hz interrupt service
 \ : clkisr
 \    int-
 \    1 clock +!				\ clock++
-\    evoke				\ execute expired events
-\    ...
+\    mslock hi?!  if                    \ non reentrant code to
+\      evoke				\  execute expired events
+\      ...
+\      mslock lo!
+\    then
 \    int+
 \ ;
 \ 
@@ -82,7 +86,7 @@ variable _efree				\ free events list
    2drop
 ;
 
-\ With the soft interrupts disabled call evoke each _clkisr to execute expired
+\ With the soft interrupts disabled call evoke each clkisr to execute expired
 \ event functions. Pass data to the expired function only if it is non-zero.
 \ NOTE: Event functions execute with the soft interrupts enabled!
 ( -- )

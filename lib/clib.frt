@@ -10,9 +10,8 @@
 \ "enlist" error return is "true" if the events memory is exhausted:
 \ enlist ( delay value xt -- error )
 \
-\ "delist" cancels the earliest "xt" pending execution.
-\ "delist" error return is "xt" if such event is not found:
-\ delist ( xt -- xt | false )
+\ "delist" cancels the earliest "xt" event pending execution. It returns
+\ "false" if "xt" is not found: delist ( xt -- xt | false )
 (
 16 constant EVENTS			\ superseded by appl_defs.frt constant
 )
@@ -147,7 +146,7 @@ variable _efree				\ free events list
    int+
 ;
 
-\ Cancel the earliest "xt" event. Return false if cancelation succeeded.
+\ Cancel the earliest "xt" event. Return "false" if the "xt" is not found.
 ( xt -- xt | false )
 : delist
    >r _etodo int-
@@ -160,11 +159,11 @@ variable _efree				\ free events list
 	 _efree @ over !
 	 _efree !			\ added to the free list
 	 int+
-	 r> fdrop exit
+	 r> exit
       then
       nip
    repeat
-   int+ drop r>
+   int+ drop r> fdrop
 ;
 
 \ list pending events (may cause soft interrupts overflow!)

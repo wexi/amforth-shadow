@@ -5,7 +5,7 @@
 #+OPTIONS: email:t
 #+STARTUP: indent
 
-*AmForth-Shadow V1.3*
+*AmForth-Shadow V1.5* (core/words/env-forthversion.asm)
 
 [[https://github.com/wexi/amforth-shadow][AmForth-Shadow]] is a sandbox for [[http://en.wikipedia.org/wiki/Atmel_AVR%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20][AVR8]] [[http://en.wikipedia.org/wiki/Forth_(programming_language)][Forth]] development that has become an
 independent fork of the [[http://amforth.sourceforge.net/][AmForth]] project since AmForth trunk@1687 decision
@@ -35,7 +35,7 @@ compatible]]; Otherwise, it is GPLv2.
 
 AmForth-Shadow is maintained by an experienced embedded systems programmer
 who considers himself yet a novice [fn:1] in Forth. *AT90CAN128 is his AVR
-micro-controller of interest*. Thus, please note, only the
+micro-controller of interest*. Thus, _please note_, only the
 core/dict/*4k.inc and core/devices/at90can128/device.asm files underwent
 change!
 

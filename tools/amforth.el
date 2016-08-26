@@ -282,6 +282,8 @@ PARSED-TYPE specifies what kind of text is parsed. It should be on of 'name',
 	 "[\"\n]" nil string (font-lock-string-face . 1))
 	(("abort\"") compile-only (font-lock-keyword-face . 1)
 	 "[\"\n]" nil string (font-lock-string-face . 1))
+	(("warning\"") compile-only (font-lock-keyword-face . 1)
+	 "[\"\n]" nil string (font-lock-string-face . 1))
 	(("{" "{:") compile-only (font-lock-variable-name-face . 1)
 	 "[\n}]" nil name (font-lock-variable-name-face . 1))
 	((".(" "(") immediate (font-lock-comment-face . 1)
@@ -296,9 +298,10 @@ PARSED-TYPE specifies what kind of text is parsed. It should be on of 'name',
 	(("[ifdef]" "[ifundef]" "[defined]" "[undefined]") immediate (font-lock-keyword-face . 2)
 	 "[ \t\n]" t name (font-lock-function-name-face . 3))
 	(("if" "begin" "ahead" "do" "?do" "+do" "u+do" "-do" "u-do" "for" 
-	  "case" "of" "?dup-if" "?dup-0=-if" "then" "endif" "until"
+	  "case" "of" "?of" "?dup-if" "?dup-0=-if" "then" "endif" "until"
 	  "repeat" "again" "leave" "?leave"
-	  "loop" "+loop" "-loop" "next" "endcase" "end-case" "endof" "else" "while" "try"
+	  "loop" "+loop" "-loop" "next" "endcase" "end-case" "next-case" "endof" "contof"
+	  "else" "while" "try"
 	  "recover" "endtry" "iferror" "restore" "endtry-iferror"
 	  "assert(" "assert0(" "assert1(" "assert2("
 	  "assert3(" ")" "<interpretation" "<compilation" "interpretation>" 
@@ -328,7 +331,7 @@ PARSED-TYPE specifies what kind of text is parsed. It should be on of 'name',
 	  "fconstant" "value" "2value" "field" "user" "vocabulary" "voctable" 
 	  "create-interpret/compile" "interpret/compile:"
 	  "debug:" "field:" "2field:" "ffield:" "sffield:" "dffield:"
-	  "uvar" "uvalue" "cfield:" "wfield:" "lfield:")
+	  "uvar" "uvalue" "cfield:" "wfield:" "lfield:" "+field")
 	 non-immediate (font-lock-type-face . 2)
 	 "[ \t\n]" t name (font-lock-variable-name-face . 3))
 	("\\S-+%" non-immediate (font-lock-type-face . 2))
@@ -361,6 +364,12 @@ PARSED-TYPE specifies what kind of text is parsed. It should be on of 'name',
 	 immediate (font-lock-constant-face . 3))
 	("-?\\([&#][0-9.]+\\|\\(0x\\|\\$\\)[0-9a-f.]+\\|%[01]+\\)"
 	 immediate (font-lock-constant-face . 3))
+	("\\([&#]-?[0-9.]+\\|\\(0x-?\\|\\$-?\\)[0-9a-f.]+\\|%-?[01]+\\)"
+	 immediate (font-lock-constant-face . 3))
+	("\"[^\"]**" immediate (font-lock-string-face . 1)
+	 "[\"\n]" nil string (font-lock-string-face . 1))
+	("\".*\""
+	 immediate (font-lock-string-face . 3))
 	("[a-z\-0-9]+(" immediate (font-lock-comment-face . 1)
 	 ")" nil comment (font-lock-comment-face . 1))
 	))
@@ -467,7 +476,7 @@ INDENT1 and INDENT2 are indentation specifications of the form
 
 (setq forth-indent-words
       '((("if" "begin" "do" "?do" "+do" "-do" "u+do"
-	  "u-do" "?dup-if" "?dup-0=-if" "case" "of" "try" "iferror"
+	  "u-do" "?dup-if" "?dup-0=-if" "case" "of" "?of" "try" "iferror"
 	  "[if]" "[ifdef]" "[ifundef]" "[begin]" "[for]" "[do]" "[?do]" "[:")
 	 (0 . 2) (0 . 2))
 	((":" ":noname" "code" "abi-code" "struct" "m:" ":m" "class" 
@@ -476,7 +485,7 @@ INDENT1 and INDENT2 are indentation specifications of the form
 	 (0 . 2) (0 . 2) non-immediate)
 	("\\S-+%$" (0 . 2) (0 . 0) non-immediate)
 	((";" ";m") (-2 . 0) (0 . -2))
-	(("again" "then" "endif" "endtry" "endcase" "end-case" "endof" 
+	(("again" "then" "endif" "endtry" "endcase" "end-case" "next-case" "endof" "contof"
 	  "[then]" "[endif]" "[loop]" "[+loop]" "[next]" 
 	  "[until]" "[again]" "loop" ";]" "nope")
 	 (-2 . 0) (0 . -2))
@@ -1292,7 +1301,7 @@ Variables controlling indentation style:
  forth-indent-level
     Indentation increment/decrement of Forth statements.
  forth-minor-indent-level
-    Minor indentation increment/decrement of Forth statemens.
+    Minor indentation increment/decrement of Forth statements.
 
 Variables controlling block-file editing:
  forth-show-screen

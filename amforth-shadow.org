@@ -434,6 +434,10 @@ be broken, logging messages mangled. Here comes lib/mite.frt:
 
 - kernel :: [ASM] Returns the DP of the first compiled word.
 
+- ffff :: [ASM] This is an abort call that occurs when forgetting to resolve a forward
+reference. In other words, $FFFF code always executes ffff. Type ~\1 .~ to
+display the unresolved reference location.
+
 * Deviations from standard Forth
 
 Since wordlist order is kept on the EEPROM it is good practice to reduce

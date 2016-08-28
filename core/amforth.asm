@@ -1,6 +1,4 @@
-;;;; avr forth
-;;;;
-;;;; GPL V2 (only)
+; -*- Coding: utf-8 -*-
 
 .set	AMFORTH_NRWW_SIZE=(FLASHEND-AMFORTH_RO_SEG)*2
 
@@ -16,7 +14,7 @@
 
 .set 	DPSTART = pc
 .if 	pc > AMFORTH_RO_SEG
-.error	"RWW Segment Overflow, please edit your dict_appl.inc to use less space!"
+.error	"RWW Segment Overflow, edit your dict_appl.inc to use less space!"
 .endif
 
 .org 	AMFORTH_RO_SEG
@@ -35,7 +33,7 @@ FFFF:	sbiw	xh:xl,1
 PFA_FFFF:
 .dw	XT_DOSLITERAL
 .dw	6	
-.db	"α .",13,10		;\1 .
+.db	"α .",13,10		;type "\1 ." to locate the ...
 .dw 	XT_ITYPE	
 .dw	XT_ABORT
 
@@ -45,7 +43,8 @@ VE_FFFF:
 .db 	"ffff"
 .dw 	VE_HEAD
 .set 	VE_HEAD = VE_FFFF
-.dw 	FFFF			;pc = $FFFF
+.dw 	FFFF		      ;pc = 0xFFFF (FLASHEND)
+.org	DPSTART		      ;to avoid .cseg warning
 	
 .elif 	pc > FLASHEND
 .error "*** Flash size exceeded, edit your dict_appl_core file to use less space!"

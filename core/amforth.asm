@@ -2,31 +2,53 @@
 ;;;;
 ;;;; GPL V2 (only)
 
-.set AMFORTH_NRWW_SIZE=(FLASHEND-AMFORTH_RO_SEG)*2
+.set	AMFORTH_NRWW_SIZE=(FLASHEND-AMFORTH_RO_SEG)*2
 
-.set corepc = pc
-.org $0000
-  jmp_ COLD_START
+.set	corepc = pc
+.org	$0000
+	jmp_	COLD_START
 
-.org corepc
+.org 	corepc
 .include "drivers/generic-isr.asm"
 ; lower part of the dictionary
 .include "dict/rww.inc"
 .include "dict_appl.inc"
 
-.set DPSTART = pc
-.if(pc>AMFORTH_RO_SEG)
-.error "RWW Segment Overflow, please edit your dict_appl.inc"
+.set 	DPSTART = pc
+.if 	pc > AMFORTH_RO_SEG
+.error	"RWW Segment Overflow, please edit your dict_appl.inc to use less space!"
 .endif
 
-.org AMFORTH_RO_SEG
+.org 	AMFORTH_RO_SEG
 .include "amforth-interpreter.asm"
 .include "dict/nrww.inc"
 .include "dict_appl_core.inc"
 
-.set flashlast = pc
-.if (pc>FLASHEND)
-  .error "*** Flash size exceeded, please edit your dict_appl_core file to use less space! Aborting."
+.if 	FLASHEND == 0xFFFF
+	
+; Unresolved forward reference (ffff) abort
+	
+FFFF:	sbiw	xh:xl,1		
+	movw	ah:al,xh:xl	;α = ffff location
+	ldiw	x,PFA_FFFF
+	jmp_	DO_NEXT
+PFA_FFFF:
+.dw	XT_DOSLITERAL
+.dw	6	
+.db	"α .",13,10		;\1 .
+.dw 	XT_ITYPE	
+.dw	XT_ABORT
+
+.org 	0xFFFB
+VE_FFFF:
+.dw 	$FF04
+.db 	"ffff"
+.dw 	VE_HEAD
+.set 	VE_HEAD = VE_FFFF
+.dw 	FFFF			;pc = $FFFF
+	
+.elif 	pc > FLASHEND
+.error "*** Flash size exceeded, edit your dict_appl_core file to use less space!"
 .endif
 
 .dseg
@@ -36,4 +58,3 @@ HERESTART:
 .include "amforth-eeprom.inc"
 ; 1st free address in EEPROM.
 EHERESTART:
-.cseg

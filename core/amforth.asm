@@ -32,8 +32,8 @@ FFFF:	sbiw	xh:xl,1
 	jmp_	DO_NEXT
 PFA_FFFF:
 .dw	XT_DOSLITERAL
-.dw	6	
-.db	"α .",13,10		;type "\1 ." to locate the ...
+.dw	8	
+.db	"α see",13,10		;\1 see  ( where ffff occurred )
 .dw 	XT_ITYPE	
 .dw	XT_ABORT
 

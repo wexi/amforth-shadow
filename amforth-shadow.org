@@ -344,9 +344,9 @@ be broken, logging messages mangled. Here comes lib/mite.frt:
 * General purpose new words
 
 - reboot :: [ASM] A "cold" rename to match the Linux tradition. The Shadow
-            implementation of reboot is not identical to HQ's for the need
-            to initialize the RAM based memory alloc pointers and the soft
-            interrupts subsystem.
+     implementation of reboot is not identical to HQ's for the need to
+     initialize the RAM based memory alloc pointers and the soft interrupts
+     subsystem.
 
 - allwords ( -- ) :: [ASM] Lists all words in the word-lists search
      order. This command is used by amforth-shell for typing auto
@@ -387,9 +387,12 @@ be broken, logging messages mangled. Here comes lib/mite.frt:
 
 - -! ( w addr -- ) :: [ASM] Subtracts w from addressed word.
 
-- || ( HL -- L H ) :: [ASM] Split a word bytes.
+- || ( HL -- L H ) :: [ASM] Split word into bytes.
 
-- -rot  ( n1 n2 n3 -- n3 n1 n2 ) :: [ASM] "not-rote".
+- c|| ( 00N₁N₀ -- N₀ N₁ ) :: [ASM] Split byte into nibbles. Part of
+     ldots.asm.
+
+- -rot  ( X1 X2 X3 -- X3 X1 X2 ) :: [ASM] "not-rote".
 
 - cell+:: [ASM] Cell size address addition (aka 2+).
 
@@ -422,8 +425,14 @@ be broken, logging messages mangled. Here comes lib/mite.frt:
 
 - weekday  ( d m y -- wd ) :: wd 0/Mon .. 6/Sun
 
+-- whex ( word -- ) :: [ASM] 4 digit hexdecimal display. Part of ldots.asm.
+
+-- bhex ( byte -- ) :: [ASM] 2 digit hexadecimal display. Part of
+ldots.asm.
+
 - marker "name" :: A different implementation that backs up word lists
-                   only.
+     only.
+
 - wild :: [ASM] Returns the word-list of the last word created. This is
           used by [[tasks][lib/tasks.frt]] to easily access the task name. Another
           possible use -- as WLSCOPE can place created words on different
@@ -434,9 +443,9 @@ be broken, logging messages mangled. Here comes lib/mite.frt:
 
 - kernel :: [ASM] Returns the DP of the first compiled word.
 
-- ffff :: [ASM] This is an abort call that occurs when forgetting to resolve a forward
-reference. In other words, $FFFF code always executes ffff. Type ~\1 .~ to
-display the unresolved reference location.
+- ffff :: [ASM] This is an abort call that occurs when forgetting to
+     resolve a forward reference. In other words, when executing erased
+     Flash "code". α (aka \1) records the IP where ffff is called.
 
 * Deviations from standard Forth
 
@@ -457,9 +466,9 @@ the number of rewrites. Hence:
 
 * Cookbook
 
-Using Edefer to resolve forward references is wasteful since it adds one
-level of runtime indirection and needs additional EEPROM and FLASH space
-to implement. Here's a simple solution:
+<<cookbook>> Using Edefer to resolve forward references is wasteful since
+it adds one level of runtime indirection and needs additional EEPROM and
+FLASH space to implement. Here's a simple solution:
 
 #+BEGIN_EXAMPLE
 \ One forward reference capable resolver, use either forward& or &forward.
@@ -531,13 +540,19 @@ the following definition:
 ~.equ AMFORTH_RO_SEG = NRWW_START_ADDR + 512 ;make room for BOOFA~
 
 * amforth-shell.py enhancements
+** New Forth directives
 
-For more information see tools/amforth-shell.py beginning comments.
-
-+ #include vs. #install :: #include would skip uploading if the file has
+*** #include vs. #install :: #include would skip uploading if the file has
      already been uploaded in the current shell session. #install is
      unconditional. To maintain compatibility with HQ's libraries #require
      is a synonym for #include.
+
+*** TODO Automatic forward reference resolution
+
+An alternative to the [[cookbook][cookbook]] approach is now being developed via
+amforth-shell. The seed has been planted, see core/words/ldots.asm.
+
+** Command line options
 
 + --create, -c :: <<create>> The argument of this option is a wordlist
                   whose words need to be captured into the file
@@ -550,11 +565,15 @@ For more information see tools/amforth-shell.py beginning comments.
 
 + --log :: <<log>> This option collects the actual code that it sent to
            the AmForth system, comments free and following all string
-           substituion.
+           substituions.
 
 + --rtscts :: Hardware handshake. This option is for a more reliable
               serial connection if your AmForth implementation supports
               it.
+
+** More info
+
+For more information see tools/amforth-shell.py beginning comments.
 
 * Emacs support
 

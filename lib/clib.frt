@@ -176,7 +176,7 @@ variable _efree				\ free events list
 	 i 1+ . tab
 	 dup _e.when @ clock @ - 1+ . tab
 	 dup _e.data @ . tab
-	 dup _e.xt @ . cr
+	 dup _e.xt @ [char] $ emit whex cr
       else
 	 leave
       then

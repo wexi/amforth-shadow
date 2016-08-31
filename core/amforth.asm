@@ -43,8 +43,8 @@ VE_FFFF:
 .db 	"ffff"
 .dw 	VE_HEAD
 .set 	VE_HEAD = VE_FFFF
-.dw 	FFFF		      ;pc = 0xFFFF (FLASHEND)
-.org	DPSTART		      ;to avoid .cseg warning
+.dw 	FFFF		      ;pc = 0xFFFF, FLASHEND must be
+.org	DPSTART		      ;to avoid later .cseg warning
 	
 .elif 	pc > FLASHEND
 .error "*** Flash size exceeded, edit your dict_appl_core file to use less space!"

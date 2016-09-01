@@ -550,9 +550,9 @@ the following definition:
      unconditional. To maintain compatibility with HQ's libraries #require
      is a synonym for #include.
 
-*** Automatic forward reference resolution
+*** Forward reference resolution via the shell 
 
-For references calls or values should be marked with ellipsis:
+Forward references calls or values should be marked with an ellipsis:
 #+BEGIN_EXAMPLE
 … my-last-word … ['] my-last-word
 #+END_EXAMPLE

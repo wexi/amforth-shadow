@@ -5,7 +5,7 @@
 #+OPTIONS: email:t
 #+STARTUP: indent
 
-*AmForth-Shadow V1.5* (core/words/env-forthversion.asm)
+*AmForth-Shadow V1.6* (core/words/env-forthversion.asm)
 
 [[https://github.com/wexi/amforth-shadow][AmForth-Shadow]] is a sandbox for [[http://en.wikipedia.org/wiki/Atmel_AVR%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20][AVR8]] [[http://en.wikipedia.org/wiki/Forth_(programming_language)][Forth]] development that has become an
 independent fork of the [[http://amforth.sourceforge.net/][AmForth]] project since AmForth trunk@1687 decision
@@ -466,7 +466,7 @@ the number of rewrites. Hence:
 
 * Cookbook
 
-<2016-09-01 Thu> NEWS: amforth-shell can resolve forward references. The
+<2016-09-01 Thu> news: amforth-shell can resolve forward references. The
 following recipe which relies on Forth only may be considered outdated.
 
 <<cookbook>> Using Edefer to resolve forward references is wasteful since
@@ -550,10 +550,15 @@ the following definition:
      unconditional. To maintain compatibility with HQ's libraries #require
      is a synonym for #include.
 
-*** DONE Automatic forward reference resolution
+*** Automatic forward reference resolution
 
-An alternative to the [[cookbook][cookbook]] approach is now being developed via
-amforth-shell. The seed has been planted, see core/words/ldots.asm.
+For references calls or values should be marked with ellipsis:
+#+BEGIN_EXAMPLE
+… my-last-word … ['] my-last-word
+#+END_EXAMPLE
+
+The #forward directive lists the unresolved references. #resolve, based on
+an #update-words view, would introduce the necessary Flash code changes.
 
 ** Command line options
 

@@ -1,7 +1,7 @@
 ; -*- Coding: utf-8 -*-
 	
 /*	
-   Display DP value in hexadecimal format. "…" is an immediate word
+   Display DP value in hexadecimal format . "…" is an immediate word
    for use in compile mode. It precedes a forward referenced name. See
    amforth-shell.py
 */
@@ -15,11 +15,13 @@ XT_LDOTS:
 .dw	DO_COLON
 .dw	XT_DOSLITERAL
 .dw	2
-.db	"0x"
-.dw	XT_ITYPE		;for easy eval()
+.db	"0x"			;hexadecimal mark
+.dw	XT_ITYPE
 .dw	XT_DP
 .dw	XT_WHEX
-.dw	XT_SPACE		;for next forward reference on same line
+.dw	XT_DOLITERAL
+.db	",",0			;easy eval()
+.dw	XT_EMIT
 .dw	XT_EXIT	
 	
 VE_WHEX:

@@ -466,6 +466,9 @@ the number of rewrites. Hence:
 
 * Cookbook
 
+<2016-09-01 Thu> NEWS: amforth-shell can resolve forward references. The
+following recipe which relies on Forth only may be considered outdated.
+
 <<cookbook>> Using Edefer to resolve forward references is wasteful since
 it adds one level of runtime indirection and needs additional EEPROM and
 FLASH space to implement. Here's a simple solution:
@@ -547,7 +550,7 @@ the following definition:
      unconditional. To maintain compatibility with HQ's libraries #require
      is a synonym for #include.
 
-*** TODO Automatic forward reference resolution
+*** DONE Automatic forward reference resolution
 
 An alternative to the [[cookbook][cookbook]] approach is now being developed via
 amforth-shell. The seed has been planted, see core/words/ldots.asm.

@@ -1,9 +1,10 @@
-#!/usr/bin/python
+#!/usr/bin/env python
+# coding: utf-8
 #
 # pySerial based upload & interpreter interaction module for AmForth.
 #
 # Copyright 2011 Keith Amidon (camalot@picncipark.org)
-# AmForth-Shadow additions by Enoch (ixew@hotmail.com) 
+# AmForth-Shadow additions by Enoch (ixew@hotmail.com)
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License version 2 as
@@ -37,26 +38,37 @@
 # The following two step create & conceal procedure can conserve a
 # significant dictionary space and obfuscate the resulting Forth code.
 #
-# Step 1: Invoke the shell with one or more -c (--create) arguments:
-# -c <vocabulary1> -c <vocabulary2> etc. This would create a file with the
+# Step 1: Invoke the shell with one or more -c (--create) arguments: -c
+# <vocabulary1> -c <vocabulary2> etc. This would create a file with the
 # words listed in random order; the file name is appl.dic.
 #
-# Step 2: Invoke the shell with the argument -C (--conceal) to
-# substitute in the next compilation session the names of the words in
-# appl.dic with compact names (a ^^ prefix followed by a base62 serial
-# number).
-# 
-# Invoke the shell with the argument --log <filename.frt> to collect the 
+# Step 2: Invoke the shell with the argument -C (--conceal) to substitute
+# in the next compilation session the names of the words in appl.dic with
+# compact names (a ^^ prefix followed by a base62 serial number).
+#
+# Invoke the shell with the argument --log <filename.frt> to collect the
 # lines which were uploaded to the AmForth system that received an " ok"
-# response. This file can later be uploaded to another system using a tool 
-# simpler than the shell. Leave the shell by #exit to close the file properly.
+# response. This file can later be uploaded to another system using a tool
+# simpler than the shell. Leave the shell by #exit to close the file
+# properly.
 #
 # Invoke the shell with the argument --rtscts to enable serial port
 # RTS/CTS hardware handshake connection.
 #
 # ALLWORDS replaces WORDS in #update-words implementation.
 #
-# The shell provides humble support to locals. See core/words/greeks.asm.
+# The shell can resolve forward references: In the source line just place
+# an ellipsis before the unknown word call or value. Emacs users should
+# have no problem to enter ellipsis via Latex mode "\ldots" or via its
+# Unicode name, HORIZONTAL ELLIPSIS (AmForth deals well with utf-8 coding).
+# 
+# For example: … my-last-word … ['] my-last-word execute
+# 
+# The #forward directive lists all the unresolved references. #resolve,
+# after an #update-words, would send Forth code to replace the "ffff" place
+# holders with the updated values with the a
+# 
+# The shell also provides humble support to locals. See core/words/greeks.asm.
 # It would replace : definition { name1 [ name2 [ name3 [ -- comment ]]] }
 # with : definition (3) (2) or (1), with \1 \2 \3 instead of names.
 # 
@@ -287,9 +299,12 @@ from random import shuffle
 from datetime import datetime
 
 Greek = re.compile(r'(\s|^)\{\s+((\S+\s+){1,3})(--.*)?\}(\s|$)')
+Ldots = re.compile(ur"…\s+(\['\]\s+)?(\S+)", re.UNICODE)
+
 
 class AmForthException(Exception):
     pass
+
 
 class Behaviors(object):
     """Simple class for storing configurable processing behaviors"""
@@ -414,7 +429,7 @@ class AmForth(object):
         "#cd", "#edit", "#install", "#include", "#require", "#directive", "#ignore-error",
         "#error-on-output", "#string-start-word", "#quote-char-word",
         "#timeout", "#timeout-next", "#update-words", "#exit", 
-        "#update-cpu", "#update-files"
+        "#update-cpu", "#forward", "#resolve", "#update-files"
         ]
     # standard words are usually uppercase, but amforth needs
     # them in lowercase.
@@ -561,6 +576,7 @@ class AmForth(object):
         self._appl_defs = ad_def
 
         self._greeks = {}
+        self._ldots = {}
 
     @property
     def serial_port(self):
@@ -890,10 +906,9 @@ additional definitions (e.g. register names)
                     self.progress_callback("Whitespace", lineno, full_line)
                 continue
             try:
-                (line, in_comment,
-                 directive,
-                 directive_arg) = self.preprocess_line(full_line, in_comment,
-                                                       self.upload_directives)
+                (line, ldots, in_comment,
+                 directive, directive_arg) = self.preprocess_line(
+                     full_line, in_comment, self.upload_directives)
             except AmForthException, e:
                 self._record_error(lineno)
                 self.progress_callback("Error", lineno, full_line)
@@ -921,7 +936,19 @@ additional definitions (e.g. register names)
             response = self.read_response()
             self.progress_callback("Sent", lineno, full_line)
             if response[-3:] == " ok":
-                if len(response) > 3:
+                if ldots:       # forward references
+                    try:
+                        ips = eval(response[:-3])
+                        assert len(ips) == len(ldots)
+                    except:
+                        raise AmForthException("Unexpected ellipsis response")
+                    else:
+                        for (name, apos), ip in zip(ldots, ips):
+                            if name in self._ldots:
+                                self._ldots[name].append(ip+apos)
+                            else:
+                                self._ldots[name] = [ip+apos]
+                elif len(response) > 3:
                     for l in StringIO.StringIO(response[:-3]):
                         self.progress_callback("Output", lineno, l.rstrip())
                     r = self._config.current_behavior.expected_output_regexp
@@ -938,9 +965,9 @@ additional definitions (e.g. register names)
                             if not self._config.current_behavior.ignore_errors:
                                 self._record_error(lineno)
                                 raise AmForthException(errmsg)
-                elif self._log:
-                    self._log.write(line + "\n")
-                    
+                if self._log:
+                    self._log.write(line.encode('utf-8') + "\n")
+
             else:
                 self.progress_callback("Error", None, response)
                 if not self._config.current_behavior.ignore_errors:
@@ -948,15 +975,16 @@ additional definitions (e.g. register names)
                     raise AmForthException("Error in line sent")
 
     def preprocess_line(self, line, in_delim_comment=False, directives=[]):
-        # Compresses whitespace, including comments so send minimum
-        # data to atmega
-        result =  []
+        # Compress whitespace and comments to send minimum data to atmega
+        result = []
         comment_words = []
         char_quote = False
         in_string = False
         in_line_comment = False
         directive = None
         directive_arg = []
+
+        line = line.decode('utf-8')
 
         # see core/words/greek.asm locals implementation
         local = Greek.search(line)
@@ -965,12 +993,21 @@ additional definitions (e.g. register names)
             locals = locals.split(' ')
             locals.pop()
             count = len(locals)
-            line = line[:local.start()] + " ({0}) ".format(count) + line[local.end():]
+            line = (line[:local.start()] + " ({0}) ".format(count) +
+                    line[local.end():])
             for iw, w in enumerate(locals):
-                self._greeks[w] = "\\{}".format(iw+1) # local names
+                self._greeks[w] = "\\{}".format(iw+1)  # local names
+
+        ldots = []
+        names = set()
+        for ma in Ldots.finditer(line):
+            apos = ma.group(1) is not None
+            name = ma.group(2)
+            names.add(name)
+            ldots.append((name, apos))
 
         words = self._split_space_or_tab(line)
-        for iw,w in enumerate(words):
+        for iw, w in enumerate(words):
             if in_string:
                 try:
                     i = w.index('"')
@@ -997,6 +1034,8 @@ additional definitions (e.g. register names)
                 self._greeks.clear()
             elif w in self._greeks:
                 w = self._greeks[w]
+            elif w in names:
+                w = 'ffff'
             elif w in self._appl_defs:
                 w = self._appl_defs[w]
             elif w in self._amforth_regs:
@@ -1054,7 +1093,7 @@ additional definitions (e.g. register names)
             raise AmForthError("Directive must not have other content: %s",
                                " ".join(result))
 
-        return (" ".join(result), in_delim_comment,
+        return (" ".join(result), ldots, in_delim_comment,
                 directive, " ".join(directive_arg))
 
     def _record_error(self, lineno):
@@ -1149,17 +1188,17 @@ additional definitions (e.g. register names)
                 raise AmForthExcetion(errmsg)
 
     def send_line(self, line):
-        if len(line) > self.max_line_length - 1: # For newline
-            raise AmForthException("Input line > %d char" % self.max_line_length)
+        if len(line) > self.max_line_length - 1:  # For newline
+            raise AmForthException("Input line too long")
         if self._serial_rtscts:
             line += '\r'
-            self._serialconn.write(line)
+            self._serialconn.write(line.encode('utf-8'))
             self._echo = True
         else:
-            for c in line + "\r":
+            for c in line.encode('utf-8') + '\r':
                 self._serialconn.write(c)
                 self._serialconn.flush()
-                r = self._serialconn.read(1) # Read echo of character we just sent
+                r = self._serialconn.read(1)  # Read echo of char just sent
                 while r and (r != c or (c == '\t' and r != ' ')):
                     r = self._serialconn.read(1)
                 if not r:
@@ -1177,7 +1216,7 @@ additional definitions (e.g. register names)
         if response == "> ":
             return " ok"
         if response != "\r\n":
-            response += self._serialconn.readline() 
+            response += self._serialconn.readline()
         if not response:
             raise serial.SerialException("Timed out waiting for response")
         if self._serialconn.read(2) != "> ":
@@ -1219,10 +1258,9 @@ additional definitions (e.g. register names)
                              str(e)))
                 self.progress_callback("Error", None, errmsg)
                 raise AmForthException(errmsg)
-            (line, in_comment,
-             directive,
-             directive_arg) = self.preprocess_line(full_line, in_comment,
-                                                   self.interact_directives)
+            (line, ldots, in_comment,
+             directive, directive_arg) = self.preprocess_line(
+                 full_line, in_comment, self.interact_directives)
             try:
                 if directive:
                     self.progress_callback("Directive", None, full_line)
@@ -1233,6 +1271,12 @@ additional definitions (e.g. register names)
                         continue
                     elif directive == "#update-cpu":
                         self._update_cpu()
+                        continue
+                    elif directive == "#forward":
+                        self._forward()
+                        continue
+                    elif directive == "#resolve":
+                        self._resolve()
                         continue
                     elif directive == "#update-files":
                         self._update_files()
@@ -1318,27 +1362,47 @@ additional definitions (e.g. register names)
           from device import MCUREGS
           self._amforth_regs=MCUREGS
           self._amforth_cpu = words[:-3]
-          self.progress_callback("Information", None, "Successfully loaded register definitions for " + mcudef)
+          self.progress_callback("Information", None,
+                                 "Successfully loaded register definitions for " + mcudef)
         except:
-          self.progress_callback("Warning", None, "Failed loading register definitions for " + mcudef + " .. continuing")
+            self.progress_callback("Warning", None,
+                                   "Failed loading register definitions for " + mcudef + " .. continuing")
+
+    def _forward(self):
+        self.progress_callback("Information", None,
+                               "Unresolved: " + ' '.join(self._ldots.keys()))
+
+    def _resolve(self):
+        self.progress_callback("Directive", None, "#update-words")
+        self._update_words()
+        for name in self._ldots.keys():
+            if name in self._amforth_words:
+                self.progress_callback("Information", None, "Resolving " + name)
+                for ip in self._ldots[name]:
+                    self.send_line("' {} &{} !i".format(name, ip))
+                    response = self.read_response()
+                    if response !=  " ok":
+                        raise AmForthException("Cannot write to Flash memory")
+                self._ldots.pop(name)
 
     def _update_files(self):
-      self.progress_callback("Information", None, "Getting filenames on the host")
-      self._filedirs = {}
-      for p in self._search_list:
-        self.progress_callback("Information", None, "Reading "+p)
-        for root, dirs, files in os.walk(p):
-          for f in files:
-            fpath=os.path.realpath(os.path.join(root, f))
-            fpathdir=os.path.dirname(fpath)
-            if self._filedirs.has_key(f):
-              # check for duplicates
-              for d in self._filedirs[f]:
-                if d==fpathdir:
-                  fpath=None
-              if fpath: self._filedirs[f].append(fpathdir)
-            else:
-              self._filedirs[f]=[fpathdir]
+        self.progress_callback("Information", None, "Getting filenames on the host")
+        self._filedirs = {}
+        for p in self._search_list:
+            self.progress_callback("Information", None, "Reading "+p)
+            for root, dirs, files in os.walk(p):
+                for f in files:
+                    fpath=os.path.realpath(os.path.join(root, f))
+                    fpathdir=os.path.dirname(fpath)
+                    if self._filedirs.has_key(f):
+                        # check for duplicates
+                        for d in self._filedirs[f]:
+                            if d==fpathdir:
+                                fpath=None
+                        if fpath:
+                            self._filedirs[f].append(fpathdir)
+                    else:
+                        self._filedirs[f]=[fpathdir]
 
     def _rlcompleter(self, text, state):
         if state == 0:

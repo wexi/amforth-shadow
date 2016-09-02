@@ -928,27 +928,15 @@ additional definitions (e.g. register names)
                 continue
             try:
                 self.send_line(line)
+                self.progress_callback("Sent", lineno, full_line)
             except AmForthException, e:
                 self._record_error(lineno)
                 self.progress_callback("Error", lineno, full_line)
                 self.progress_callback("Error", None, str(e))
                 raise
-            response = self.read_response()
-            self.progress_callback("Sent", lineno, full_line)
+            response = self.read_response(ldots)
             if response[-3:] == " ok":
-                if ldots:       # forward references
-                    try:
-                        ips = eval(response[:-3])
-                        assert len(ips) == len(ldots)
-                    except:
-                        raise AmForthException("Unexpected ellipsis response")
-                    else:
-                        for (name, apos), ip in zip(ldots, ips):
-                            if name in self._ldots:
-                                self._ldots[name].append(ip+apos)
-                            else:
-                                self._ldots[name] = [ip+apos]
-                elif len(response) > 3:
+                if len(response) > 3:
                     for l in StringIO.StringIO(response[:-3]):
                         self.progress_callback("Output", lineno, l.rstrip())
                     r = self._config.current_behavior.expected_output_regexp
@@ -1204,23 +1192,40 @@ additional definitions (e.g. register names)
                 if not r:
                     raise AmForthException("Input character not echoed.")
 
-    def read_response(self):
+    def read_response(self, ldots=None):
         if self._echo:
             response = self._serialconn.readline()
             if not response:
-                raise serial.SerialException("Timed out waiting for echo")
+                raise serial.SerialException("Timeout on waiting for echo")
             self._echo = False
+
+        if ldots:
+            response = self._serialconn.read(7*len(ldots))
+            if not response:
+                raise serial.SerialException("Timeout on response to ellipsis")
+            try:
+                ips = eval(response)
+                assert len(ips) == len(ldots)
+            except:
+                raise AmForthException("Unexpected response to ellipsis")
+            else:
+                for (name, apos), ip in zip(ldots, ips):
+                    if name in self._ldots:
+                        self._ldots[name].append(ip+apos)
+                    else:
+                        self._ldots[name] = [ip+apos]
+
         response = self._serialconn.read(2)
         if not response:
-            raise serial.SerialException("Timed out waiting for response")
+            raise serial.SerialException("Timeout waiting for response")
         if response == "> ":
             return " ok"
         if response != "\r\n":
             response += self._serialconn.readline()
         if not response:
-            raise serial.SerialException("Timed out waiting for response")
+            raise serial.SerialException("Timeout waiting for response")
         if self._serialconn.read(2) != "> ":
-            raise serial.SerialException("Timed out waiting for prompt")
+            raise serial.SerialException("Timeout waiting for prompt")
         return response[:-2]
 
     def print_progress(self, type, lineno, info):
@@ -1381,7 +1386,7 @@ additional definitions (e.g. register names)
                 for ip in self._ldots[name]:
                     self.send_line("' {} &{} !i".format(name, ip))
                     response = self.read_response()
-                    if response !=  " ok":
+                    if response != " ok":
                         raise AmForthException("Cannot write to Flash memory")
                 self._ldots.pop(name)
 

@@ -57,16 +57,15 @@
 #
 # ALLWORDS replaces WORDS in #update-words implementation.
 #
-# The shell can resolve forward references: In the source line just place
-# an ellipsis before the unknown word call or value. Emacs users should
-# have no problem to enter ellipsis via Latex mode "\ldots" or via its
-# Unicode name, HORIZONTAL ELLIPSIS (AmForth deals well with utf-8 coding).
-# 
+# The shell can resolve forward references: In the source line place an
+# ellipsis before the unknown call or value. Emacs users can introduce
+# ellipsis via TeX "\ldots" input or via C-X 8 HORIZONTAL ELLIPSIS.
+#
 # For example: … my-last-word … ['] my-last-word execute
-# 
-# The #forward directive lists all the unresolved references. #resolve,
-# after an #update-words, would send Forth code to replace the "ffff" place
-# holders with the updated values with the a
+#
+# The #forward directive lists unresolved references. The #resolve
+# directive, after an #update-words, sends Forth code to replace the "ffff"
+# place holders with the updated values.
 # 
 # The shell also provides humble support to locals. See core/words/greeks.asm.
 # It would replace : definition { name1 [ name2 [ name3 [ -- comment ]]] }
@@ -420,16 +419,17 @@ class AmForth(object):
 
     amforth_error_cre = re.compile(" \?\? -\d+ \d+ \r\n> $")
     upload_directives = [
-        "#cd", "#install", "#include", "#require", "#directive", "#ignore-error",
-        "#ignore-error-next", "#error-on-output", "#expect-output-next",
-        "#string-start-word", "#quote-char-word",
+        "#cd", "#install", "#include", "#require", "#resolve", "#forward",
+        "#directive",
+        "#ignore-error", "#ignore-error-next", "#error-on-output",
+        "#expect-output-next", "#string-start-word", "#quote-char-word",
         "#timeout", "#timeout-next", "#interact", "#exit"
         ]
     interact_directives = [
         "#cd", "#edit", "#install", "#include", "#require", "#directive", "#ignore-error",
         "#error-on-output", "#string-start-word", "#quote-char-word",
         "#timeout", "#timeout-next", "#update-words", "#exit", 
-        "#update-cpu", "#forward", "#resolve", "#update-files"
+        "#update-cpu", "#update-files"
         ]
     # standard words are usually uppercase, but amforth needs
     # them in lowercase.
@@ -1115,6 +1115,10 @@ additional definitions (e.g. register names)
                 oldpath = self._config.current_behavior.working_directory
                 dirpath = os.path.normpath(os.path.join(oldpath, dirname))
             self._config.current_behavior.working_directory = dirpath
+        elif directive == "#resolve":
+            self._resolve()
+        elif directive == "#forward":
+            self._forward()
         elif directive == "#timeout":
             try:
                 timeout = float(directive_arg)
@@ -1277,12 +1281,6 @@ additional definitions (e.g. register names)
                     elif directive == "#update-cpu":
                         self._update_cpu()
                         continue
-                    elif directive == "#forward":
-                        self._forward()
-                        continue
-                    elif directive == "#resolve":
-                        self._resolve()
-                        continue
                     elif directive == "#update-files":
                         self._update_files()
                         continue
@@ -1374,11 +1372,12 @@ additional definitions (e.g. register names)
                                    "Failed loading register definitions for " + mcudef + " .. continuing")
 
     def _forward(self):
-        self.progress_callback("Information", None,
-                               "Unresolved: " + ' '.join(self._ldots.keys()))
+        if self._ldots:
+            self.progress_callback("Warning", None, "Unresolved: "
+                                   + ' '.join(self._ldots.keys()))
 
     def _resolve(self):
-        self.progress_callback("Directive", None, "#update-words")
+        self.progress_callback("Information", None, "#update-words")
         self._update_words()
         for name in self._ldots.keys():
             if name in self._amforth_words:

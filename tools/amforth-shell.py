@@ -64,8 +64,8 @@
 # For example: … my-last-word … ['] my-last-word execute
 #
 # The #forward directive lists unresolved references. The #resolve
-# directive, after an #update-words, sends Forth code to replace the "ffff"
-# place holders with the updated values.
+# directive, after an #update-words, sends Forth code to replace the Flash
+# "ffff" place holders with appropriate execution tokens.
 # 
 # The shell also provides humble support to locals. See core/words/greeks.asm.
 # It would replace : definition { name1 [ name2 [ name3 [ -- comment ]]] }
@@ -1373,8 +1373,8 @@ additional definitions (e.g. register names)
 
     def _forward(self):
         if self._ldots:
-            self.progress_callback("Warning", None, "Unresolved: "
-                                   + ' '.join(self._ldots.keys()))
+            self.progress_callback("Warning", None, "Unresolved "
+                                   + ','.join(self._ldots.keys()))
 
     def _resolve(self):
         self.progress_callback("Information", None, "#update-words")

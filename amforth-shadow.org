@@ -375,6 +375,8 @@ be broken, logging messages mangled. Here comes lib/mite.frt:
 - ?= ( n1 n2 -- n1 false | true ) :: [ASM] twisted compare, true when n1
      equals n2.
 
+- ?execute :: [ASM] same as: ~?dup  if  execute  then~
+
 - u2/ :: [ASM] Unsigned division by 2.
 
 - u4/ :: [ASM] Unsigned division by 4.
@@ -557,8 +559,10 @@ Forward references calls or values should be marked with an ellipsis:
 … my-last-word … ['] my-last-word
 #+END_EXAMPLE
 
-The #forward directive lists the unresolved references. #resolve, based on
-an #update-words view, would introduce the necessary Flash code changes.
+The "#forward" directive lists the unresolved references. "#resolve
+my-last-word" would introduce the necessary Flash code patches if
+"my-last-word" has been created. "#resolve" without an argument resolves as
+many forward references as possible.
 
 ** Command line options
 

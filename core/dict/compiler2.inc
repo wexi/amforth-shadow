@@ -10,6 +10,8 @@
 
 .include "words/only.asm"
 .include "words/forth-wordlist.asm"
+.include "words/allwords.asm"
+.include "words/my-words.asm"
 .include "words/set-order.asm"
 .include "words/set-recognizer.asm"
 .include "words/get-recognizer.asm"

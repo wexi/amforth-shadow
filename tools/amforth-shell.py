@@ -63,9 +63,11 @@
 #
 # For example: … my-last-word … ['] my-last-word execute
 #
-# The #forward directive lists unresolved references. The #resolve
-# directive, after an #update-words, sends Forth code to replace the Flash
-# "ffff" place holders with appropriate execution tokens.
+# The "#forward" directive lists unresolved references, if any. The
+# "#resolve" directive after an #update-words, sends Forth code to replace
+# the "ffff" Flash place holders with appropriate execution
+# tokens. "#resolve my-last-word" only resolves forward references to
+# my-last-word...
 # 
 # The shell also provides humble support to locals. See core/words/greeks.asm.
 # It would replace : definition { name1 [ name2 [ name3 [ -- comment ]]] }
@@ -426,7 +428,8 @@ class AmForth(object):
         "#timeout", "#timeout-next", "#interact", "#exit"
         ]
     interact_directives = [
-        "#cd", "#edit", "#install", "#include", "#require", "#directive", "#ignore-error",
+        "#cd", "#edit", "#install", "#include", "#require", "#forward",
+        "#directive", "#ignore-error",
         "#error-on-output", "#string-start-word", "#quote-char-word",
         "#timeout", "#timeout-next", "#update-words", "#exit", 
         "#update-cpu", "#update-files"
@@ -1116,7 +1119,7 @@ additional definitions (e.g. register names)
                 dirpath = os.path.normpath(os.path.join(oldpath, dirname))
             self._config.current_behavior.working_directory = dirpath
         elif directive == "#resolve":
-            self._resolve()
+            self._resolve(directive_arg)
         elif directive == "#forward":
             self._forward()
         elif directive == "#timeout":
@@ -1339,13 +1342,14 @@ additional definitions (e.g. register names)
 
     def _update_words(self):
         # get all words that are available in the search order      
-        self.send_line("base @ decimal dp u. base !")
-        dp = self.read_response()
-        if dp[-3:] != " ok":
+        self.send_line(u"…")
+        response = self.read_response()
+        if len(response) != 10 or response[-4:] != ", ok":
             return  # Something went wrong, just silently ignore
-        dp = int(dp[:-3])
+        dp = int(response[:-4], base=0)
         if self._amforth_dp != dp:
             self._amforth_dp = dp
+            self.progress_callback("Information", None, "Reading SUT words")
             self.send_line("allwords")
             response = self.read_response()
             if response[-3:] != " ok":
@@ -1377,10 +1381,10 @@ additional definitions (e.g. register names)
             self.progress_callback("Warning", None, "Unresolved "
                                    + ','.join(self._ldots.keys()))
 
-    def _resolve(self):
-        self.progress_callback("Information", None, "#update-words")
+    def _resolve(self, name):
         self._update_words()
-        for name in self._ldots.keys():
+        names = [name] if name else self._ldots.keys()
+        for name in names:
             if name in self._amforth_words:
                 self.progress_callback("Information", None, "Resolving " + name)
                 for ip in self._ldots[name]:

@@ -1222,24 +1222,27 @@ additional definitions (e.g. register names)
                     else:
                         self._ldots[name] = [ip+apos]
 
-        response = self._serialconn.read(2)
-        if not response:
-            raise serial.SerialException("Timeout waiting for response")
-        if response == "> ":
-            return " ok"
-        if response != "\r\n":
-            response += self._serialconn.readline()
-        if not response:
-            raise serial.SerialException("Timeout waiting for response")
-        if self._serialconn.read(2) != "> ":
-            raise serial.SerialException("Timeout waiting for prompt")
-        return response[:-2]
+        response = ""
+        while True:
+            c  = self._serialconn.read(1)
+            if not c:
+                raise serial.SerialException("Timeout waiting for response")
+            response += c
+            if response.endswith("> "):
+                response = response[:-2]
+                break
+        if response.endswith("\r\n"):
+            response = response[:-2]
+
+        return response if response.endswith(" ok") else response + " ok"
+
 
     def print_progress(self, type, lineno, info):
         if not lineno:
             print "|%s=%s" % (type[:1], info)
         else:
             print "|%s|%5d|%s" % (type[:1], lineno, info)
+
 
     def interact(self):
         self.progress_callback("Interact", None,

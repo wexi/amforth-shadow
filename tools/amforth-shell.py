@@ -816,7 +816,7 @@ additional definitions (e.g. register names)
             self._serialconn.timeout = 2.0
             response = self.read_response()
             if response:
-                self.progress_callback("Information", None, "Forth: " + response)
+                self.progress_callback("Information", None, "Forth: " + response[:-3])
             else:
                 raise serial.SerialException('"ver" response')
         except serial.SerialException, e:
@@ -1228,11 +1228,9 @@ additional definitions (e.g. register names)
             if not c:
                 raise serial.SerialException("Timeout waiting for response")
             response += c
-            if response.endswith("> "):
-                response = response[:-2]
+            if response.endswith("\r\n> "):
+                response = response[:-4]
                 break
-        if response.endswith("\r\n"):
-            response = response[:-2]
 
         return response if response.endswith(" ok") else response + " ok"
 
@@ -1361,18 +1359,21 @@ additional definitions (e.g. register names)
             self._amforth_words = words.split(" ") + self.interact_directives
 
     def _update_cpu(self):
-        self.send_line("s\" cpu\" environment search-wordlist drop execute itype")
-        words = self.read_response()
-        self.progress_callback("Information", None, "MCU: " + words)
-        if words[-3:] != " ok":
-            return # Something went wrong, just silently ignore
-        mcudef = words[:-3].lower()
+        self.send_line('s" cpu" environment search-wordlist not throw execute itype')
+        try:
+            response = self.read_response()
+        except serial.SerialException:
+            raise AmForthException("Cannot read the cpu type")
+        self.progress_callback("Information", None, "MCU: " + response[:-3])
+        mcudef = response[:-3].lower()
         self._amforth_regs = {}
-        sys.path.insert(1,os.path.join(os.path.dirname(sys.argv[0]),"..", "core", "devices",mcudef))
+        dir = os.path.abspath(os.path.join(os.path.dirname(
+            sys.argv[0]),"..", "core", "devices", mcudef))
+        sys.path.insert(1, dir)
         try:
           from device import MCUREGS
           self._amforth_regs=MCUREGS
-          self._amforth_cpu = words[:-3]
+          self._amforth_cpu = response[:-3]
           self.progress_callback("Information", None,
                                  "Successfully loaded register definitions for " + mcudef)
         except:

@@ -859,7 +859,6 @@ additional definitions (e.g. register names)
             except AmForthException, e:
                 self.progress_callback("Error", None, str(e))
                 raise
-            self._update_cpu()
             self.progress_callback("File", None, fpath)
             try:
                 with open(fpath, "r") as f:
@@ -1228,11 +1227,10 @@ additional definitions (e.g. register names)
             if not c:
                 raise serial.SerialException("Timeout waiting for response")
             response += c
+            if response == "> ":  # compilation mode
+                return " ok"
             if response.endswith("\r\n> "):
-                response = response[:-4]
-                break
-
-        return response if response.endswith(" ok") else response + " ok"
+                return response[:-4]  # interprete mode
 
 
     def print_progress(self, type, lineno, info):

@@ -994,6 +994,8 @@ additional definitions (e.g. register names)
             apos = ma.group(1) is not None
             name = ma.group(2)
             names.add(name)
+            if name in self._appl_defs:
+                name = self._appl_defs[name]
             ldots.append((name, apos))
 
         words = self._split_space_or_tab(line)
@@ -1230,7 +1232,7 @@ additional definitions (e.g. register names)
             if response == "> ":  # compilation mode
                 return " ok"
             if response.endswith("\r\n> "):
-                return response[:-4]  # interprete mode
+                return response[:-4].decode('utf-8')  # interprete mode
 
 
     def print_progress(self, type, lineno, info):
@@ -1353,7 +1355,7 @@ additional definitions (e.g. register names)
             response = self.read_response()
             if response[-3:] != " ok":
                 return # Something went wrong, just silently ignore
-            words = response[:-4].decode('utf-8')
+            words = response[:-4]
             self._amforth_words = words.split(" ") + self.interact_directives
 
     def _update_cpu(self):

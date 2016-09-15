@@ -959,6 +959,7 @@ additional definitions (e.g. register names)
                     self._log.write(line.encode('utf-8') + "\n")
 
             else:
+                self.progress_callback("Error", None, line)
                 self.progress_callback("Error", None, response)
                 if not self._config.current_behavior.ignore_errors:
                     self._record_error(lineno)

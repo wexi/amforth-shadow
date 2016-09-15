@@ -16,6 +16,20 @@
 ;;; Copyright © 2015 Energy Measurement & Control, NJ, USA. 
 ;;; Redistribution: FreeBSD License.
 	
+VE_GEEK:
+	.dw	$ff04
+	.db	"geek"
+	.dw	VE_HEAD
+	.set	VE_HEAD = VE_GEEK
+XT_GEEK:
+	.dw	PFA_GEEK
+PFA_GEEK:
+	movw	ch:cl,bh:bl
+	movw	bh:bl,ah:al
+	movw	ah:al,tosh:tosl
+	loadtos
+	jmp_	DO_NEXT
+
 VE_1GREEK:
 	.dw	$ff03
 	.db	"(1)",0

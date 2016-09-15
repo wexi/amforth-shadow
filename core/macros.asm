@@ -8,7 +8,7 @@
   .def upl = r4
   .def uph = r5
 
-  .def al = r6			;cf lazy man 4 locals: words/greek.asm
+  .def al = r6			;cf lazy man 3 locals: words/greek.asm
   .def ah = r7
   .def bl = r8
   .def bh = r9

@@ -316,14 +316,14 @@ would be converted to the above form. _However_, note that outside this
 	
 Note:
 
-1. There can be up to 3 locals, their initial value is zero. The locals –
-   *α*, *α β* or *α β γ* – are loaded from stack via the words *(1)*, *(2)*
-   or *(3)*, respectively. This should be the defined word first
-   action. Upon return to the _calling word_ the values of the calling word
-   locals are restored. Local values can be used by _called words_ if not
-   reloaded.
+1. There can be up to 3 locals, their initial value is undefined[fn:2]. The
+   locals – *α*, *α β* or *α β γ* – are loaded from stack via the words
+   *(1)*, *(2)* or *(3)*, respectively. This should be the defined word
+   first action. Upon return to the _calling word_ the values of the
+   calling word locals are restored. Local values can be used by _called
+   words_ if not reloaded.
 
-2. "to" is not implemented for didactic reasons! 
+2. *to* is not implemented for didactic reasons.
 
 3. A word non changing args are a well suited for locals. It would free
    your stacks to hold just the more important [[https://en.wikipedia.org/wiki/Invariant_(computer_science)][loop invariants]], etc.
@@ -445,9 +445,9 @@ ldots.asm.
 
 - kernel :: [ASM] Returns the DP of the first compiled word.
 
-- ffff :: [ASM] This is an abort call that occurs when forgetting to
-     resolve a forward reference. In other words, when executing erased
-     Flash "code". α (aka \1) records the IP where ffff is called.
+- ffff :: [ASM] Causes a system restart when forgetting to resolve a
+     forward reference. In other words, when executing erased Flash
+     "code". α (aka \1) records the IP where ffff is called.
 
 * Deviations from standard Forth
 
@@ -595,12 +595,10 @@ For more information see tools/amforth-shell.py beginning comments.
 
 * Footnotes
 
-[fn:2] The Shadow believes that [[http://www.complang.tuwien.ac.at/anton/euroforth/ef08/papers/pelc.pdf][MPE VM extension]], which HQ adopted, would
-never make it into the standard for being too "C"-ish. That's not the case
-with locals...
-
 [fn:1] Forth is an old language, no one with less than 20 years of Forth
 programming experience counts :-)
 
+[fn:2] geek ( x -- ) :: pushes x → α → β → γ. It's a way to initialize the
+locals, if this is really necessary.
 
 

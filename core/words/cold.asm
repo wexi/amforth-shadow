@@ -20,10 +20,7 @@ PFA_REBOOT1:
 COLD_START:
 	clr 	zerol
 	clr 	zeroh
-	movw	ah:al, zeroh:zerol ;see words/greek.asm
-	movw	bh:bl, zeroh:zerol
-	movw	ch:cl, zeroh:zerol
-	mov	dl, zerol
+	mov	dl, zerol	;see words/greek.asm
 	ldiw 	Z, intbuf	;clear soft interrupts stuff
 clr_int:
 	st  	Z+, zerol

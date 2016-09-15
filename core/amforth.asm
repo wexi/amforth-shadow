@@ -24,18 +24,23 @@
 
 .if 	FLASHEND == 0xFFFF
 	
-; Unresolved forward reference (ffff) abort
+; Unresolved forward reference (ffff) restart
 	
 FFFF:	sbiw	xh:xl,1		
 	movw	ah:al,xh:xl	;α = ffff location
 	ldiw	x,PFA_FFFF
 	jmp_	DO_NEXT
 PFA_FFFF:
+.dw	XT_SWIDI		;int-
+.dw	XT_WDTON		;+wdt
+.dw	XT_WDR			;wdr
 .dw	XT_DOSLITERAL
 .dw	8	
 .db	"α see",13,10		;\1 see  ( where ffff occurred )
 .dw 	XT_ITYPE	
-.dw	XT_ABORT
+PFA_GGGG:
+.dw	XT_DOBRANCH		;wait for watchdog
+.dw	PFA_GGGG	
 
 .org 	0xFFFB
 VE_FFFF:

@@ -293,8 +293,10 @@ be changed in the process. For example, all the words which begin with
 "gl-" can be added to a separate graphics word-list with the "gl-" prefix
 removed.
 
-It is recommended to include the lib/_local.frt (via *also*) wordlist-scope and
-remove it after use from the search order (via *previous*) ...
+** Application
+
+It is recommended that names of library words which have no public
+significance will have an underscore prefix. See lib/local.frt
 
 * Lazy man locals implementation (aka three Greek locals)
 

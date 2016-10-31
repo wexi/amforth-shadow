@@ -168,9 +168,7 @@ variable _efree				\ free events list
 
 \ list pending events (may cause soft interrupts overflow!)
 : events
-   Red foreground
-   ." №" tab ." DELAY" tab ." DATA" tab ." XT"
-   text_normal cr
+   text_reverse ." №" tab ." DELAY" tab ." DATA" tab ." XT" text_normal cr
    _etodo EVENTS 0 int-  do
       @ ?dup  if
 	 i 1+ . tab

@@ -168,13 +168,13 @@ variable _efree				\ free events list
 
 \ list pending events (may cause soft interrupts overflow!)
 : events
-   text_reverse ." №" tab ." DELAY" tab ." DATA" tab ." XT" text_normal cr
+   text_reverse ." No" tab ." DELAY" tab ." DATA" tab ." XT" text_normal cr
    _etodo EVENTS 0 int-  do
       @ ?dup  if
-	 i 1+ . tab
-	 dup _e.when @ clock @ - 1+ . tab
-	 dup _e.data @ . tab
-	 dup _e.xt @ [char] $ emit whex cr
+	 i bhex tab
+	 dup _e.when @ clock @ - 1+ whex tab
+	 dup _e.data @ whex tab
+	 dup _e.xt @ whex cr
       else
 	 leave
       then
